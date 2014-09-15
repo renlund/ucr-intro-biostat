@@ -1,0 +1,748 @@
+\documentclass{beamer}
+% ---Ett s?tt att skapa ``handouts''----------------------------------
+% \documentclass[handout]{beamer}
+% \usepackage{pgf,pgfpages}
+% \pgfpagesuselayout{4 on 1}[letterpaper,landscape,border shrink=0.5in]
+% --------------------------------------------------------------------
+\usepackage{beamerthemeclassic}
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{multicol}
+
+\newcommand{\plot}{0.42}
+\newcommand{\pr}{\mathbf{Prob}}
+\newcommand{\el}{\mbox{\;or\;}}
+\newcommand{\rymd}{\vspace{0.3cm}}
+\newcommand{\rymda}{\vspace{0.5cm}}
+
+%\setbeamersize{text margin left=6mm, text margin right=2mm}  % DEFAULT
+\setbeamersize{text margin left=3mm, text margin right=2mm}
+
+\title{Introduction to Biostatistics \\ Lecture 6}
+\author{Henrik Renlund}
+\date{2014-10-13}
+
+\begin{document} % >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+\frame{ % -------------------------------------------------------------------->
+\begin{center}
+\begin{figure}
+\includegraphics[scale=0.45]{pics/Karl_Pearson_2.jpg}
+\caption{Karl Pearson introduced the $\chi^2$-test in ''On the Criterion that a Given System of Deviations from the Probable in the Case of a Correlated System of Variables is such that it can be Reasonably Supposed to have Arisen from Random Sampling'' (1900) }
+\end{figure}
+\end{center}
+}
+\frame{ % -------------------------------------------------------------------->
+\titlepage
+\begin{center}
+\includegraphics[scale=0.8]{pics/ucrlogo.pdf}
+\end{center}
+}
+% \frame{ % -------------------------------------------------------------------->
+% \frametitle{Contents of Lecture 1-2}
+% \tableofcontents
+% }
+\frame{ % -------------------------------------------------------------------->
+\frametitle{What shall we learn today?}
+
+Many analyses and concepts that relates to count data (tables).
+
+\rymd For tables relating dichotomous data (event or non-event)
+ what can be said about risk, both compared to a model
+ and between subgroups?
+
+\rymd For tables relating counts of a categorical variable,
+how can we test the distribution of values against
+a model or between subgroups.
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[Risk measures]{Risk measures and their estimates} %%%%%%%%%%%%%%%%%%%%
+\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Dabigatran data}
+Dagbigatran is an anticoagulant used for e.g.\
+stroke prevention in patients with atrial fibrillation.
+The following example only looks at side effects.
+
+\rymd 718 people were randomized to Dabigatran or placebo
+and observed for some set time for bleeding.
+
+\begin{center}
+\begin{tabular}{ccc}
+id & intervention & bleeding \\ \hline \hline
+1 & dabigatran & Yes \\
+2 & placebo & No \\
+3 & placebo & No \\
+4 & dabigatran & No \\
+$\vdots$ & $\vdots$ & $\vdots$ \\
+718 & placebo & No \\ \hline
+\end{tabular}
+\end{center}
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Tabulated data}
+\begin{center}
+\begin{tabular}{c|cc||c}
+\multicolumn{1}{c}{}  & \multicolumn{2}{c}{Bleeding} & \\
+    & Yes & No & Sum\\ \hline
+dabigatran & 27  & 320 & 347 \\
+placebo & 8 & 363 & 371 \\ \hline \hline
+Sum & 35 & 683 & 718 \\
+\end{tabular}
+\end{center}
+Measures for dabigatran:
+\begin{itemize}
+\item Risk is probability of an unwanted event. \\
+Risk of bleeding $= 27/347 = 7.8\%$
+\item Odds is how much more likely it is to
+experience an event compared to not experience it.
+Odds of bleeding
+\[ = \frac{27/347}{320/347} = \frac{27}{320} = 8.4\% \]
+\end{itemize}
+(Odds? Sometimes this is easier to model.)
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Odds}
+For an event with probability $p$, the odds is $p/(1-p)$.
+<<odds_1>>=
+par(mar=c(4,4,1,1), "ylog"=TRUE)
+curve(x/(1-x), from=0, to=1, ylab="Odds", xlab="Probability", lwd=2,
+   cex.lab=1.5, las=1, yaxp=c(0,100,4))
+@
+}
+
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Odds}
+For small probabilities: odds $\approx$ probability.
+<<odds_2>>=
+par(mar=c(4,4,1,1))
+curve(x/(1-x), from=0, to=0.75, ylab="Odds", xlab="Probability", lwd=2,
+   xaxt='n', yaxt='n',xlim=c(0,0.667), ylim=c(0,2), cex.lab=1.5)
+axis(side=1,at=c(0,0.1,1/3, 0.5,2/3), labels=c("0", "0.1", "1/3", "1/2", "2/3"))
+axis(side=2,at=c(0,1/2,1,2), labels=c("0","1/2","1","2"), las=1)
+abline(a=0, b=1, lty=3, col="blue")
+text(x=7/12,y=7/12,labels="y=x",pos=3,srt=11, cex=1.5)
+LTY <- 2
+COL <- "gray"
+X <- c(1/3,1/2,2/3)
+Y <- c(1/2,1,2)
+for(k in seq_along(X)){
+   x <- X[k]; y <- Y[k]
+   points(x=x,y=y)
+   points(x=c(x,x),y=c(0,y), type="l",lty=LTY, col=COL)
+   points(x=c(0,x), y=c(y,y), type="l",lty=LTY, col=COL)
+}
+@
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{More on odds}
+\begin{itemize}
+   \item if an event has odds $\theta$, then its probability $p$ is $p=\theta/(1+\theta)$ \\
+      $\theta = 2$ corresponds to $p=2/3$. \\
+      $\theta = 1$ corresponds to $p=1/2$. \\
+      $\theta = 1/100$ corresponds to $p=1/101$.
+
+   \rymd \item in a betting game where you stand to win 1 unit of money, your stake $S$ (\emph{if this is kept when winning}) should not exceed the odds
+      \begin{itemize}
+         \item 'expected' profit $=1\frac{\theta}{1+\theta}-S\frac{1}{1+\theta}\geq 0$ is equivalent to $S\leq \theta$
+         \item If your offered $x$ units of money for a game you think has odds 2 (in your favor) then do not bet more than $2x$. \\ Betting $2x$ makes the game "fair".
+      \end{itemize}
+
+   \rymd \item there are multiple systems of betting (sports) 'odds', that are not odds in the sense of this course!
+\end{itemize}
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Relational measures}
+\begin{center}
+\begin{tabular}{c|cc||c}
+\multicolumn{1}{c}{}  & \multicolumn{2}{c}{Bleeding} & \\
+    & Yes & No & Sum\\ \hline
+dabigatran & 27  & 320 & 347 \\
+placebo & 8 & 363 & 371 \\ \hline \hline
+Sum & 35 & 683 & 718 \\
+\end{tabular}
+\end{center}
+Measures for risk of dabigatran versus placebo
+\begin{itemize}
+\item (Risk ratio $ = \frac{27/347}{8/371} \approx 3.6$)
+\item Odds ratio $ = \frac{27/320}{8/363} \approx 3.8$
+\item Risk difference $= 27/347 - 8/371 \approx 0.056$
+\end{itemize}
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Odds ratio (OR)}
+The OR contains no information about the probabilities.
+
+If you know the 'denominator' probability ($p_2$) then the 'numerator'
+probability ($p_1$) can be calculated
+\[ p_1 = \frac{\text{OR}\cdot p_2}{1+(\text{OR}-1)\cdot p_2}. \]
+
+More importantly, for small values of $p_2$ and 'moderate' values of OR,
+one essentially has
+\[ p_1 \approx \text{OR}\cdot p_2. \]
+<<tab_odds, results='asis'>>=
+THE <- c(0.1, 0.5, 1, 2, 10)
+xs <- c(0.75, 0.55, 0.47, 0.4, 0.23)
+ps <- c(0.01, 0.05, 0.1, 0.5)
+M <- matrix(NA, nrow=length(ps), ncol=length(THE))
+rownames(M) <- ps
+colnames(M) <- THE
+for(i in 1:length(ps)){
+   for(j in 1:length(THE)){
+      M[i,j] <- THE[j]*ps[i]/(1+(THE[j]-1)*ps[i])
+   }
+}
+latex(
+   signif(M,2),
+   file="",
+   title="'denominator' ($p_2$)",
+   caption.loc="bottom",
+   cgroup="Odds Ratio (OR)",
+   row.title="'denominator'"
+   )
+@
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{OR and probabilities}
+The blue dotted lines are the 'corresponding slopes'.
+<<OR, fig.width=7>>=
+par(mar=c(4,4,1,1))
+THE <- c(0.1, 0.5, 1, 2, 10)
+xs <- c(0.75, 0.55, 0.47, 0.4, 0.23)
+plot(1,1,type='n', xlim=0:1, ylim=0:1,
+         xlab="Probability of 'denominator event'",
+      ylab="Probability of 'numerator' event",
+   cex.lab=1.5, las=1)
+for(k in seq_along(THE)){
+   curve(THE[k]*x/(1+(THE[k]-1)*x), from=0, to=1,add=TRUE, lwd=2)
+   text(x=xs[k], y=THE[k]*xs[k]/(1+(THE[k]-1)*xs[k]), label=paste("OR =", THE[k]), srt=45, cex=1.2, pos=3)
+   abline(a=0, b=THE[k], col="blue", lty=2)
+
+}
+@
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Fishers exact test}
+\begin{center}
+\begin{tabular}{c|cc||c}
+\multicolumn{1}{c}{}  & \multicolumn{2}{c}{Bleeding} & \\
+    & Yes & No & Sum\\ \hline
+dabigatran & X  & (347-X) & 347 \\
+placebo & (35-X) & (683-347+X) & 371 \\ \hline \hline
+Sum & 35 & (683) & 718 \\
+\end{tabular}
+\end{center}
+Suppose that whether a person bleeds or not is complete
+independent of intervention. ($H_0$: "odds ratio = 1".)
+
+\rymd Then the 35 individuals who bled should be a random sample
+of the study population (of size 718) and we would expect
+that $X/35=347/718\approx 48\%$.
+
+\rymd We can calculate \emph{exactly} what the distribution
+of $X$ is \emph{given} $H_0$.
+
+\rymd The $p$-value is the probability of a discrepancy
+the size of that between the observed and the expected.
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{$p$-value in Fishers exact test}
+<<fisher, cache=FALSE, include=FALSE>>=
+bord <- matrix(c(27,320,8,363), byrow=TRUE, ncol=2)
+rownames(bord) <- c("dabigatran","placebo")
+colnames(bord) <- c("yes", "no")
+bord
+(fb <- fisher.test(bord))
+fishers_p <- fb$pvalue
+rm(bord, fb)
+@
+Sum the red values to get $p=0.00045$. % <------------------------------------------ \Sexpr here?
+<<hyper>>=
+par(mar=c(4,4,1,1))
+xx <- 4:30
+plot(xx, dhyper(xx, 347, 371, 35), type='h', xlab="Outcome", ylab="Probability",
+   ylim=c(0,0.17), cex.lab=1.5, las=1)
+points(8:26, dhyper(8:26,347, 371, 35), pch=16)
+points(17, dhyper(17,347, 371, 35), pch=4, cex=1.7, lwd=3)
+text(17, dhyper(17,347, 371, 35), pos=3, label="Expected", offset=1, cex=1.5)
+points(c(4:7,27:30), dhyper(c(4:7,27:30),347, 371, 35), pch=16, col="red")
+points(27, dhyper(27,347, 371, 35), pch=4, cex=1.7, col="red", lwd=3)
+text(27, dhyper(27,347, 371, 35), pos=3, col="red", label="Observed", offset=2, cex=1.5)
+arrows(x0=17.5, y0=dhyper(17,347, 371, 35),x1=26.5, y1=dhyper(17,347, 371, 35))
+abline(v=27, lty=2, col="red")
+arrows(x0=16.5, y0=dhyper(17,347, 371, 35),x1=7.5, y1=dhyper(17,347, 371, 35))
+abline(v=7, lty=2, col="red")
+text(x=22, y=dhyper(17,347, 371, 35), pos=3, label="Discrepancy")
+
+d <- 6; p <- sum(dhyper((17-d):(17+d), 347, 371, 35) )
+arrows(x0=(17-d), x1=(17+d), y0=0.155, y1=0.155, code=3)
+text(17, 0.155, pos=3, label=paste(round(100*p,1), "%", sep=""))
+d <- 5; p <- sum(dhyper((17-d):(17+d), 347, 371, 35) )
+arrows(x0=(17-d), x1=(17+d), y0=0.165, y1=0.165, code=3)
+text(17, 0.165, pos=3, label=paste(round(100*p,1), "%", sep=""))
+@
+}
+\begin{frame}[fragile] % ----------------------------------------------------->
+\frametitle{More on Fishers exact test}
+My software produced the following output:
+\begin{verbatim}
+   Fisher's Exact Test for Count Data
+
+data:  Dabigatran_example
+p-value = 0.0004458
+alternative hypothesis: true odds ratio is not equal to 1
+95 percent confidence interval:
+ 1.659358 9.877595
+sample estimates:
+odds ratio
+  3.821942
+\end{verbatim}
+So odds ratio is between 1.7 and 9.9. (Allows for test of model.)\\
+Probabilities are small, so risk of dabigatran is (approx.) between
+1.7 and 9.9 times larger than placebo risk.
+\end{frame}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{What question did we answer?}
+Calculating the OR is a very 'standard' analysis.
+
+\vspace{0.2cm}
+It is worth reiterating that this is a relative measure
+and answers a question along the lines of
+\begin{quote}
+how much does the odds of bleeding - measured in units of the placebo odds - change with
+this drug?
+Answer: 3.83 (1.66--9.88).
+\end{quote}
+The placebo risk is $p_2=8/371\approx 2.2\%$ so we can
+use an earlier formula to get $p_1=$ risk with dabigatran:
+
+\begin{center}\begin{tabular}{|c|lll|} \hline
+OR & 1.66 & 3.82 & 9.88 \\ \hline
+$p_1\approx$ & 3.6\% & 8.2\% & 21\% \\ \hline
+$p_1 =$ & 3.5\% & 7.8\% & 18\% \\ \hline
+RR $=$ & 1.6 & 3.6 & 8.3 \\ \hline
+\end{tabular}\end{center}
+
+In a sense this gives us a confidence interval $p_1$
+but it is "too" wide since it takes into account the
+uncertainty of $p_2$.
+% Of course there are reasons to be interested in e.g.\
+% the absolute risk
+% as well as the risk difference.
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Absolute risk}
+What can we say about the \emph{absolut} risk of bleeding with dabigatran?
+
+\rymd This was covered by Lars in Lecture 3! (Genotype example.)
+
+\rymd The risk estimate $27/347=0.078$ has a standard error (SE) given by
+   \[ \sqrt{\frac{0.078(1-0.078)}{347}}=0.0144. \]
+
+This yields a 95\% confidence interval given by
+   \[ (0.078\pm 1.96\cdot 0.0144)=(0.050, 0.11). \]
+
+(This allows for test of model.)
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Risk difference}
+What is the \emph{difference} in risk between dabigatran
+and placebo?
+
+This has (almost) been covered by Lars. One needs to know that for two \textbf{independent}  estimators (having SE$_1$ and SE$_2$) the SE for their difference is given by
+   \[ \sqrt{\text{SE}_1^2+\text{SE}_2^2}. \]
+
+\begin{center}\begin{tabular}{crr}
+Risk  & Estimate & Standard error \\ \hline
+dabigatran & $p_1 = 27/347 = 0.078$ & $\sqrt{p_1(1-p_1)/347}=0.0144$ \\
+placebo  & $p_2 = 8 / 371 = 0.022$ & $\sqrt{p_2(1-p_2)/371}=0.0075$  \\ \hline
+difference &$p_1-p_2=0.056$ & $\sqrt{0.0144^2+0.0075^2}=0.0162$
+\end{tabular}\end{center}
+
+We get a 95\% confidence interval for the difference with
+   \[ (0.056\pm 1.96\cdot 0.0162) = (0.024, 0.088). \]
+(This allows for test of model.)
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Cosmetic skin testing}
+To prove a new product is hypoallergenic it should provoke
+no more skin reactions than current market leader.
+
+\rymd To test a new product 40 individuals got both products applied
+to to patches of skin and observed for reaction (yes/no)
+
+\begin{center}\begin{tabular}{ccc} \\ \hline
+id & new & market \\ \hline
+1 & no & no \\
+2 & yes & no \\
+3 & no & no \\
+$\vdots$ & $\vdots$ & $\vdots$ \\
+40 & yes & yes \\ \hline
+\end{tabular}\end{center}
+}
+\frame{ % -------------------------------------------------------------------->
+
+Is the new product as good as the market leader?\\
+
+\rymd The following table is \emph{not} appropriate to answer that question.
+
+\begin{center}\begin{tabular}{|c|cc|}  \hline
+     & no & yes \\ \hline
+ old & 22 & 18 \\
+ new & 32 & 8  \\ \hline
+\end{tabular}\end{center}
+
+The rows are dependent. This makes e.g.\ test of risk difference faulty.
+}
+<<mcnemar, include=FALSE>>=
+mcbord <- matrix(c(17,5,15,3), byrow=TRUE, ncol=2)
+rownames(mcbord) <- c("old:no","old:yes")
+colnames(mcbord) <- c("new:no", "new:yes")
+mcbord
+addmargins(mcbord)
+mcnemar.test(mcbord)
+mcwrong <- rbind(rowSums(mcbord), colSums(mcbord))
+rownames(mcwrong) <- NULL
+rownames(mcwrong) <- c("old","new")
+colnames(mcwrong) <- c("no", "yes")
+mcwrong
+addmargins(mcwrong)
+prop.test(mcwrong)
+@
+\frame{ % -------------------------------------------------------------------->
+\frametitle{McNemars test for paired data}
+\begin{center}
+\begin{tabular}{c|cc|c}
+\multicolumn{1}{c}{} & \multicolumn{2}{c}{new} & \\ \cline{2-3}
+market & no & yes & Sum \\ \hline
+no & 17 & 5 & 22 \\
+yes & 15 & 3 & 18 \\ \hline
+Sum & 32 & 8 & 40 \\
+\end{tabular}
+\end{center}
+
+McNemars test only considers the pairs were
+the results are different.
+
+\rymd With new product there are 8 reactions but 3
+of them would have happened anyway.
+The new product 'creates' 5 reactions.\\
+
+\rymd Similarily, the market leader 'creates' 15 reactions. \\
+(15 benefits, 5 are worse off and 20 are unchanged.)
+
+\rymd A test statistic is created using '5' and '15'.
+$p$-value for $H_0$:'no difference' is approx 4\%.
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Other situations}
+
+Twins being randomized to intervention or placebo:
+\begin{center}\begin{tabular}{c|cc}
+\multicolumn{1}{c}{} & \multicolumn{2}{c}{Placebo}  \\ \cline{2-3}
+Intervention & improvement & non  \\ \hline
+improvement & a & b \\
+non & c & d \\ \hline
+\end{tabular}\end{center}
+
+\rymda Case control study:
+\begin{center}
+\begin{tabular}{c|cc}
+\multicolumn{1}{c}{} & \multicolumn{2}{c}{Cases}  \\ \cline{2-3}
+Controls & exposure & non \\ \hline
+exposure & a & b \\
+non & c & d \\ \hline
+\end{tabular}
+\end{center}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[$\chi^2$]{$\chi^2$-tests} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Mendel's pea experiment}
+
+One of Mendels pea-experiments was a (dihybrid)
+cross between the genes for round/wrinkled seeds and yellow/green seeds.
+
+\begin{center}\begin{tabular}{|c|cccc|c|}  \hline
+Type  & RY & RG & WY & WG & Sum\\ \hline
+Count ($O$)  & 315 & 108 & 101 & 32 & 558 \\ \hline
+\end{tabular}\end{center}
+
+According to his theory, these should appear in ratios of 9:3:3:1.
+
+So, we have a model for $X=$"the type":
+
+\begin{center}\begin{tabular}{|c|cccc|}  \hline
+Value $v$ & RY & RG & WY & WG\\ \hline
+$\pr(X=v)$ & 9/16 & 3/16 & 3/16 & 1/16 \\ \hline
+\end{tabular}\end{center}
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{$\chi^2$-tests}
+$\chi^2$ tests are applied to tabulated data
+(i.e. the 'counts'), typically categorical
+data.
+
+\rymd Like the $t$-test, we can use $\chi^2$ to compare
+a  sample against a model
+or, compare 2 or more samples against each other.
+
+\rymd $\chi^2$-tests can be applied to all tables (non-paired data)
+presented so far.
+
+\rymd $\chi^2$ tests typically calculate a test statistic $Q$ according to the formula
+\[ Q = \sum \frac{ (\mbox{observed - expected})^2 }{\mbox{expected}}. \]
+$Q$ is compared to a $\chi^2$ distribution with
+a parameter (degrees of freedom) that depends on
+the situation.
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Comparing data to a model}
+$\chi^2$-analysis:
+
+\begin{center}\begin{tabular}{|c|cccc|c|}  \hline
+Type  & RY & RG & WY & WG & Sum\\ \hline
+Data ($O$)  & 315 & 108 & 101 & 32 & 558 \\ \hline
+$H_0$ model ($p$) \ &  9/16 & 3/16 & 3/16 & 1/16 & 1 \\ \hline
+Expected ($E=558\times p$)  & 313.9 & 104.6 & 104.6 & 34.9 & 558 \\ \hline
+$Q$, i.e. $\,(O-E)^2/E$  & 0.004 & 0.111 & 0.124 & 0.241 & 0.479  \\  \hline
+Residuals $\,(O-E)/\sqrt E$ & 0.127 &  0.367 & -0.318 & -0.467 & \\ \hline
+\end{tabular}\end{center}
+
+
+If $H_0$ is correct then $Q$ should be (approximately) $\chi^2(3)$. \\
+($3=$ the number of categories $- 1$.)
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Mendels hypothesis seems ok}
+The observed test statistic 0.47 is compatible with $H_0$.
+<<chisq>>=
+dfm <- data.frame(
+   pod=factor(rep(c("R", "W"), c(423,133))),
+   color=factor(rep(c("Y","G", "Y","G"), c(315,108,101,32)), levels=c("Y", "G"))
+)
+Tdfm <- with(dfm, table(pod,color))
+dfm$type <- factor(paste(dfm$pod, dfm$color, sep=""), levels=c("RY","RG","WY","WG"))
+T2dfm <- table(dfm$type)
+chi <- chisq.test(T2dfm, p=c(9,3,3,1)/16 )
+obs <- chi$statistic
+par(mar=c(4,4,1,1))
+curve(dchisq(x,3), from=0, to=15, xlab="Outcome", ylab="Probability", xlim=c(0,10),
+   las=1, cex.lab=1.5, xaxt='n', lwd=2)
+q <- qchisq(0.95, 3)
+axis(1,at=c(0,obs,5,q, 10), lab=c("0",round(obs,2),"5",round(q,2),"10"))
+abline(v=q, lty=2)
+arrows(x0=q, y0=0.15,x1=10.2,y1=0.15)
+text(x=9, y=0.15, pos=3, label="5%", cex=1.5)
+points(x=obs, y=0, pch=4, cex=2, lwd=2, col="red")
+text(x=obs+0.5, y=0, "observed", pos=3, cex=1.5)
+@
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Comparing distributions}
+A case control study of coronary heart disease and drinking (none, moderate, heavy). Cases were matched on age, gender and smoking habits.
+
+\begin{center}\begin{tabular}{|c|ccc|c|} \hline
+ & non & moderate & heavy & sum \\ \hline
+ cases & 34 & 80 & 18 & 132\\
+ controls & 156 & 334 & 37 & 527 \\ \hline
+ sum & 190  &    414  &     55 & 659 \\ \hline
+\end{tabular}\end{center}
+
+Does drinking habits differ between cases and controls?
+
+If they do not ($H_0$), their distributions should be close to
+
+\begin{center}\begin{tabular}{ccc} \hline
+non & moderate & heavy  \\ \hline
+28.8\%\,(190/659) & 62.8\%\,(414/659) & 8.3\%\,(55/659) \\ \hline
+\end{tabular}\end{center}
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Visualizing the distributions}
+<<case_cont, fig.width=5, fig.height=5, include=FALSE>>=
+cases <- c(34,80,18)
+controls <- c(156, 334, 37)
+chd <- cbind(cases, controls)
+save(chd, file="data/chd.rdata")
+rownames(chd) <- c("non","moderate","heavy")
+barplot(prop.table(chd),
+   beside=TRUE,
+   legend=TRUE,
+   main="Proportions within dataset",
+   col=brewer.pal(3,"Blues"),
+   args.legend=c(x="top"))
+points(x=c(1,8), y=c(0,0.5), type='l', lwd=5)
+points(x=c(1,8), y=c(0.5,0), type='l', lwd=5)
+barplot(prop.table(chd,2),
+   beside=TRUE,
+   legend=TRUE,
+   main="Proportion within subgroups",
+   col=brewer.pal(3,"Blues"),
+   args.legend=c(x="top"))
+@
+
+<<case_cont_code, results='asis'>>=
+plot_code <- sprintf("\\includegraphics[scale=0.48]{figure/%s}\n", paste0("case_cont",1:2))
+cat(plot_code, sep="")
+@
+}
+\frame{ % -------------------------------------------------------------------->
+Are drinking categories equidistributed for cases and controls?
+\begin{center}\begin{tabular}{|c|ccc|c|} \hline
+ & non & moderate & heavy & Sum \\ \hline
+ observed cases & 34 & 80 & 18 & 132 \\
+ observed controls & 156 & 334 & 37 & 527 \\ \hline \hline
+ sum & 190 &414 &55& 659 \\
+ prop. (p=sum/659) & 0.29 & 0.63 &  0.08 & (1)\\ \hline
+ expected cases (132$\cdot p$) & 38.1 &82.9 &11.0 & (132)\\
+ expected controls (527$\cdot p$) & 152.0 &331.0& 44.0 & (527) \\ \hline
+ Q cases ((Obs.-Exp.)$^2$/Exp.) & 0.43&0.10&4.4 & Tot:\\
+ Q controls & 0.11&0.026& 1.1 & 6.2\\ \hline
+\end{tabular}\end{center}
+The test statistic $Q=6.2$ should be compared to a $\chi^2$ with
+(rows-1)$\times$(columns-1)=1*2=2 degrees of freedom.
+$p=\pr(Q>6.2)=0.045$.
+}
+\frame{ % -------------------------------------------------------------------->
+So the difference between cases and controls is statistically significant.
+
+\vspace{0.2cm}
+The large sample size gives this test a lot of power (ability to find
+differences).
+
+\vspace{0.2cm}
+Do not forget to look at the estimates!
+
+
+\begin{center}
+\begin{tabular}{|c|ccc|} \hline
+ & non & moderate & heavy  \\ \hline
+proportion  cases  & 0.26 &0.61&0.13 \\
+proportion  controls &0.30&0.63&0.07 \\ \hline
+proportion total & 0.29 & 0.63 & 0.08 \\ \hline
+\end{tabular}
+\end{center}
+
+Whether these differences are significant in any other sense
+is for the researcher to discuss.
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Which categories deviate?}
+One can also look at the 'residuals'.
+<<chiq_res>>=
+load("data/chd.rdata")
+res <- chisq.test(chd)$resid
+barplot(res, beside=TRUE, legend=TRUE, main="Residuals",
+   col=brewer.pal(3,"Blues"),args.legend=c(x="topright"))
+@
+}
+\begin{frame}[fragile] % ----------------------------------------------------->
+\frametitle{$\chi^2$ on the dabigatran data}
+The $\chi^2$ test can also be applied to our dabigatran data.
+
+\rymda It tests if the distribution of complications (bleeding/not)
+is the same for the two groups.
+
+\rymda Output from my software:
+<<back2chi, include=FALSE>>=
+bord <- matrix(c(27,320,8,363), byrow=TRUE, ncol=2)
+rownames(bord) <- c("dabigatran","placebo")
+colnames(bord) <- c("yes", "no")
+chisq.test(bord)
+rm(bord)
+@
+\begin{verbatim}
+#  Pearson's Chi-squared test with Yates'
+#  continuity correction
+#
+#  data:  bord
+#  X-squared = 11.05, df = 1, p-value = 0.0008869
+\end{verbatim}
+
+(Recall that Fisher's exact test gave $p=0.0004458$.)
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[More]{Additional analysis} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \frame{ % -------------------------------------------------------------------->
+% \frametitle{$\chi^2$-test for trend}
+% In the example with Dabigatran more data was available:
+% \begin{multicols}{2}
+% $\phantom{.}$
+% \vspace{0.5cm}
+% \begin{tabular}{|c|cc|} \hline
+% & \multicolumn{2}{c|}{Bleeding} \\ \hline
+% Dose     &  Yes & No \\ \hline
+% 150 mg&  27 &320\\
+% 100 mg&  32 &374\\
+% 75 mg &  16 &352\\
+% 50 mg &  13 &356\\ \hline
+% \end{tabular}
+% \includegraphics[scale=0.3]{R/trend.pdf}
+% \end{multicols}
+% The $\chi^2$ test for trend yields a statistically significant result.\\
+% (Details omitted.)
+% }
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Adjusting for a confounder}
+Comparison of open surgery (OS) and percutaneous nephrolithotomy (PN)
+for removal of kidney stones. \\
+(Data illustrates Simpson's paradox.)
+<<mantel_haenzel, include=FALSE>>=
+mhbord <- array(
+   data=c(81,6,234,36,192,71,55,25),
+   dim=c(2,2,2),
+   dimnames=list(
+      c("Success", "Failure"),
+      c("OS", "PN"),
+      c("Small stones", "Large stones")
+   ))
+mantelhaen.test(mhbord)
+rm(mhbord)
+@
+\begin{center}\begin{tabular}{|c|cc||cc|cc|}
+\multicolumn{3}{c}{} & \multicolumn{4}{c}{Adjusted for size} \\ \cline{4-7}
+\multicolumn{1}{c}{}&\multicolumn{2}{c||}{Total} & \multicolumn{2}{c|}{Small stones} & \multicolumn{2}{c|}{Large stones} \\ \cline{2-7}
+\multicolumn{1}{c|}{}&OS & PN & OS & PN & OS & PN \\ \hline
+Success & 273 & 289 & 81 & 234 & 192 & 55 \\  \hline
+Failure & 77 & 61 & 6   & 36 & 71 & 25 \\ \hline \hline
+Odds (for success) &  3.5 & 4.7 & 13.5 &  6.5 & 2.7 & 2.2 \\ \hline
+Odds ratio (OS / PN) &\multicolumn{2}{c||}{0.75} &\multicolumn{2}{c|}{2.1} & \multicolumn{2}{c|}{1.2} \\ \hline
+\end{tabular}\end{center}
+
+Here it seems like we should adjust for stone size. \\
+\textbf{The Mantel-Haenszel} test is a way to analyse several contingency tables.
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Adjusting for multiple confounders}
+In observational studies we typically gather more information. E.g.\
+\begin{center}\begin{tabular}{|ccccccc|} \hline
+Ind.\ & Bleeding & DE Dose & Age & Gender & Weight & \ldots \\ \hline
+1 & Yes & 50 & 75 & M & 83 & \ldots \\
+2 & No & 75 & 64 & F & 77 & \ldots  \\
+$\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ &  \\ \hline
+\end{tabular}\end{center}
+
+When medicine is not randomized a simple cross tabulation analysis of 'Bleeding'
+versus 'DE Dose' is likely to be confounded.
+
+One way to deal with this is to do a logistic regression. More on that in Lecture 10.
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{ } %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\frame{ % -------------------------------------------------------------------->
+\frametitle{References}
+
+\begin{itemize}
+\item Chapters 23-25: Petrie \& Sabin. \emph{Medical Statistics at a Glance}, Wiley-Blackwell (2009).
+\item Grant, R.\ L.: Converting an odds ratio to a range of plausible relative risks for better communication of research findings, \emph{BMJ} \textbf{348} (2014) 7 pages.
+\end{itemize}
+}
+\end{document} # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
