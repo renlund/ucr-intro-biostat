@@ -206,11 +206,17 @@ Happiness & 11 &  $\frown$ & 19 \\
 \frametitle{Some points on tables (for publication)}
 \begin{itemize}
    \item Table and caption should be self contained.
-
-   \rymd \item Avoid excessive precision.
-
-   \rymd \item Use adequate measures of location and spread.
+   \item Every table should be referred to in text.*
+   \item Put captions \emph{above} the table.
+   \item Avoid excessive precision. (Mean age 65.63?)
+   \item Use adequate measures of location and spread.
 \end{itemize}
+
+\rymda *The table should illustrate some part of the data relating to the hypothesis of the paper. Referring to a table should fit the narrative.
+
+\rymd Generally bad: "Table 3 displays values of biomarkers in group A and B".
+
+\rymd Better: "The mean level of measured biomarkers are higher in group A compared to B (Table 3)."
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{What about missing data?}
