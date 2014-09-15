@@ -115,19 +115,16 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
 % \item  Are some categorical values coded as integers?
 % \end{itemize}
 % }
-
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Types of data}
-A dataset contains one or more \emph{variables}, typically arranged as
-\begin{center}
-\begin{tabular}{ccccc}
+A data set contains one or more \emph{variables}, typically arranged as:
+\begin{center}\begin{tabular}{ccccc}
 Individual & Sex & Age & Height & Happiness \\
 1 & M & 29 & 1.77 & {\LARGE $\smile$ } \\
 2 & F & 37 & 1.80 & {\LARGE $\frown$ } \\
 3 & F & 25 & 1.68 & {\LARGE $-\phantom{.}$} \\
 $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$
-\end{tabular}
-\end{center}
+\end{tabular}\end{center}
 Data:
 \begin{itemize}
    \item Numerical
@@ -138,28 +135,31 @@ Data:
    \item Categorical and
       \begin{itemize}
          \item nominal, e.g.\ M, F, \emph{or}
-         \item ordinal, e.g.\ "Happines" is ordered: $\frown, -, \smile$.
+         \item ordinal, e.g.\ "Happiness" is ordered: $\frown, -, \smile$.
       \end{itemize}
 \end{itemize}
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{"Table 1"}
 It is usual to provide a summary table of the variables you are working with.
-These usually contain (at least) number of observations, "the" average and
-"the" spread.
 
-\begin{table}\begin{center}\begin{tabular}{|cccc|} \hline
+\rymd These may contain "the" average and "the" spread (continuous variables) or counts of levels (for categorical variables)
+
+\begin{table}\begin{center}
+\caption{Description of data set.}
+\begin{tabular}{|cccc|} \hline
 Variable & n  & median/mode$^*$ & IQR  \\  \hline
 Sex  & 42    & F$^*$ & -  \\
 Age & 42  & 33.3 & 17.2 \\
 Height & 40  & 176.5 & 21.0 \\
 Happiness & 29  & $\frown^*$ & - \\ \hline
-\end{tabular}\end{center}
-\caption{Description of dataset.}
-\end{table}
+\end{tabular}
+\end{center}\end{table}
 }
 \frame{ % -------------------------------------------------------------------->
-\begin{table}\begin{center}\begin{tabular}{|cccc|} \hline
+\begin{table}\begin{center}
+\caption{Data set on 42 individuals.}
+\begin{tabular}{|cccc|} \hline
 Variable & missing & mean & sd  \\  \hline
 Age  & 0 & 32.0 & 15.9 \\
 Height & 2 & 181.1 & 27.3 \\
@@ -169,30 +169,13 @@ Sex & 0 & M & 15 \\
 Happiness & 11 &  $\frown$ & 19 \\
  && $-$ & 7 \\
  && $\smile$ & 5 \\ \hline
-\end{tabular}\end{center}
-\caption{Dataset on 42 individuals.}
-\end{table}
+\end{tabular}
+\end{center}\end{table}
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Ex: Luo et. al. Am.\ j.\ epidemiol.\ (2013)}
+Example: Table 1 from "The effect of obesity on antibiotic treatment failure: a historical cohort study", \emph{Pharmacoepidemiol.\ Drug. Saf.} (2013)
 \begin{center}
-\includegraphics[scale=0.6]{pics/table1_ex1.png}
-\end{center}
-}
-% @article{luo2013smoking,
-%   title={Smoking and Diabetes: Does the Increased Risk Ever Go Away?},
-%   author={Luo, Juhua and Rossouw, Jacques and Tong, Elisa and Giovino, Gary A and Lee, Cathy C and Chen, Chu and Ockene, Judith K and Qi, Lihong and Margolis, Karen L},
-%   journal={American journal of epidemiology},
-%   volume={178},
-%   number={6},
-%   pages={937--945},
-%   year={2013},
-%   publisher={Oxford Univ Press}
-% }
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Ex: Longo et. al. Pharmacoepidemiol.\ Drug. Saf.\ (2013)}
-\begin{center}
-\includegraphics[scale=0.65]{pics/table1_ex3.png}
+\includegraphics[scale=.65]{pics/table1_ex3.png}
 \end{center}
 }
 % @article{longo2013effect,
@@ -226,7 +209,7 @@ Missing data is usually a problem for observational studies.
 
 \rymd Suppose we investigate death within one year of myocardial infarction with a model that includes gender, age, BMI (some missing) and smoking status (some missing).
 
-\rymd The statistical software default is to include only those indivuduals with complete case data on all variables that you include.
+\rymd The statistical software default is to include only those individuals with complete case data on all variables that you include.
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Solutions}
@@ -239,7 +222,7 @@ a known mechanism that created the missing data?
 \begin{itemize}
 \item Is missing data exist for 5\% or less, usually
 a complete case analysis is sufficient. \\
-Describe the missing data separetly.
+Describe the missing data separately.
 \item One can impute the missing values. Imputation methods
 range from
 \begin{itemize}
@@ -252,7 +235,7 @@ see how estimates vary (multiple imputation).
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Visualization of (continuous) data}
-A sufficiently small dataset might not need visualization.
+A sufficiently small data set might not need visualization.
 
 \rymda
 The level of the protein fibrinogen was recorded in a
@@ -272,10 +255,10 @@ cat("\\[", out, "\\]")
 @
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Dotplot of fibrogen data}
+\frametitle{Dotplot of fibrinogen data}
 A dotplot is a one dimensional plot of the data.
 
-If there are non-unique (or close) points, the dataset
+If there are non-unique (or close) points, the data set
 may appear smaller than it is. (Perturbation solves this.)
 
 <<plot_fib, fig.align='center', fig.height=5, fig.width=11>>=
@@ -302,7 +285,7 @@ text(
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Subarachnoidal bleeding}
-A biomarker - the protein S100$\beta$ - was measured for 113 individuals with aneurysmal subarachnoid hemorrhage. (To be returned in lecture 10.)
+A biomarker - the protein S100$\beta$ - was measured for 113 individuals with aneurysmal subarachnoid hemorrhage. (To return in lecture 10.)
 <<plot_subarach, fig.align='center', fig.height=5, fig.width=11>>=
 load("data/F10B_subarach.Rdata")
 par(mar=c(4,9,0,0))
@@ -374,7 +357,7 @@ points(dd$s100b, rep(-0.05,113))
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Empirical cumulative distribution function}
-Ecdf's can also display (a few) groups.
+Ecdf's can also display group differences.
 <<subarach_2ecdf, fig.align='center', fig.height=5, fig.width=11>>=
 load("data/F10B_subarach.Rdata")
 par(mar=c(4,4,0,0))
@@ -388,17 +371,17 @@ legend(x=0.9,y=0.4, c("Good", "Poor"), title="Outcome", lty=c(1,2), bty='n', cex
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Average value / Measure of location}
 An average value is a single value meant to be
-representative of the entire dataset.
+representative of the entire data set.
 
 \begin{itemize}
-\item  \textbf{The mode:} is the single most common datapoint. \\
+\item  \textbf{The mode:} is the single most common data point. \\
 (Mostly meaningful for categorical, or possibly discrete, data.)
 
 \rymd
 \item  \textbf{The median:} is the midpoint of the ordered numerical sample.
 
 \rymd
-\item  \textbf{The mean:} is the "center of gravity" of a dataset. \\
+\item  \textbf{The mean:} is the "center of gravity" of a data set. \\
 Note: unlike the median, the mean value is sensitive to "extreme" values.
 \end{itemize}
 }
@@ -415,15 +398,15 @@ Mean   & 22.6 & 28 \\ \hline
 \end{center}
 
 \vspace{0.5cm}
-Some points;
+Some points:
 \begin{itemize}
-   \item Small datasets does not really need summary measures.
+   \item Small data sets does not really need summary measures.
    \item Symmetric data has mean $\approx$ median.
    \item (Easy enough to calculate both.)
 \end{itemize}
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Measuring the spread of a dataset}
+\frametitle{Measuring the spread of a data set}
 
 \begin{itemize}
    \item  \textbf{Range} The difference between the maximum and the minimum value.
@@ -494,10 +477,11 @@ boxplot(dd$s100b, add=TRUE, horizontal=TRUE, at=0.5, boxwex=1, lwd=2)
 \frametitle{Some points on graphs (for publication)}
 \begin{itemize}
    \item Graph and caption should be self-contained.
+   \item Every graph should be referred to in the text.
    \item 'Economy' Do not make a graph which is more easily expressed in text or a small table. \\ E.g. graph with a single boxplot.
    \item Pattern or detail? \\ E.g.
       \begin{itemize}
-         \item a ecdf gives a lot of detail of a dataset. \\
+         \item a ecdf gives a lot of detail of a data set. \\
          \item graph with multiple boxplots can reveal pattern among subgroups.
       \end{itemize}
    \item Avoid 3-dimensional bar charts.
@@ -522,7 +506,7 @@ cat(plot_code, sep="")
 @
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section[Models]{Probabilty theory and models} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[Models]{Probability theory and models} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Probability theory and models}
@@ -534,7 +518,7 @@ cat(plot_code, sep="")
 
    \rymd \item $\pr(A)$ denotes "the probability of the event $A$".
 
-   \rymd \item The basic rule of probabilty is that if $A$ and $B$ are
+   \rymd \item The basic rule of probability is that if $A$ and $B$ are
 mutually exclusive events the \[ \pr(A \el B)=\pr(A)+\pr(B). \]
 \end{itemize}
 }
@@ -555,19 +539,22 @@ $\pr(X=v)$ & 0.49 & 0.20   & 0.31 \\ \hline
 
 \frame{ % -------------------------------------------------------------------->
 Integer-valued RV's are also described by
-probabilty functions.
+probability functions.
 
-\rymd Let $Y=$'the number of cigarettes a person selected
-at random smoked yesterday'.
+\rymd Some are easy to model realistically, let e.g.\ $Z=$'the outcome of the throw of a die'.
+Then $\pr(Z=k)=1/6$ for all $k=1,2,\ldots,6$, or, equivalently
+
+\begin{center}\begin{tabular}{|c|cccccc|} \hline
+Value $k$ & 1  & 2 & 3 & 4 & 5 & 6 \\
+$\pr(X=v)$ & 1/6 & 1/6 & 1/6 & 1/6 & 1/6 & 1/6\\ \hline
+\end{tabular}\end{center}
+
+\rymd Others are difficult. Let $Y=$'the number of cigarettes a person selected at random smoked yesterday'.
 
 \rymd It is difficult to know what the probability function of $Y$ is.
-
-\rymd Other situations are easy to model realistically:\\
-Let $Z=$'the outcome of the throw of a die'. \\
-Then $\pr(Z=k)=1/6$ for all $k=1,2,\ldots,6$.
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{FEV dataset}
+\frametitle{FEV data set}
 430 children (9-17 years of age) had their age, forced expiratory volume
 in 1 second (FEV) and smoking status (!) recorded. (To be seen again
 in lecture 8.)
@@ -593,24 +580,24 @@ latex(
 <<smoker>>=
 load("data/F8_smoking.Rdata")
 par(mar=c(4,4,0,0))
-barplot(tabsmok, beside=TRUE, legend=TRUE, ylab="Frequency")
+barplot(tabsmok, beside=TRUE, legend=TRUE, ylab="Frequency", col=brewer.pal(9, "YlGn"))
 @
 }
 \frame{ % -------------------------------------------------------------------->
 %\frametitle{}
 If the groups (smokers/non-smokers) aren't balanced
-it is somewhat difficult to compare the distributions.2
+it is difficult to compare the distributions.
 
-Tabulate/plot the percentages within groups;
+Tabulate/plot the percentages within groups:
 <<tab_smoker2, results='asis'>>=
 load("data/F8_smoking.Rdata") # dd
-with(dd, tabsmok2 <<- prop.table(table( age=age, smoker=smoker), 2))
+with(dd, tabsmok2 <<- addmargins(prop.table(table( age=age, smoker=smoker), 2), 1))
 latex(
    tabsmok2,
    digits=2,
    file="",
    title="Age",
-   cgroup="Smoking"
+   cgroup="Smoking (\\%)"
 )
 @
 }
@@ -618,8 +605,9 @@ latex(
 \frametitle{Visualizing 'age' versus 'smoking' as percentages within groups}
 <<plot_smoker2>>=
 load("data/F8_smoking.Rdata")
+with(dd, tabsmok3 <<- prop.table(table( age=age, smoker=smoker), 2))
 par(mar=c(4,4,0,0))
-barplot(tabsmok2, beside=TRUE, legend=TRUE, ylab="Percent")
+barplot(tabsmok3, beside=TRUE, legend=TRUE, ylab="Percent", col=brewer.pal(9, "YlGn"))
 @
 }
 \frame{ % -------------------------------------------------------------------->
@@ -834,12 +822,12 @@ set_params <- function(){
    m <<- 5
    d <<- 0.3
    DD <<- 1.5
-   COL <<- "red"
+   COL <<- "black" # "red"
 }
 @
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Attempt to visualize sampling from a given model}
-Assume that height of indivuduals in some population is Normally distributed with
+Assume that height of individuals in some population is Normally distributed with
 mean 179 (cm) and s.d. 6.35 (cm).
 
 \rymd The following three slides show histogram of samples of sizes 10, 50 and 500, respectively.
@@ -884,9 +872,9 @@ Suppose we have a sample of size 10 from the population.
 Recall that the s.d. is (approx.) the average distance
 to the average value.
 
-\rymd We want to know the population mean.
+\rymd We want to know the population mean ($\mu$).
 
-\rymd We can estimate with sample mean.
+\rymd We can estimate with the sample mean ($\mu^*$).
 
 \rymd To know how good this is we need to know properties of
 samples of size 10. This can be achieved by considering
@@ -896,21 +884,23 @@ repeated samples of size 10.
 %\frametitle{Properties of samples and sample means}
 <<sd>>=
 set_params()
+use.sd.here <- FALSE
 MAT <- matrix( rnorm(n*m, mean=Mu, sd=Sd), ncol=n, nrow=m )
 save(MAT, file="data/MAT.rdata")
-par(mar=c(5, 7, 4, 2) )# default c(5,4,4,2) + 0.1
+if(use.sd.here) par(mar=c(5, 7, 4, 2)) else par(mar=c(5,4,4,2) + 0.1) # default c(5,4,4,2) + 0.1
 plot( x=c(min(MAT), max(MAT)), y=c(0,m), type='n',
       xlab="Outcome", ylab="", yaxt='n', bty='o',
       main=paste(m, "samples of size", n, "with population mean =", Mu, "and sd. = ", Sd)
 )
-abline(v=179, lty=2, col="gray")
-text(x=min(MAT)-DD, y=m+0.5, labels="Sample s.d.", xpd=TRUE, pos=2, offset=1)
+abline(v=179, lty=2, col="darkgray", lwd=2)
+if(use.sd.here) text(x=min(MAT)-DD, y=m+0.5, labels="Sample s.d.", xpd=TRUE, pos=2, offset=1)
 for(k in 1:m){
    tmp <- MAT[k,]
+   col <- if(m<=5) wes.palette(5, "Cavalcanti")[k]
    mtm <- mean(tmp)
    sdt <- sd(tmp)
-   text(x=min(MAT)-DD, y=m+1-k, labels=round(sdt,1), xpd=TRUE, pos=2, offset=1)
-   points(x=tmp, y=rep(m+1-k,n), pch=k)
+   if(use.sd.here) text(x=min(MAT)-DD, y=m+1-k, labels=round(sdt,1), xpd=TRUE, pos=2, offset=1)
+   points(x=tmp, y=rep(m+1-k,n), pch=k, col=col)
 }
 @
 }
@@ -941,16 +931,18 @@ plot( x=c(min(MAT), max(MAT)), y=c(0,m), type='n',
       xlab="Outcome", ylab="", yaxt='n', bty='o',
       main=paste(m, "samples of size", n, "with population mean =", Mu, "and sd. = ", Sd)
 )
-abline(v=179, lty=2, col="gray")
+abline(v=179, lty=2, col="darkgray", lwd=2)
 text(x=min(MAT)-DD, y=m+0.5, labels="Sample s.d.", xpd=TRUE, pos=2, offset=1)
 for(k in 1:m){
    tmp <- MAT[k,]
+   col <- if(m<=5) wes.palette(5, "Cavalcanti")[k]
    mtm <- mean(tmp)
    sdt <- sd(tmp)
    text(x=min(MAT)-DD, y=m+1-k, labels=round(sdt,1), xpd=TRUE, pos=2, offset=1)
-   points(x=tmp, y=rep(m+1-k,n), pch=k)
-   points(x=mtm, y=m+1-k, cex=2, col=COL, pch=k, lwd=2)
-   points(x=mtm, y=0, cex=2, col=COL, pch=k, lwd=2)
+   points(x=tmp, y=rep(m+1-k,n), pch=k, col=col)
+   points(x=mtm, y=m+1-k, cex=2, col=col, pch=k, lwd=3)
+   points(x=mtm, y=0, cex=2, col=col, pch=k, lwd=3)
+   segments(x0 = mtm, y0 = 0.3, x1 = mtm, y1 = m+0.7-k, col = col, lty = 2)
 }
 tmp <- rowMeans(MAT)
 mtm <- mean(tmp)
@@ -1119,7 +1111,8 @@ mean.
 \item sample, and
 \item estimate.
 \end{itemize}
-The s.d. of the latter is called the Standard Error\\
+
+\rymd The s.d. of the latter is called the Standard Error\\
 (Standard Error of the Mean if the mean is used as estimate.)
 
 \rymd The CLT explains why many estimates ('statistics') are

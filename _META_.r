@@ -1,6 +1,7 @@
 library(knitr)
 library(Hmisc)
 library(RColorBrewer)
+library(weanderson)
 library(graphics)
 
 opts_chunk$set(
