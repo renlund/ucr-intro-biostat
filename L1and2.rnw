@@ -500,8 +500,26 @@ boxplot(dd$s100b, add=TRUE, horizontal=TRUE, at=0.5, boxwex=1, lwd=2)
          \item a ecdf gives a lot of detail of a dataset. \\
          \item graph with multiple boxplots can reveal pattern among subgroups.
       \end{itemize}
-   \item Avoid pie-charts? What are you showing?
+   \item Avoid 3-dimensional bar charts.
+   \item Avoid pie charts? It depends\ldots
 \end{itemize}
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{A situation for a pie chart}
+<<pie, include=FALSE, fig.height=5, fig.width=5>>=
+x <- sample(LETTERS[1:5], size = 250, replace = T, prob = c(5,2,1,4,3))
+a_table <- table(x); save(a_table, file="a_table.rdata")
+barchart(tx, col = wes.palette(5, "Cavalcanti"))
+pie(tx, col = wes.palette(5, "Cavalcanti"))
+@
+Is it of interest to be able to compare summation of levels?
+
+(Are A + B smaller than C + D + E?)
+
+<<show_pie, results='asis'>>=
+plot_code <- sprintf("\\includegraphics[scale=0.48]{figure/%s}\n", paste0("pie",1:2))
+cat(plot_code, sep="")
+@
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section[Models]{Probabilty theory and models} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
