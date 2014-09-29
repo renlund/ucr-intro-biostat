@@ -1,9 +1,17 @@
-\documentclass{beamer}
-% ---Ett s?tt att skapa ``handouts''----------------------------------
-% \documentclass[handout]{beamer}
-% \usepackage{pgf,pgfpages}
-% \pgfpagesuselayout{4 on 1}[letterpaper,landscape,border shrink=0.5in]
-% --------------------------------------------------------------------
+<<PRES_OR_HANDOUTS, cache=FALSE, echo=FALSE, include=TRUE, results='asis'>>=
+if(!exists("HANDOUT")) HANDOUT <- FALSE
+if(HANDOUT){
+   cat("
+\\documentclass[handout]{beamer}
+\\usepackage{pgf,pgfpages}
+\\pgfpagesuselayout{4 on 1}[letterpaper,landscape,border shrink=0.5in]
+")
+} else {
+   cat("\\documentclass{beamer}")
+}
+rm(HANDOUT)
+@
+
 \usepackage{beamerthemeclassic}
 \usepackage[english]{babel}
 \usepackage[latin1]{inputenc}

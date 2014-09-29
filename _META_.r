@@ -1,3 +1,4 @@
+library(proh)
 library(knitr)
 library(Hmisc)
 library(RColorBrewer)
@@ -16,15 +17,28 @@ opts_chunk$set(
    fig.height=5
 )
 
-knit2pdf("L9.rnw")
-# knit("L6.rnw")
+.alsHO <- function(name){
+   HANDOUT <- TRUE; knit2pdf(name, clean=TRUE)
+   inName <- paste0(fileName(name)$name, ".pdf")
+   outName <- paste0(fileName(name)$name, "_handout.pdf")
+   file.rename(from = inName, to = outName)
+   HANDOUT <- FALSE; knit2pdf(name)
+   proh::clean()
+}
 
-knit2pdf("L6.rnw")
-# knit("L6.rnw")
+# LECTURE 9 ----------------------------
+knit2pdf("L9.rnw", clean=TRUE)
+.alsHO("L9.rnw")
 
-knit2pdf("L1and2.rnw")
-# knit("L1and2.rnw")
+# LECTURE 6 ----------------------------
+knit2pdf("L6.rnw", clean=TRUE)
+.alsHO("L6.rnw")
 
+# LECTURE 1&2  --------------------------
+knit2pdf("L1and2.rnw", clean=TRUE)
+.alsoHO("L1and2.rnw")
+
+# clean'n'kill --------------------------
 proh::clean()
 proh::killCache()
 # rm(list=setdiff(ls(), "set_params"))

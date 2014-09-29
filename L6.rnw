@@ -1,9 +1,17 @@
-\documentclass{beamer}
-% ---Ett s?tt att skapa ``handouts''----------------------------------
-% \documentclass[handout]{beamer}
-% \usepackage{pgf,pgfpages}
-% \pgfpagesuselayout{4 on 1}[letterpaper,landscape,border shrink=0.5in]
-% --------------------------------------------------------------------
+<<PRES_OR_HANDOUTS, cache=FALSE, echo=FALSE, include=TRUE, results='asis'>>=
+if(!exists("HANDOUT")) HANDOUT <- FALSE
+if(HANDOUT){
+   cat("
+\\documentclass[handout]{beamer}
+\\usepackage{pgf,pgfpages}
+\\pgfpagesuselayout{4 on 1}[letterpaper,landscape,border shrink=0.5in]
+")
+} else {
+   cat("\\documentclass{beamer}")
+}
+rm(HANDOUT)
+@
+
 \usepackage{beamerthemeclassic}
 \usepackage[english]{babel}
 \usepackage[latin1]{inputenc}
@@ -121,7 +129,7 @@ curve(x/(1-x), from=0, to=0.75, ylab="Odds", xlab="Probability", lwd=2,
    xaxt='n', yaxt='n',xlim=c(0,0.667), ylim=c(0,2), cex.lab=1.5)
 axis(side=1,at=c(0,0.1,1/3, 0.5,2/3), labels=c("0", "0.1", "1/3", "1/2", "2/3"))
 axis(side=2,at=c(0,1/2,1,2), labels=c("0","1/2","1","2"), las=1)
-abline(a=0, b=1, lty=3, col="blue")
+abline(a=0, b=1, lty=3, col="blue", lwd=2)
 text(x=7/12,y=7/12,labels="y=x",pos=3,srt=11, cex=1.5)
 LTY <- 2
 COL <- "gray"
@@ -206,8 +214,8 @@ latex(
 \frame{ % -------------------------------------------------------------------->
 \frametitle{OR and probabilities}
 The blue dotted lines are the 'corresponding slopes'.
-<<OR, fig.width=7>>=
-par(mar=c(4,4,1,1))
+<<OR, fig.width=7, fig.height=7, include=FALSE>>=
+par(mar=c(4,4.2,1,1))
 THE <- c(0.1, 0.5, 1, 2, 10)
 xs <- c(0.75, 0.55, 0.47, 0.4, 0.23)
 plot(1,1,type='n', xlim=0:1, ylim=0:1,
@@ -218,9 +226,9 @@ for(k in seq_along(THE)){
    curve(THE[k]*x/(1+(THE[k]-1)*x), from=0, to=1,add=TRUE, lwd=2)
    text(x=xs[k], y=THE[k]*xs[k]/(1+(THE[k]-1)*xs[k]), label=paste("OR =", THE[k]), srt=45, cex=1.2, pos=3)
    abline(a=0, b=THE[k], col="blue", lty=2)
-
 }
 @
+\begin{center} \includegraphics[scale=0.4]{figure/OR} \end{center}
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Fishers exact test}
