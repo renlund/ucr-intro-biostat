@@ -1,0 +1,424 @@
+<<PRES_OR_HANDOUTS, cache=FALSE, echo=FALSE, include=TRUE, results='asis'>>=
+if(!exists("HANDOUT")) HANDOUT <- FALSE
+if(HANDOUT){
+   cat("
+\\documentclass[handout]{beamer}
+\\usepackage{pgf,pgfpages}
+\\pgfpagesuselayout{4 on 1}[letterpaper,landscape,border shrink=0.5in]
+")
+} else {
+   cat("\\documentclass{beamer}")
+}
+rm(HANDOUT)
+@
+
+\usepackage{beamerthemeclassic}
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{multicol}
+
+\newcommand{\plot}{0.42}
+\newcommand{\pr}{\mathbf{Prob}}
+\newcommand{\el}{\mbox{\;or\;}}
+\newcommand{\rymd}{\vspace{0.3cm}}
+
+%\setbeamersize{text margin left=6mm, text margin right=2mm}  % DEFAULT
+\setbeamersize{text margin left=3mm, text margin right=2mm}
+
+\title{Introduction to Biostatistics \\ Lecture 'Meta'}
+\author{Henrik Renlund}
+\date{20??-??-??}
+
+\begin{document} % >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+\frame{
+Thus fare, this is the old lecture 9.
+}
+
+\frame{ % -------------------------------------------------------------------->
+\begin{center}
+\includegraphics[scale=0.34]{pics/frequentists_vs_bayesians.png}
+\end{center}
+}
+\frame{ % -------------------------------------------------------------------->
+\titlepage
+\begin{center}
+\includegraphics[scale=0.8]{pics/ucrlogo.pdf}
+\end{center}
+}
+% \frame{ % -------------------------------------------------------------------->
+% \frametitle{Contents of Lecture 1-2}
+% \tableofcontents
+% }
+\frame{ % -------------------------------------------------------------------->
+\frametitle{What shall we learn today?}
+% We will discuss
+% \begin{itemize}
+% \item some problems with statistical significance, and
+% \item how to interpret 'null' results.
+% \end{itemize}
+
+We will (briefly) discuss  problems and solutions in interpreting
+positive and negative results.
+
+\begin{itemize}
+\item How to design studies to make null results interesting.
+\item Factors that can make statistically significant results misleading.
+\end{itemize}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[Power]{Power} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+<<power, cache=FALSE>>=
+vizP <- function(eff = 1,
+                 n = 10,
+                 s = 1,
+                 N = 15,
+                 alfa = 0.05,
+                 M = 5000,
+                 out = TRUE
+){
+   set.seed(19790424)
+   pow <- rep(NA,M); for(k in 1:M) pow[k] <- if(t.test(rnorm(n,eff,s))$p.value<0.05) 1 else 0
+   POW <- mean(pow); POW
+   M <- matrix(rnorm(n*N,mean=eff,sd=s), nrow=N, ncol=n)
+   rownames(M) <- sprintf("sample %d", 1:N)
+   colnames(M) <- sprintf("observation %d", 1:n)
+   a <- min(M)
+   b <- max(M)
+   ci_ <- 0.5
+   tsc <- 1.3
+   if(out) x11(height=7, width=11)
+   par(mar=c(1,1,1,1))
+   plot(1,1,type='n',xlab="", ylab="",main="",yaxt='n',xaxt='n',bty='n',
+        xlim=c(min(0,a),max(b,eff+2.5*s)), ylim=c(0.5,(N+5)))
+   abline(h=N+ci_, lwd=2) # x-axis
+   abline(v=0, lwd=2) # y-axis
+   axis(side=1,at=c(0,eff),pos=N+ci_, hadj=-1, padj=-3.2, cex=tsc) # x-axis ticks
+   abline(v=eff, lty=2, lwd=1, col="lightgray")
+   ref <- dnorm(eff,eff,s)
+   curve( 3*dnorm(x,eff,s)/ref+N+ci_, from=-10,to=10, add=TRUE, col="blue")
+   text(x=eff+0.5*s, y=N+2*ci_+3*dnorm(eff+0.5*s,eff,s)/ref, paste("Pop. sd =", round(s,1)), cex=tsc, pos=4)
+   text(x=eff+1.0*s, y=N+2*ci_+3*dnorm(eff+1.0*s,eff,s)/ref, paste("Sample size =", n), cex=tsc, pos=4)
+   text(x=eff+1.5*s, y=N+2*ci_+3*dnorm(eff+1.5*s,eff,s)/ref, paste("Power =", round(POW,2)), cex=tsc, pos=4)
+   arrows( x0=0, x1=eff, y0=N+5, y1=N+5, code=3,length = 0.15, angle = 25 )
+   text(x=0+eff/2, y=N+4, pos=3, "Effect", cex=tsc)
+   k <- 1
+   for(k in 1:N){
+      tmp <- M[k,]
+      points(x=tmp,y=rep(k,n), pch=k, col="blue")
+      ci <- t.test(tmp, conf.level=(1-alfa))$conf.int
+      COL <- if( min(ci)<= 0 ) "red" else "green"
+      arrows(x0=ci[1], x1=ci[2], y0=k-ci_,y1=k-ci_, code=3,length = 0.15, angle = 25,col=COL)
+      points(x=mean(tmp), y=k-ci_, pch=k, col=COL, cex=1.2)
+      rm(tmp, COL)
+   }
+}
+@
+\frame{ % -------------------------------------------------------------------->
+\frametitle{How to make 'null' results meaningful}
+
+Generally, it '$H_0$ not rejected' is uninformative
+\emph{unless} we know that the study had a good chance
+of detecting an effect that is interesting.
+
+\rymd E.g:  "Two methods of pain relief were compared. The
+median difference of 4 on the VAS scale
+was not statistically significant."
+
+\rymd This would be enhanced by;
+
+\rymd "The study was designed to have a 90\% chance of
+detecting a clinically significant difference
+of 9".
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Attempt to visualize the power of a test}
+Suppose we measure the effect of a drug
+that on average does decrease the blood pressure
+by a clinically significant amount (defined as 1 unit).
+
+\rymd We measure the blood pressure on $n$ indivuals
+before and after taking the drug.
+
+\rymd Our data consist of $n$ 'indivual effects'
+(before - after) which are positive if
+the drug works. We assume these are Normal
+with a standard deviation of 1 unit.
+
+\rymd $H_0:$"average effect $= 0$" is determinded
+by creating a 95\% confidence interval for
+the mean effect.
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{A sample size of 5}
+<<n5>>=
+vizP(n=5, out=FALSE)
+@
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{A sample size of 10}
+<<n10>>=
+vizP(n=10, out=FALSE)
+@
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{A sample size of 25}
+<<n25>>=
+vizP(n=25, out=FALSE)
+@
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Power}
+The power of a test is the probability
+of rejecting the null hypothesis.
+
+The power depends on
+\begin{itemize}
+\item effect size
+\item sample size
+\item the spread of the data
+\item (the statistical test, significance level, etc.)
+\end{itemize}
+
+Some points
+\begin{itemize}
+\item In an experimental setting, you can control the sample size.
+\item We usually express the power as a function of effect size.
+\item We usually want high power ($\geq 80\%$) at some minimally
+interesting effect size.
+\item Calculations are generally gruesome.
+\end{itemize}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[Significance]{Statistical Significance} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Statistical Significance}
+By default, we construct our statistical test to reject a true
+null hypothesis only 5\% of the time. This, the probability
+of 'error of type 1'
+is the significance level of the test.  \\
+(It is \emph{not} the probability of $H_0$ given by the data.\\
+It is 'almost' the probability of the data, given $H_0$.)
+
+\rymd Rejecting $H_0$ is generally a strong statement.
+
+\rymd It means that data is incompatible with $H_0$. \\
+
+\rymd Rejection should be weighted against the prior
+plausability of $H_0$.
+}
+\frame{ % -------------------------------------------------------------------->
+\begin{center}
+\includegraphics[scale=0.33]{pics/frequentists_vs_bayesians.png}
+\end{center}
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{When writing or reading a paper}
+Even when the prior plausibility is ok, a statistically
+significant result is by itself not very informative.
+
+\rymd Some 'easy' problems:
+\begin{itemize}
+\item If sample size is large, the effect might be uninterestingly small. \\
+Solution: report effect size.
+\item The assumptions of the analysis might not be fullfilled. \\
+Solution: one should check the assumptions. \\
+(Violations should make the test more conservative.)
+\end{itemize}
+
+\rymd Some 'hard' problems:
+\begin{itemize}
+\item Researcher degrees of freedom.
+\item Publication bias (File drawer effect).
+\end{itemize}
+}
+<<rdf, eval=FALSE>>=
+RR <- function(n, sd=1, N=1000L, alpha=0.05){
+   rej <- rep(NA,N)
+   for(i in 1:N){
+      if(i %% 50 == 0) cat(N-i, "...")
+      if(i==N) cat("\n")
+      y <- rnorm(n, 0, sd)
+      p <- rep(NA_real_,n-1)
+      for(k in 2:n) p[k-1] <- t.test(y[1:k])$p.value
+      rej[i] <- any(p<=0.05)
+   }
+   mean(rej)/alpha
+}
+sd <- 1
+mean_for_pow <- 1
+pow <- 0.95
+ns <- 1:500
+# n <- which(
+#    1-pnorm(1.96*sd/ns, mean=mean_for_pow)+pnorm(-1.96*sd/ns, mean=mean_for_pow)
+#    >= pow )[1]
+n <- 50
+R <- RR(n, sd)
+
+flott <- function(){
+   y <- rnorm(n, 0, sd)
+   p <- rep(NA_real_,n)
+   for(k in 2:n) p[k] <- t.test(y[1:k])$p.value
+   par(mar=c(4,4,0,2))
+   plot(y, xlab="Measurement number", ylab="Measurements"#,main=paste("Relative risk of rejection:",round(R, 1))
+   )
+   points(cumsum(y)/(1:n), type='l', col="grey60")
+   y0 <- min(y)
+   y1 <- max(y)
+   r <- y1-y0
+   axis(side=4, at=seq(y0,y1,len=5), labels=seq(0,1,len=5), col="red")
+   points(y=y0+r*p, x=1:n, col="red", type='l')
+   points(y=y0+r*p[n], x=n, col="red", pch=20, cex=1.5)
+   abline(h=0, lty=3)
+   abline(h=c(y0,y0+r*0.05,y1), lty=3, col="red")
+} # ---------------------
+#axis(side=4, at=y0+r*0.05, label=0.05, las=1, col="red")
+flott()
+# pows <- seq(0.6, 0.95, by=0.05)
+# sds <- c(0.5,1,2,5,10)
+# MAT <- matrix(NA_real_,nrow=length(sds), ncol=length(pows))
+# rownames(MAT) <- sds
+# colnames(MAT) <- pows
+# for(i in 1:length(pows)){
+#    cat("~~~~~~~~~~~~ i ~~~~~~~~~~~~~~~~~~ :  ", i,  "~~~~~~~~~~~~~~~~~~ \n")
+#    for(j in 1:length(sds)){
+#       cat("---- j ---- :  ", j, " ----  \n")
+#       n <- which(1-pnorm(1.96*sd/(1:100000), mean=mean_for_pow)
+#          + pnorm(-1.96*sd/(1:100000), mean=mean_for_pow) >=pows[i])[1]
+#       MAT[j,i] <- RR(n, sds[j], N=5000)
+#    }
+# }
+# save(MAT, file="RR_vs_pow.rdata")
+# load("RR_vs_pow.rdata")
+# par(mar=c(4,4,0,0))
+# barplot(MAT, beside=TRUE, legend=TRUE, args.legend=c(x="topleft",
+#    title="Noise relative effect size", bty='n'),
+#    ylab="Relative Risk of Rejecting a True Null Hypothesis",
+#    xlab="Power")
+@
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Researcher degrees of freedom}
+Unless you have a predetermined analysis,
+there are many decisions that influence final estimates;
+\begin{itemize}
+   \item when to stop collecting data,
+   \item when to exclude datapoints,
+   \item which variables to control for,
+   \item which statistical analysis to do,
+   \item \ldots and more.
+\end{itemize}
+In theory (but not practice) we could take all this
+into account and calculate what this will do to the $p$-value.
+
+\rymd In general it will raise the $p$-value \emph{substantially}.
+
+\rymd Attempt at solution: be honest. Report the rule you made for collecting
+and handling data, which variables you measured, etc.
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Choosing when to stop invalidates the $p$-value.}
+Suppose a researcher has allocated funds for 50 measurements.
+Unbeknowst to her, there is no effect size - all measurements
+are just (standard Normal) 'noise'.
+
+\vspace{0.2cm} What if she has the opportunity to analyze her data sequentially,
+as it comes in? In particular, to test the null hypothesis: "no effect size"
+with error rate 5\%.
+
+\vspace{0.2cm} The $p$-value is only meaningful for a single analysis for a predetermined
+sample size.
+If she is allowed to stop at any point she chooses (after inspecting the date
+collected thus far) the 'real' error rate is in fact $\approx 30\%$.
+
+\vspace{0.2cm} The following graphs shows data (dots), mean value (grey) and
+$p$-values (red), sequentially.
+}
+\frame{ % -------------------------------------------------------------------->
+\begin{center}
+Something like this will happen 70\% of the time: \\
+\includegraphics[scale=\plot]{pics/potion.pdf}
+\end{center}
+}
+\frame{ % -------------------------------------------------------------------->
+\begin{center}
+Something like this will happen 30\% of the time:
+\includegraphics[scale=\plot]{pics/bingo2.pdf}
+\end{center}
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Publication bias}
+Positive (meaning statistically significant) results are more likely
+to be published.
+
+\rymd
+This effectively raises the (reported) $p$-values and effect sizes.
+
+\rymd
+Attempt at solution: When reading a single study, just be aware. \\
+To some extent this effect can be handled in a meta-analysis.
+
+\rymd
+A 'funnelplot' plots some measure of study quality (usually
+sample size) against reported effect size.
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Publication bias skewes results}
+<<funnel>>=
+eff <- 1
+Y <- c(5,4.1,4.0,seq(3.7,2.1,-0.3), seq(2,1,-0.1) )
+y <- Y; y[1] <- 2*Y[1]
+X <- rnorm(length(Y), eff, sd=2/y)
+# plot(X,Y,xlab="Reported Effect Size", ylab="Study Quality", yaxt='n', pch=19)
+# abline(v=weighted.mean(x=X,w=Y), lwd=2, lty=3, col="black")
+# legend("topright", "Effect", lwd=2, lty=2, col="black")
+# FILT <- X>0.5
+# COL <- ifelse(FILT, "green", "red")
+# plot(X, Y, xlab="Reported Effect Size", ylab="Study Quality", yaxt='n', pch=19,
+#    col=COL)
+# abline(v=weighted.mean(x=X[FILT],w=Y[FILT]), lwd=2, lty=3, col="green")
+# legend("topright", "Effect", lwd=2, lty=2, col="green")
+par(mar=c(4,3,1,1))
+FILT <- X>0.5
+COL <- ifelse(FILT, "green", "red")
+plot(X, Y, xlab="", ylab="", yaxt='n', pch=21, cex=1.3, lwd=2,
+   col="black", bg=COL)
+mtext(text="Study Quality Increase -->", side=2, line=1, cex=1.5)
+mtext(text="Reported Effect Size", side=1, line=3, cex=1.5)
+abline(v=weighted.mean(x=X[FILT],w=Y[FILT]), lwd=3, lty=3, col="green")
+abline(v=weighted.mean(x=X,w=Y), lwd=3, lty=3, col="black")
+legend("topright", c("Published", "Total"), title="Estimated Effect", lwd=2, lty=2,
+   col=c("green", "black"),  cex=1.3)
+legend("topleft", c("Yes", "No"), title="Published", pch=21, cex=1.3, lwd=2,
+   pt.bg=unique(COL), lty=0)
+@
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{ } %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{} % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \frame{ % -------------------------------------------------------------------->
+% \frametitle{Summary}
+%
+% }
+
+\frame{ % -------------------------------------------------------------------->
+\frametitle{References}
+
+\begin{itemize}
+   \item Chapters 23-25: Petrie \& Sabin. \emph{Medical Statistics at a Glance}, Wiley-Blackwell (2009).
+   \item Simmons et al. \emph{False-Positive Psychology: Undisclosed Flexibility in Data Collection and Analysis Allows Presenting Anything as Significant}, Psychological Sciences \textbf{22} 11 (2011) 1359-1366.
+   \item Dubben \& Beck-Bornholdt. \emph{Systematic Review of Publication Bias in Studies on Publication Bias}, BMJ \textbf{331} 7514 (2005) 433-434.
+   \item Ioannidis, \emph{Why Most Published Research Findings Are False}, PLoS medicine \textbf{2} 8 (2005) e124.
+   \item Munroe. \emph{Frequentist vs. Bayesians},
+Xkcd - a webcomic of romance, sarcasm, math, and language, 1132 (2012), http://www.xkcd.com/1132.
+\end{itemize}
+}
+% http://xkcd.org/1132/
+\end{document}
