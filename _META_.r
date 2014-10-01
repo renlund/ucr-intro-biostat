@@ -36,7 +36,7 @@ knit2pdf("L6.rnw", clean=TRUE)
 
 # LECTURE 1&2  --------------------------
 knit2pdf("L1and2.rnw", clean=TRUE)
-.alsoHO("L1and2.rnw")
+.alsHO("L1and2.rnw")
 
 # clean'n'kill --------------------------
 proh::clean()

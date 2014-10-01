@@ -59,6 +59,11 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
    else
       points(x=x, y=revsort(y,perm), ...)
 }
+.yellow <- wes.palette(5, "Cavalcanti")[1]
+.green <- wes.palette(5, "Cavalcanti")[2]
+.grey <- wes.palette(5, "Cavalcanti")[3]
+.blue <- wes.palette(5, "Cavalcanti")[4]
+.red <- wes.palette(5, "Cavalcanti")[5]
 @
 
 \newcommand{\pr}{\mathbf{Prob}}
@@ -322,16 +327,18 @@ Dotplots can display groups.
 load("data/F10B_subarach.Rdata")
 x <- dd$s100b[dd$outcome=="Poor"]
 y <- dd$s100b[dd$outcome=="Good"]
+good_col <- .yellow
+bad_col  <- .green
 par(mar=c(4,4,0,0))
 layout(matrix(1:2,nrow=2))
-dotplot( x=dd$s100b, new=TRUE, col=ifelse(dd$outcome=="Good", "green", "red"),
+dotplot( x=dd$s100b, new=TRUE, col=ifelse(dd$outcome=="Good", good_col, bad_col),
          xlab="", maxi=0.6, skal=75)
-legend("bottomright", c("Good", "Poor"), col=c("green", "red"), cex=1.2,
+legend("bottomright", c("Good", "Poor"), col=c(good_col, bad_col), cex=1.2,
        lty=NULL, pch=1, title="Outcome", bty='n')
 plot(x=dd$s100b,rep(1,113),type='n',xlab="microgram / litre",ylab="",
      yaxt='n', ylim=c(0.5,2.5), cex.lab=1.2)
-dotplot(x, col="red", maxi=0.5)
-dotplot(y, col="green", maxi=0.5, yfix=2)
+dotplot(x, col=bad_col, maxi=0.5)
+dotplot(y, col=good_col, maxi=0.5, yfix=2)
 wtf <- axis(2,at=1:2, labels=FALSE)
 text(x=0, y=wtf, labels=c("Poor", "Good"), cex=1.2,
      xpd=TRUE, pos=2, offset=1)
@@ -501,8 +508,9 @@ boxplot(dd$s100b, add=TRUE, horizontal=TRUE, at=0.5, boxwex=1, lwd=2)
 <<pie, include=FALSE, fig.height=5, fig.width=5>>=
 x <- sample(LETTERS[1:5], size = 250, replace = T, prob = c(5,2,1,4,3))
 a_table <- table(x); save(a_table, file="a_table.rdata")
-barchart(tx, col = wes.palette(5, "Cavalcanti"))
-pie(tx, col = wes.palette(5, "Cavalcanti"))
+barchart(a_table, col = wes.palette(5, "Cavalcanti"))
+pie(a_table, col = wes.palette(5, "Cavalcanti"))
+
 @
 Is it of interest to be able to compare summation of levels?
 
@@ -654,7 +662,7 @@ load("data/F8_smoking.Rdata")
 h <- hist(dd$fev, plot=FALSE)
 par(mar=c(4,4,0,0))
 hist(dd$fev, freq=FALSE, ylim=c(0,1.05*max(h$density)), xlab="FEV (L)", main="",
-     col="grey80")
+     col=.blue) # col="grey80")
 text(h$mids, h$density,labels=round(h$counts/sum(h$counts),3),pos=3)
 @
 }
@@ -666,7 +674,7 @@ load("data/F8_smoking.Rdata") # dd
 h <- hist(dd$fev, plot=FALSE)
 par(mar=c(4,4,0,0))
 h1 <- hist(dd$fev, freq=FALSE, breaks=seq(1,6,1), ylim=c(0,1.05*max(h$density)),
-           xlab="FEV (L)", main="", col="grey80")
+           xlab="FEV (L)", main="", col=.blue) #col="grey80")
 text(h1$mids, h1$density,round(h1$counts/sum(h1$counts),3),pos=3)
 @
 }
@@ -678,7 +686,7 @@ load("data/F8_smoking.Rdata") # dd
 h <- hist(dd$fev, plot=FALSE)
 par(mar=c(4,4,0,0))
 h2 <- hist(dd$fev, freq=FALSE, breaks=c(1,2,2.5,2.75,3,3.5,4,6),
-           ylim=c(0,1.05*max(h$density)), xlab="FEV (L)", main="", col="grey80")
+           ylim=c(0,1.05*max(h$density)), xlab="FEV (L)", main="", col=.blue) #col="grey80")
 text(h2$mids, h2$density,round(h2$counts/sum(h2$counts),2),pos=3)
 @
 }
@@ -712,7 +720,7 @@ h <- hist(
    ylim=c(0,1.05*max(h0$density)),
    xlab="FEV (L)",
    main="",
-   col="grey80",
+   col=.blue, #col="grey80",
    breaks=seq(1,6,length.out=n)
 )
 curve(dnorm(x,mean(dd$fev), sd(dd$fev)), from=-1, to=8, add=TRUE, lwd=2)
@@ -730,7 +738,7 @@ plot( c(-3.2,3.2),c(0,0.4), col="white",
       main="",ylab="Density",xlab="")
 v <- qnorm(0.975)
 xx <- seq(-v,v,length.out=100); yy <- dnorm(xx,0,1); xx <- c(xx[1],xx,xx[100]); yy <- c(0,yy,0)
-polygon( xx,yy, col="lightblue", lty=2)
+polygon( xx,yy,  lty=2, col=.blue) # col="lightblue",
 points( c(-v,-v), c(0,0.28), type='l', lty=2)
 text( -v, 0.3, label=paste("-",signif(v,3),sep=""), cex=1.5 )
 points( c(v,v), c(0,0.28), type='l', lty=2)
@@ -742,7 +750,7 @@ plot( c(-3.2,3.2),c(0,0.4), col="white",
       main="",ylab="Density",xlab="")
 v <- 1; #1-2*(1-pnorm(1))
 xx <- seq(-v,v,length.out=100); yy <- dnorm(xx,0,1); xx <- c(xx[1],xx,xx[100]); yy <- c(0,yy,0)
-polygon( xx,yy, col="lightblue", lty=2)
+polygon( xx,yy, col=.blue, lty=2) # col="lightblue"
 points( c(-v,-v), c(0,0.33), type='l', lty=2)
 text( -v, 0.34, labels=paste("-",signif(v,3),sep=""), cex=1.5 )
 points( c(v,v), c(0,0.33), type='l', lty=2)
@@ -769,7 +777,7 @@ y2 <- dnorm(x, 3, 3)
 y3 <- dnorm(x, 1, 2)
 m <- max(c(y1,y2,y3))
 plot( 0, 0, col="white",ylim=c(0,m),xlim=c(-2,7),xlab="",ylab="Density")
-myCol <-  brewer.pal(3,"Set2")
+myCol <-  c(.blue, .green, .yellow) #brewer.pal(3,"Set2")
 for(k in 1:3){
    points( x, get( paste("y",k,sep="") ), type='l', col=myCol[k], lwd=3)
 }
@@ -794,7 +802,7 @@ xx <- seq(Mu-v*Sd,Mu+v*Sd,length.out=100)
 yy <- dnorm(xx,Mu,Sd)
 xx <- c(xx[1],xx,xx[100])
 yy <- c(0,yy,0)
-polygon( xx,yy, col="lightblue", lty=2)
+polygon( xx,yy, col=.blue, lty=2) # col="lightblue"
 points( c(Mu-v*Sd,Mu-v*Sd), c(0,0.14), type='l', lty=2)
 text( Mu-v*Sd, 0.15, labels=paste(Mu,"-",signif(v,3),"*",Sd,sep=""), cex=1.5 )
 points( c(Mu+v*Sd,Mu+v*Sd), c(0,0.14), type='l', lty=2)
@@ -847,7 +855,7 @@ set_params()
 curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,
       xlab="Outcome", ylab="Density", ylim=c(-0.005,yMax))
 points(x=x1,y=rep(-0.005, length(x1)))
-hist(x1, add=TRUE, prob=TRUE, breaks=B, col="lightgrey")
+hist(x1, add=TRUE, prob=TRUE, breaks=B, col=.blue)
 curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,lty=2, add=TRUE)
 @
 }
@@ -858,7 +866,7 @@ set_params()
 curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,
       xlab="Outcome", ylab="Density", ylim=c(-0.005,yMax))
 points(x=x2,y=rep(-0.005, length(x2)))
-hist(x2, add=TRUE, prob=TRUE, breaks=B, col="lightgrey")
+hist(x2, add=TRUE, prob=TRUE, breaks=B, col=.blue)
 curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,lty=2, add=TRUE)
 @
 }
@@ -870,7 +878,7 @@ B <- seq(from=145,to=215,by=2.5)
 curve(dnorm(x, mean=Mu, sd=Sd), from=Min, to=Max,
       xlab="Outcome", ylab="Density", ylim=c(-0.005,yMax))
 points(x=x3,y=rep(-0.005, length(x3)))
-hist(x3, add=TRUE, prob=TRUE, breaks=B, col="lightgrey")
+hist(x3, add=TRUE, prob=TRUE, breaks=B, col=.blue)
 curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,lty=2, add=TRUE)
 @
 }
@@ -1008,7 +1016,7 @@ good approximation) Normal by choosing $n$ large enough.
 \frametitle{Attempt to visualize CLT (for means)}
 The distribution of sample means from a skewed distribution.
 <<exp_mean>>=
-COL <- brewer.pal(5, "Set2")
+COL <- wes.palette(5, "Cavalcanti") #brewer.pal(5, "Set2")
 par(mar=c(4,4,1,1))
 plot(1,1,type='n', xlim=c(0,2.5), ylim=c(0,1.8), xlab="Outcome", ylab="Density")
 ns <- c(1,2,5,10,20)
@@ -1054,8 +1062,7 @@ A histogram with best normal density fit.
 <<pev_h, cache=FALSE>>=
 load("data/F4_crossover.Rdata")
 par(mar=c(4,4,0,0))
-hist(y-x, freq=FALSE, breaks=seq(-50,150,len=10), xlab="Differences (formoterol-sabutamol) L/min",
-     xlim=c(-60,160), ylim=c(0,.018), main="")
+hist(y-x, freq=FALSE, breaks=seq(-50,150,len=10), xlab="Differences (formoterol-sabutamol) L/min", xlim=c(-60,160), ylim=c(0,.018), main="", col=.blue)
 curve( dnorm(t, mean(y-x), sd(y-x)), from=-250, to=200, lty=2, add=TRUE, xname="t")
 @
 }

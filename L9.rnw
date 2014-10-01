@@ -29,13 +29,23 @@ rm(HANDOUT)
 \author{Henrik Renlund}
 \date{2014-10-16}
 
+<<cache=FALSE, echo=FALSE, include=FALSE>>=
+.yellow <- wes.palette(5, "Cavalcanti")[1]
+.green <- wes.palette(5, "Cavalcanti")[2]
+.grey <- wes.palette(5, "Cavalcanti")[3]
+.blue <- wes.palette(5, "Cavalcanti")[4]
+.red <- wes.palette(5, "Cavalcanti")[5]
+.seq3 <- brewer.pal(5,"YlGn")[2:4]
+@
+
+
 \begin{document} % >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-\frame{ % -------------------------------------------------------------------->
-\begin{center}
-\includegraphics[scale=0.34]{pics/frequentists_vs_bayesians.png}
-\end{center}
-}
+% \frame{ % -------------------------------------------------------------------->
+% \begin{center}
+% \includegraphics[scale=0.34]{pics/frequentists_vs_bayesians.png}
+% \end{center}
+% }
 \frame{ % -------------------------------------------------------------------->
 \titlepage
 \begin{center}
@@ -48,19 +58,17 @@ rm(HANDOUT)
 % }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{What shall we learn today?}
-% We will discuss
+
+The concept of (statistical) 'power' and its relation to  sample size calculations.
+
+We will briefly discuss resampling techiques (bootstrap).
+% We will (briefly) discuss  problems and solutions in interpreting
+% positive and negative results.
+%
 % \begin{itemize}
-% \item some problems with statistical significance, and
-% \item how to interpret 'null' results.
+% \item How to design studies to make null results interesting.
+% \item Factors that can make statistically significant results misleading.
 % \end{itemize}
-
-We will (briefly) discuss  problems and solutions in interpreting
-positive and negative results.
-
-\begin{itemize}
-\item How to design studies to make null results interesting.
-\item Factors that can make statistically significant results misleading.
-\end{itemize}
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -194,9 +202,11 @@ interesting effect size.
 \section[Power]{Examples} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+
 \frame{ % -------------------------------------------------------------------->
-% Idea: Breastfeeding example.
-<<>>=
+Idea: Breastfeeding example.
+<<eval=FALSE, include=FALSE, >>=
 library(reshape2)
 library(ggplot2)
 
@@ -258,24 +268,43 @@ search <- function(m, bi=50, mi=50, thresh=0.05, probs=c(0.05,0.5,.95)){
 save(list=sprintf("POW%d",1:3), file="data/power_bm.rdat")
 @
 }
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Sample size calculations without a model}
+Recall the breastfeeding example from lecture 4.
+{\tiny
+<<echo=FALSE, include=TRUE, results='asis', cache=FALSE>>=
+load("data/F4_breastfeeding.Rdata")
+bord <- rbind(y,x,y-x,c(NA, rank(abs(y-x)[-1])))
+colnames(bord) <- 1:14
+rownames(bord) <- c("breast", "bottle", "diff", "rank")
+latex(bord,file="", title="pair")
+@
+}
+<<echo=FALSE, include=TRUE, results='asis'>>=
+neg <- bord[4,bord[3,]<0]
+pos <- bord[4,bord[3,]>0]
+df <- data.frame(
+    part = c("negative", "positive"),
+    rank = c(paste0(neg, collapse=", "), paste0(pos, collapse=", ")),
+    sum = c(sum(neg), sum(pos))
+)
+latex(df,file="",rowname=NULL)
+@
+
+
+
+}
 
 \frame{ % -------------------------------------------------------------------->
 Idea: New drug versus Dabigatran.
-
 }
-
 \frame{ % -------------------------------------------------------------------->
-
-
-
+Hoo
 }
-
 \frame{ % -------------------------------------------------------------------->
 \frametitle{References}
-
 \begin{itemize}
    \item Chapters 23-25: Petrie \& Sabin. \emph{Medical Statistics at a Glance}, Wiley-Blackwell (2009).
-
+\end{itemize}
 }
-% http://xkcd.org/1132/
-\end{document}
+\end{document} % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
