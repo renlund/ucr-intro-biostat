@@ -41,11 +41,11 @@ rm(HANDOUT)
 
 \begin{document} % >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-% \frame{ % -------------------------------------------------------------------->
-% \begin{center}
-% \includegraphics[scale=0.34]{pics/frequentists_vs_bayesians.png}
-% \end{center}
-% }
+\frame{ % -------------------------------------------------------------------->
+\begin{center}
+\includegraphics[scale=0.30]{pics/StatPower.png}
+\end{center}
+}
 \frame{ % -------------------------------------------------------------------->
 \titlepage
 \begin{center}
@@ -58,19 +58,16 @@ rm(HANDOUT)
 % }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{What shall we learn today?}
+This:
+\rymd
+\begin{itemize}
+    \item statistical power and it's relation to
 
-The concept of (statistical) 'power' and its relation to  sample size calculations.
+    \rymd\item sample size calculations (to  get power), and give an
 
-We will briefly discuss resampling techiques (bootstrap).
-% We will (briefly) discuss  problems and solutions in interpreting
-% positive and negative results.
-%
-% \begin{itemize}
-% \item How to design studies to make null results interesting.
-% \item Factors that can make statistically significant results misleading.
-% \end{itemize}
+    \rymd\item example using resampling (bootstrap).
+\end{itemize}
 }
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section[Power]{Power} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,7 +126,8 @@ Generally, it '$H_0$ not rejected' is uninformative
 of detecting an effect that is interesting.
 
 \rymd E.g:  "Two methods of pain relief were compared. The
-median difference of 4 on the VAS scale
+%median
+difference % of 4 on the VAS scale
 was not statistically significant."
 
 \rymd This would be enhanced by;
@@ -179,7 +177,7 @@ vizP(n=25, out=FALSE)
 The power of a test is the probability
 of rejecting the null hypothesis.
 
-The power depends on
+\rymd The power depends on
 \begin{itemize}
 \item effect size
 \item sample size
@@ -187,87 +185,71 @@ The power depends on
 \item (the statistical test, significance level, etc.)
 \end{itemize}
 
-Some points
+\rymd If there is no effect, the power = the significance level (the probability of rejecting a true null hypothesis)
+
+\rymd We want a test to have high power as soon as the effect is \emph{interesting}.
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Some points}
+
 \begin{itemize}
-\item In an experimental setting, you can control the sample size.
-\item We usually express the power as a function of effect size.
-\item We usually want high power ($\geq 80\%$) at some minimally
-interesting effect size.
-\item Calculations are generally gruesome.
+    \item In an experimental setting, you can control the sample size.
+
+    \rymd \item (You might be able to reduce measurement error.)
+
+    \rymd \item We usually express the power as a function of effect- and sample size.\\
+
+    \rymd \item We usually want high power ($\geq 80\%$) at some minimally interesting effect size.
+    \rymd \item Sample size calculations are generally gruesome, but
+    \begin{itemize}
+        \item software exists, and
+        \item other techniques might suffice.
+    \end{itemize}
 \end{itemize}
 }
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section[Power]{Examples} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-\frame{ % -------------------------------------------------------------------->
-Idea: Breastfeeding example.
-<<eval=FALSE, include=FALSE, >>=
-library(reshape2)
-library(ggplot2)
-
-load("data/F4_breastfeeding.Rdata")
-hist(x, breaks=seq(0,200,25))
-hist(y, breaks=seq(0,200,25))
-df <- model.frame(~x+y)
-df$id <- 1:dim(df)[1]
-
-mdf <- melt(df, id.vars = "id")
-ggplot(mdf, aes(value)) + geom_histogram(binwidth=15) + facet_wrap(~variable)
-
-df$diff <- with(df, y-x)
-hist(df$diff)
-
-N  <- length(x)
-
-
-load("data/F4_breastfeeding.Rdata")
-diffy <- y - x
-
-p_boot <- function(m, bi=50){
-   # m = sample size, bi = bootstrap iterations, mi = meta iterations
+<<foonctions, cache=FALSE, echo=FALSE, include=FALSE>>=
+# load("data/F4_breastfeeding.Rdata")
+p_boot <- function(things, m, bi=100){
+   # m = sample size, bi = bootstrap iterations
    P <- rep(NA_real_, bi)
    for(indx in 1:bi){
-      boot_sample <- sample(x = diffy, size = m, replace = T)
+      boot_sample <- sample(x = things, size = m, replace = TRUE)
       P[indx] <- wilcox.test(boot_sample, exact = FALSE)$p.value
    }
    P
 }
-x11(); hist(p_boot(14))
-
-pow_boot <- function(m, bi=50, mi=50, thresh=0.05, probs=c(0.05,0.5,.95)){
+# p_boot(things=y-x, m=14, bi=10)
+pow_boot <- function(things, m, bi=100, mi=100, thresh=0.05, probs=c(0.05,0.5,.95)){
+    # m = sample size, bi = bootstrap iterations, mi = meta iterations
    p_ge_thresh <- rep(NA_real_, mi)
+   foljd <- floor(seq(1, mi, length.out=10))
    for(indx in 1:mi){
-      p_tmp <- p_boot(m, bi)
-      p_ge_thresh[indx] <- sum(p_tmp<0.05)/bi
+      p_tmp <- p_boot(things, m, bi)
+      p_ge_thresh[indx] <- sum(p_tmp<thresh)/bi
+      if(length(tmp <- which(foljd == indx))>0) cat(10*tmp, "% ready for m=", m, "\n")
    }
    M <- quantile(p_ge_thresh, probs = probs)
    names(M) <- paste0(100*probs, "%")
    M
 }
-pow_boot(14, 100, 100)
-
-search <- function(m, bi=50, mi=50, thresh=0.05, probs=c(0.05,0.5,.95)){
+# pow_boot(things=y-x, m=14)
+search <- function(things, m, bi=100, mi=100, thresh=0.05, probs=c(0.05,0.5,.95)){
    m_n <- length(m)
-   M <- matrix(NA_real_, nrow=m_n, ncol=3)
-   colnames(M) <- paste0(100*probs, "%")
-   rownames(M) <- m
+   M <- matrix(NA_real_, nrow=m_n, ncol=4)
+   colnames(M) <- c("size", paste0(100*probs, "%"))
+   #rownames(M) <- m
    for(indx in 1:m_n){
-      cat("progress: ", indx, "of", m_n, "\n")
-      M[indx,] <- pow_boot(m[indx], bi, mi, thresh, probs)
+      cat(" -- progress: ", indx, " of ", m_n, ". (m=",m[indx],") -- \n", sep="")
+      M[indx,2:4] <- pow_boot(things, m[indx], bi, mi, thresh, probs)
    }
+   M[,1] <- m
    as.data.frame(M)
 }
-(POW1 <- search(m=c(10,15,20,25,30,35,40,45), bi = 100, mi = 100))
-(POW2 <- search(m=c(10,15,20,25,30,35,40,45), bi = 250, mi = 100))
-(POW3 <- search(m=c(10,15,20,25,30,35,40,45), bi = 500, mi = 200))
-save(list=sprintf("POW%d",1:3), file="data/power_bm.rdat")
+# search(things=y-x, m=c(10,15))
 @
-}
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Sample size calculations without a model}
 Recall the breastfeeding example from lecture 4.
@@ -276,7 +258,7 @@ Recall the breastfeeding example from lecture 4.
 load("data/F4_breastfeeding.Rdata")
 bord <- rbind(y,x,y-x,c(NA, rank(abs(y-x)[-1])))
 colnames(bord) <- 1:14
-rownames(bord) <- c("breast", "bottle", "diff", "rank")
+rownames(bord) <- c("bottle", "breast", "diff", "rank")
 latex(bord,file="", title="pair")
 @
 }
@@ -289,17 +271,70 @@ df <- data.frame(
     sum = c(sum(neg), sum(pos))
 )
 latex(df,file="",rowname=NULL)
+WT <- wilcox.test(y-x,conf.int = T, exact=F)
+# signif(WT$p.value,1)
+# wilcox.test(y,x, paired = TRUE, exact=F)$p.value
+# WT$estimate
 @
+The null hypothesis of no difference was tested with the Wilcoxon (Mann-Whitney) test. (This actually tests for a shift in median.)
 
-
-
-}
-
-\frame{ % -------------------------------------------------------------------->
-Idea: New drug versus Dabigatran.
+The $p$-value was \Sexpr{signif(wilcox.test(y-x, exact=F)$p.value,1)}
 }
 \frame{ % -------------------------------------------------------------------->
-Hoo
+Think of this as being a pilot study and assume the data is representative of some target population. If the observed effect, a median shift of \Sexpr{round(WT$estimate)} days, is considered interesting (and thought to be true) what sample size would we need in order to show this?
+
+\noindent \textbf{Two possible approaches:}
+\begin{itemize}
+    \item Make a model for the data (possibly transforming to the Normal distribution if possible) and solve analytically (via software most likely)
+    \item "Pull yourself up by your own bootstraps" - resample from the pilot study data.
+\end{itemize}
+In the latter case we will simulate a study (actually, many) by using the given sample:
+<<echo=FALSE, include=TRUE, results='asis'>>=
+load("data/F4_breastfeeding.Rdata")
+cat("\\[", paste((y-x), collapse=", "), "\\]")
+@
+}
+\frame{ % -------------------------------------------------------------------->
+Resampling using the same same sample size (14).
+<<echo=FALSE, include=TRUE, results='asis'>>=
+load("data/F4_breastfeeding.Rdata")
+re1 <- sample(y-x, 14, T)
+wt1 <- wilcox.test(re1, exact=F)
+cat("\\[", paste(re1, collapse=", "), "\\]")
+@
+We are interested in the power of the test, so we want to see how often the null is rejected. For that purpose we collect the $p$-value. In  this case it is \Sexpr{signif(wt1$p.value, 2)}.
+
+Now lets repeat this process 100 times. What kind of $p$-values to we get?
+<<echo=FALSE, include=TRUE, fig.width=11, fig.height=4, cache=FALSE>>=
+load("data/F4_breastfeeding.Rdata")
+peas <- p_boot(things=y-x, 14)
+hist(peas, breaks=seq(0,1,0.05), col=.blue) # col=c(.green, rep(.blue, 19)))
+@
+}
+\frame{ % -------------------------------------------------------------------->
+These 100 'regenerated' $p$-values, suggest that the power is
+$\Sexpr{sum(peas<=0.05)}/100=\Sexpr{signif(sum(peas<=0.05)/100,2)}.
+
+This is an estimate! (If we want to get a feeling for the uncertainty of this estimate we must reiterate the procedure again.)
+<<echo=FALSE, include=FALSE, eval=FALSE>>=
+load("data/F4_breastfeeding.Rdata")
+(POW1 <- search(things=y-x, m=c(10,15,20,25,30,35,40,45), bi = 100, mi = 100))
+save(list=sprintf("POW%d",1), file="data/power_bm.rdat")
+@
+The plot shows a bootstrap estimate for varying sample sizes:
+<<echo=FALSE, include=TRUE, fig.width=11, fig.height=4>>=
+load("data/power_bm.rdat")
+names(POW1) <- c("size", "low", "est", "high")
+ggplot(POW1, aes(size, est, min=low, max=high)) +
+    geom_pointrange() +
+    geom_point(size=4) +
+    labs(x="(Re)Sample size", y="Estimated power") +
+    scale_x_continuous(limits=c(0,50)) +
+    scale_y_continuous(limits=c(0,1), breaks=c(seq(0,0.8,0.2), 0.9, 1)) +
+    theme_classic() +
+    geom_abline(intercept=0.8, slope=0, lty=2) +
+    geom_abline(intercept=0.9, slope=0, lty=3)
+@
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{References}
