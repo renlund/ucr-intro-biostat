@@ -499,12 +499,12 @@ boxplot(dd$s100b, add=TRUE, horizontal=TRUE, at=0.5, boxwex=1, lwd=2)
          \item a ecdf gives a lot of detail of a data set. \\
          \item graph with multiple boxplots can reveal pattern among subgroups.
       \end{itemize}
-   \item Avoid 3-dimensional bar charts.
+   \item Avoid 2D graphs shown in 3D.
    \item Avoid pie charts? It depends\ldots
 \end{itemize}
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{A situation for a pie chart}
+\frametitle{In defense of pie charts}
 <<pie, include=FALSE, fig.height=5, fig.width=5>>=
 x <- sample(LETTERS[1:5], size = 250, replace = T, prob = c(5,2,1,4,3))
 a_table <- table(x); save(a_table, file="a_table.rdata")
@@ -514,7 +514,7 @@ pie(a_table, col = wes.palette(5, "Cavalcanti"))
 @
 Is it of interest to be able to compare summation of levels?
 
-(Are A + B smaller than C + D + E?)
+(Are A + B + C smaller than D + E?)
 
 <<show_pie, results='asis'>>=
 plot_code <- sprintf("\\includegraphics[scale=0.48]{figure/%s}\n", paste0("pie",1:2))
@@ -530,13 +530,13 @@ cat(plot_code, sep="")
    \item Probabilities are numbers between (and including) 0 and 1.
 (0\% and 100\%.)\\
 
-   \rymd \item Probability is a "measure". \\
-
    \rymd \item $\pr(A)$ denotes "the probability of the event $A$".
 
    \rymd \item The basic rule of probability is that if $A$ and $B$ are
-mutually exclusive events the \[ \pr(A \el B)=\pr(A)+\pr(B). \]
+mutually exclusive events the \[ \pr(A \el B)=\pr(A)+\pr(B). \] (Probability is a "measure". \\ But what does it measure?) \\
 \end{itemize}
+
+
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Probability models for categorical or integer-valued data}
@@ -562,7 +562,7 @@ Then $\pr(Z=k)=1/6$ for all $k=1,2,\ldots,6$, or, equivalently
 
 \begin{center}\begin{tabular}{|c|cccccc|} \hline
 Value $k$ & 1  & 2 & 3 & 4 & 5 & 6 \\
-$\pr(X=v)$ & 1/6 & 1/6 & 1/6 & 1/6 & 1/6 & 1/6\\ \hline
+$\pr(X=k)$ & 1/6 & 1/6 & 1/6 & 1/6 & 1/6 & 1/6\\ \hline
 \end{tabular}\end{center}
 
 \rymd Others are difficult. Let $Y=$'the number of cigarettes a person selected at random smoked yesterday'.
@@ -656,13 +656,13 @@ If $X$ has density function $f$ as above, then we compute probabilities as
 % }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Histogram (with density) of FEV}
-The histogram - with density on the y-axis - estimates the density function.
+The histogram (with density on the y-axis) estimates the density function.
 <<fev2>>=
 load("data/F8_smoking.Rdata")
-h <- hist(dd$fev, plot=FALSE)
+h0 <- hist(dd$fev, plot=FALSE)
 par(mar=c(4,4,0,0))
-hist(dd$fev, freq=FALSE, ylim=c(0,1.05*max(h$density)), xlab="FEV (L)", main="",
-     col=.blue) # col="grey80")
+h <- hist(dd$fev, freq=FALSE, ylim=c(0,1.05*max(h0$density)),
+          xlab="FEV (L)", main="", col=.blue) # col="grey80")
 text(h$mids, h$density,labels=round(h$counts/sum(h$counts),3),pos=3)
 @
 }
