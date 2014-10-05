@@ -30,6 +30,16 @@ rm(HANDOUT)
 \author{Henrik Renlund}
 \date{2014-10-13}
 
+<<cache=FALSE, echo=FALSE, include=FALSE>>=
+.yellow <- wes.palette(5, "Cavalcanti")[1]
+.green <- wes.palette(5, "Cavalcanti")[2]
+.grey <- wes.palette(5, "Cavalcanti")[3]
+.blue <- wes.palette(5, "Cavalcanti")[4]
+.red <- wes.palette(5, "Cavalcanti")[5]
+.seq3 <- brewer.pal(5,"YlGn")[2:4]
+@
+
+
 \begin{document} % >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 \frame{ % -------------------------------------------------------------------->
@@ -274,13 +284,13 @@ plot(xx, dhyper(xx, 347, 371, 35), type='h', xlab="Outcome", ylab="Probability",
 points(8:26, dhyper(8:26,347, 371, 35), pch=16)
 points(17, dhyper(17,347, 371, 35), pch=4, cex=1.7, lwd=3)
 text(17, dhyper(17,347, 371, 35), pos=3, label="Expected", offset=1, cex=1.5)
-points(c(4:7,27:30), dhyper(c(4:7,27:30),347, 371, 35), pch=16, col="red")
-points(27, dhyper(27,347, 371, 35), pch=4, cex=1.7, col="red", lwd=3)
-text(27, dhyper(27,347, 371, 35), pos=3, col="red", label="Observed", offset=2, cex=1.5)
+points(c(4:7,27:30), dhyper(c(4:7,27:30),347, 371, 35), pch=16, col=.red)
+points(27, dhyper(27,347, 371, 35), pch=4, cex=1.7, col=.red, lwd=3)
+text(27, dhyper(27,347, 371, 35), pos=3, col=.red, label="Observed", offset=2, cex=1.5)
 arrows(x0=17.5, y0=dhyper(17,347, 371, 35),x1=26.5, y1=dhyper(17,347, 371, 35))
-abline(v=27, lty=2, col="red")
+abline(v=27, lty=2, col=.red)
 arrows(x0=16.5, y0=dhyper(17,347, 371, 35),x1=7.5, y1=dhyper(17,347, 371, 35))
-abline(v=7, lty=2, col="red")
+abline(v=7, lty=2, col=.red)
 text(x=22, y=dhyper(17,347, 371, 35), pos=3, label="Discrepancy")
 
 d <- 6; p <- sum(dhyper((17-d):(17+d), 347, 371, 35) )
@@ -544,7 +554,7 @@ axis(1,at=c(0,obs,5,q, 10), lab=c("0",round(obs,2),"5",round(q,2),"10"))
 abline(v=q, lty=2)
 arrows(x0=q, y0=0.15,x1=10.2,y1=0.15)
 text(x=9, y=0.15, pos=3, label="5%", cex=1.5)
-points(x=obs, y=0, pch=4, cex=2, lwd=2, col="red")
+points(x=obs, y=0, pch=4, cex=2, lwd=2, col=.red)
 text(x=obs+0.5, y=0, "observed", pos=3, cex=1.5)
 @
 }
@@ -580,7 +590,7 @@ barplot(prop.table(chd),
    beside=TRUE,
    legend=TRUE,
    main="Proportions within dataset",
-   col=brewer.pal(3,"Blues"),
+   col=.seq3,
    args.legend=c(x="top"))
 points(x=c(1,8), y=c(0,0.5), type='l', lwd=5)
 points(x=c(1,8), y=c(0.5,0), type='l', lwd=5)
@@ -588,7 +598,7 @@ barplot(prop.table(chd,2),
    beside=TRUE,
    legend=TRUE,
    main="Proportion within subgroups",
-   col=brewer.pal(3,"Blues"),
+   col=.seq3,
    args.legend=c(x="top"))
 @
 
@@ -643,8 +653,9 @@ One can also look at the 'residuals'.
 <<chiq_res>>=
 load("data/chd.rdata")
 res <- chisq.test(chd)$resid
+rownames(res) <- c("non", "moderate", "heavy")
 barplot(res, beside=TRUE, legend=TRUE, main="Residuals",
-   col=brewer.pal(3,"Blues"),args.legend=c(x="topright"))
+   col=.seq3,args.legend=c(x="topright"))
 @
 }
 \begin{frame}[fragile] % ----------------------------------------------------->
