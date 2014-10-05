@@ -140,7 +140,7 @@ Data:
          \item discrete; typically integer valued 1, 2, \ldots, \emph{or}
          \item continuous; i.e.\ any value in an interval.
       \end{itemize}
-   \item Categorical and
+   \item Categorical
       \begin{itemize}
          \item nominal, e.g.\ M, F, \emph{or}
          \item ordinal, e.g.\ "Happiness" is ordered: $\frown, -, \smile$.
@@ -434,7 +434,7 @@ Some points:
    Where $x_1, x_2, \ldots, x_n$ is the sample ($n=35$ in our example) and
    \[ \bar x=\frac 1n\sum_{i=1}^n x_i \] is the (sample) mean.
 
-   \rymd It is (approximately) the average distance to the average value.
+   \rymd It is (approximately) the mean distance to the mean value.
 \end{itemize}
 }
 \frame{ % -------------------------------------------------------------------->

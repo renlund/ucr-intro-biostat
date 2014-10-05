@@ -195,8 +195,34 @@ interesting effect size.
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \frame{ % -------------------------------------------------------------------->
-% Idea: Breastfeeding example.
+\frametitle{Breastfeeding example from Lecture 3}
+Duration of middle-ear infection between breast- and bottle fed babies.
+<<breast_ex, echo=FALSE, include=TRUE, results='asis'>>=
+load("data/F4_breastfeeding.Rdata")
+bord <- rbind(y,x,y-x,c(NA,rank(abs((y-x)[-1]))))
+colnames(bord) <- 1:14
+rownames(bord) <- c("bottle", "breast", "diff.", "rank")
+latex(bord, file="", title="pair")
+@
+To answer the question if bottle or breast
+
 <<>>=
+
+data.frame(
+   part = c("negative", "positive"),
+   ranks = c(paste0(bord[4,bord[3,]<0], collapse=", "), paste0(bord[4,bord[3,]>0], collapse=", ")),
+   sum = c(19.5, 71)
+)
+@
+
+
+
+
+
+
+
+
+<<echo=FALSE, include=FALSE, eval=FALSE>>=
 library(reshape2)
 library(ggplot2)
 
@@ -265,7 +291,6 @@ Idea: New drug versus Dabigatran.
 }
 
 \frame{ % -------------------------------------------------------------------->
-
 
 
 }
