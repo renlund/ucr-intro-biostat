@@ -618,12 +618,23 @@ latex(
 @
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Visualizing 'age' versus 'smoking' as percentages within groups}
+\frametitle{Visualizing 'age' versus 'smoking' as percentages within smoking groups}
 <<plot_smoker2>>=
 load("data/F8_smoking.Rdata")
 with(dd, tabsmok3 <<- prop.table(table( age=age, smoker=smoker), 2))
 par(mar=c(4,4,0,0))
 barplot(tabsmok3, beside=TRUE, legend=TRUE, ylab="Percent", col=brewer.pal(9, "YlGn"))
+@
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Visualizing 'smoking' versus 'age' as percentages within age groups}
+<<plot_smoker3>>=
+load("data/F8_smoking.Rdata")
+dd$age <- factor(dd$age)
+ggplot(dd, aes(age, fill=smoker)) +
+   geom_bar(position="fill") +
+   labs(x="Age", y="Fraction within year") +
+   scale_fill_manual(values=c(.blue, .yellow), name="Smoker")
 @
 }
 \frame{ % -------------------------------------------------------------------->
@@ -1129,6 +1140,8 @@ mean.
 
 \rymd The s.d. of the latter is called the Standard Error\\
 (Standard Error of the Mean if the mean is used as estimate.)
+
+\rymd (The sample s.d. is an estimate of the population s.d.)
 
 \rymd The CLT explains why many estimates ('statistics') are
 (approx.) Normally distributed even though the population
