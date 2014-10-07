@@ -81,7 +81,7 @@ vizP <- function(eff = 1,
                  M = 5000,
                  out = TRUE
 ){
-   set.seed(19790424)
+   set.seed(19790425)
    pow <- rep(NA,M); for(k in 1:M) pow[k] <- if(t.test(rnorm(n,eff,s))$p.value<0.05) 1 else 0
    POW <- mean(pow); POW
    M <- matrix(rnorm(n*N,mean=eff,sd=s), nrow=N, ncol=n)
@@ -169,7 +169,7 @@ vizP(n=10, out=FALSE)
 \frame{ % -------------------------------------------------------------------->
 \frametitle{A sample size of 25}
 <<n25>>=
-vizP(n=25, out=FALSE)
+vizP(n=15, out=FALSE)
 @
 }
 \frame{ % -------------------------------------------------------------------->
@@ -189,37 +189,7 @@ of rejecting the null hypothesis.
 
 \rymd We want a test to have high power as soon as the effect is \emph{interesting}.
 }
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Breastfeeding example from Lecture 3}
-Duration of middle-ear infection between breast- and bottle fed babies.
-<<breast_ex, echo=FALSE, include=TRUE, results='asis'>>=
-load("data/F4_breastfeeding.Rdata")
-bord <- rbind(y,x,y-x,c(NA,rank(abs((y-x)[-1]))))
-colnames(bord) <- 1:14
-rownames(bord) <- c("bottle", "breast", "diff.", "rank")
-latex(bord, file="", title="pair")
-@
-To answer the question if bottle or breast
-
-<<>>=
-
-data.frame(
-   part = c("negative", "positive"),
-   ranks = c(paste0(bord[4,bord[3,]<0], collapse=", "), paste0(bord[4,bord[3,]>0], collapse=", ")),
-   sum = c(19.5, 71)
-)
-@
-
-<<echo=FALSE, include=FALSE, eval=FALSE>>=
-library(reshape2)
-library(ggplot2)
-
-load("data/F4_breastfeeding.Rdata")
-hist(x, breaks=seq(0,200,25))
-hist(y, breaks=seq(0,200,25))
-df <- model.frame(~x+y)
-df$id <- 1:dim(df)[1]
-
+\frame{ %--------------------------------------------------------------------->
 \frametitle{Some points}
 
 \begin{itemize}
@@ -237,8 +207,40 @@ df$id <- 1:dim(df)[1]
     \end{itemize}
 \end{itemize}
 }
+
+% \frame{ % -------------------------------------------------------------------->
+% \frametitle{Breastfeeding example from Lecture 3}
+% Duration of middle-ear infection between breast- and bottle fed babies.
+% <<breast_ex, echo=FALSE, include=TRUE, results='asis'>>=
+% load("data/F4_breastfeeding.Rdata")
+% bord <- rbind(y,x,y-x,c(NA,rank(abs((y-x)[-1]))))
+% colnames(bord) <- 1:14
+% rownames(bord) <- c("bottle", "breast", "diff.", "rank")
+% latex(bord, file="", title="pair")
+% @
+% To answer the question if bottle or breast
+% <<>>=
+% data.frame(
+%    part = c("negative", "positive"),
+%    ranks = c(paste0(bord[4,bord[3,]<0], collapse=", "), paste0(bord[4,bord[3,]>0], collapse=", ")),
+%    sum = c(19.5, 71)
+% )
+% @
+%
+% <<echo=FALSE, include=FALSE, eval=FALSE>>=
+% library(reshape2)
+% library(ggplot2)
+%
+% load("data/F4_breastfeeding.Rdata")
+% hist(x, breaks=seq(0,200,25))
+% hist(y, breaks=seq(0,200,25))
+% df <- model.frame(~x+y)
+% df$id <- 1:dim(df)[1]
+% @
+% }
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section[Power]{Examples} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[Bootstrap example]{Examples} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 <<foonctions, cache=FALSE, echo=FALSE, include=FALSE>>=
 # load("data/F4_breastfeeding.Rdata")
@@ -334,18 +336,20 @@ cat("\\[", paste(re1, collapse=", "), "\\]")
 @
 We are interested in the power of the test, so we want to see how often the null is rejected. For that purpose we collect the $p$-value. In  this case it is \Sexpr{signif(wt1$p.value, 2)}.
 
-Now lets repeat this process 100 times. What kind of $p$-values to we get?
+Now lets repeat this process 100 times. What kind of $p$-values do we get?
 <<echo=FALSE, include=TRUE, fig.width=11, fig.height=4, cache=FALSE>>=
 load("data/F4_breastfeeding.Rdata")
 peas <- p_boot(things=y-x, 14)
-hist(peas, breaks=seq(0,1,0.05), col=.blue) # col=c(.green, rep(.blue, 19)))
+hist(peas, breaks=seq(0,1,0.05), col=.blue, main="") # col=c(.green, rep(.blue, 19)))
+p_star <- sum(peas<=0.05)/100
 @
 }
 \frame{ % -------------------------------------------------------------------->
 These 100 'regenerated' $p$-values, suggest that the power is
-$\Sexpr{sum(peas<=0.05)}/100=\Sexpr{signif(sum(peas<=0.05)/100,2)}.
+$\Sexpr{signif(p_star,2)}$.
 
-This is an estimate! (If we want to get a feeling for the uncertainty of this estimate we must reiterate the procedure again.)
+This is an estimate! (The error will depend on both the resample \emph{and} inital sample size.)
+
 <<echo=FALSE, include=FALSE, eval=FALSE>>=
 load("data/F4_breastfeeding.Rdata")
 (POW1 <- search(things=y-x, m=c(10,15,20,25,30,35,40,45), bi = 100, mi = 100))
@@ -355,12 +359,15 @@ The plot shows a bootstrap estimate for varying sample sizes:
 <<echo=FALSE, include=TRUE, fig.width=11, fig.height=4>>=
 load("data/power_bm.rdat")
 names(POW1) <- c("size", "low", "est", "high")
+err_guess <- 2*0.5*(1-0.5)/13
+POW1$low <- POW1$low - err_guess
+POW1$high <- POW1$high + err_guess
 ggplot(POW1, aes(size, est, min=low, max=high)) +
     geom_pointrange() +
     geom_point(size=4) +
     labs(x="(Re)Sample size", y="Estimated power") +
     scale_x_continuous(limits=c(0,50)) +
-    scale_y_continuous(limits=c(0,1), breaks=c(seq(0,0.8,0.2), 0.9, 1)) +
+    scale_y_continuous(limits=c(0,1.01), breaks=c(seq(0,0.8,0.2), 0.9, 1)) +
     theme_classic() +
     geom_abline(intercept=0.8, slope=0, lty=2) +
     geom_abline(intercept=0.9, slope=0, lty=3)
