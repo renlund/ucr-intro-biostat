@@ -129,7 +129,7 @@ Odds of bleeding
 \frametitle{Odds}
 For an event with probability $p$, the odds is $p/(1-p)$.
 <<odds_1, fig.height=5>>=
-par(mar=c(4,4,1,1), "ylog"=TRUE)
+par(mar=c(4,4.1,1,1), "ylog"=TRUE)
 curve(x/(1-x), from=0, to=1, ylab="Odds", xlab="Probability", lwd=2,
    cex.lab=1.5, las=1, yaxp=c(0,100,4))
 @
@@ -139,7 +139,7 @@ curve(x/(1-x), from=0, to=1, ylab="Odds", xlab="Probability", lwd=2,
 \frametitle{Odds}
 For small probabilities: odds $\approx$ probability.
 <<odds_2>>=
-par(mar=c(4,4,1,1))
+par(mar=c(4,4.1,1,1))
 curve(x/(1-x), from=0, to=0.75, ylab="Odds", xlab="Probability", lwd=2,
    xaxt='n', yaxt='n',xlim=c(0,0.667), ylim=c(0,2), cex.lab=1.5)
 axis(side=1,at=c(0,0.1,1/3, 0.5,2/3), labels=c("0", "0.1", "1/3", "1/2", "2/3"))
@@ -282,13 +282,13 @@ rm(bord, fb)
 @
 Sum the red values to get $p=0.00045$. % <------------------------------------------ \Sexpr here?
 <<hyper>>=
-par(mar=c(4,4,1,1))
+par(mar=c(4,4.1,1,1))
 xx <- 4:30
 plot(xx, dhyper(xx, 347, 371, 35), type='h', xlab="Outcome", ylab="Probability",
    ylim=c(0,0.17), cex.lab=1.5, las=1)
 points(8:26, dhyper(8:26,347, 371, 35), pch=16)
 points(17, dhyper(17,347, 371, 35), pch=4, cex=1.7, lwd=3)
-text(17, dhyper(17,347, 371, 35), pos=3, label="Expected", offset=1, cex=1.5)
+text(17, dhyper(17,347, 371, 35), pos=3, label="Mean under H0", offset=1, cex=1.5)
 points(c(4:7,27:30), dhyper(c(4:7,27:30),347, 371, 35), pch=16, col=.red)
 points(27, dhyper(27,347, 371, 35), pch=4, cex=1.7, col=.red, lwd=3)
 text(27, dhyper(27,347, 371, 35), pos=3, col=.red, label="Observed", offset=2, cex=1.5)
@@ -296,7 +296,7 @@ arrows(x0=17.5, y0=dhyper(17,347, 371, 35),x1=26.5, y1=dhyper(17,347, 371, 35))
 abline(v=27, lty=2, col=.red)
 arrows(x0=16.5, y0=dhyper(17,347, 371, 35),x1=7.5, y1=dhyper(17,347, 371, 35))
 abline(v=7, lty=2, col=.red)
-text(x=22, y=dhyper(17,347, 371, 35), pos=3, label="Discrepancy")
+text(x=23.5, y=dhyper(17,347, 371, 35), pos=3, label="Discrepancy")
 
 d <- 6; p <- sum(dhyper((17-d):(17+d), 347, 371, 35) )
 arrows(x0=(17-d), x1=(17+d), y0=0.155, y1=0.155, code=3)
