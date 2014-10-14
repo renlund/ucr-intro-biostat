@@ -134,7 +134,7 @@ was not statistically significant."
 
 \rymd "The study was designed to have a 90\% chance of
 detecting a clinically significant difference
-of 9".
+of 9 (on the VAS scale)".
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Attempt to visualize the power of a test}
@@ -287,9 +287,9 @@ search <- function(things, m, bi=100, mi=100, thresh=0.05, probs=c(0.05,0.5,.95)
 Recall the breastfeeding example from lecture 4.
 {\tiny
 <<echo=FALSE, include=TRUE, results='asis', cache=FALSE>>=
-load("data/F4_breastfeeding.Rdata")
-bord <- rbind(y,x,y-x,c(NA, rank(abs(y-x)[-1])))
-colnames(bord) <- 1:14
+load("data/F4_breastfeeding.Rdata"); x <- x[-1]; y <- y[-1]
+bord <- rbind(y,x,y-x, rank(abs(y-x)))
+colnames(bord) <- 1:13
 rownames(bord) <- c("bottle", "breast", "diff", "rank")
 latex(bord,file="", title="pair")
 @
@@ -322,14 +322,14 @@ Think of this as being a pilot study and assume the data is representative of so
 \end{itemize}
 In the latter case we will simulate a study (actually, many) by using the given sample:
 <<echo=FALSE, include=TRUE, results='asis'>>=
-load("data/F4_breastfeeding.Rdata")
+load("data/F4_breastfeeding.Rdata"); x <- x[-1]; y <- y[-1]
 cat("\\[", paste((y-x), collapse=", "), "\\]")
 @
 }
 \frame{ % -------------------------------------------------------------------->
-Resampling using the same same sample size (14).
-<<echo=FALSE, include=TRUE, results='asis'>>=
-load("data/F4_breastfeeding.Rdata")
+Resampling using the same same sample size (13).
+<<echo=FALSE, include=TRUE, results='asis', cache=FALSE>>=
+load("data/F4_breastfeeding.Rdata"); x <- x[-1]; y <- y[-1]
 re1 <- sample(y-x, 14, T)
 wt1 <- wilcox.test(re1, exact=F)
 cat("\\[", paste(re1, collapse=", "), "\\]")
@@ -338,20 +338,20 @@ We are interested in the power of the test, so we want to see how often the null
 
 Now lets repeat this process 100 times. What kind of $p$-values do we get?
 <<echo=FALSE, include=TRUE, fig.width=11, fig.height=4, cache=FALSE>>=
-load("data/F4_breastfeeding.Rdata")
-peas <- p_boot(things=y-x, 14)
+load("data/F4_breastfeeding.Rdata"); x <- x[-1]; y <- y[-1]
+peas <- p_boot(things=y-x, 13)
 hist(peas, breaks=seq(0,1,0.05), col=.blue, main="") # col=c(.green, rep(.blue, 19)))
 p_star <- sum(peas<=0.05)/100
 @
 }
 \frame{ % -------------------------------------------------------------------->
-These 100 'regenerated' $p$-values, suggest that the power is
+These 100 'regenerated' $p$-values, suggest that the power was
 $\Sexpr{signif(p_star,2)}$.
 
-This is an estimate! (The error will depend on both the resample \emph{and} inital sample size.)
+This is an estimate! (The error will depend on both the resample \emph{and} inital sample.)
 
 <<echo=FALSE, include=FALSE, eval=FALSE>>=
-load("data/F4_breastfeeding.Rdata")
+load("data/F4_breastfeeding.Rdata"); x <- x[-1]; y <- y[-1]
 (POW1 <- search(things=y-x, m=c(10,15,20,25,30,35,40,45), bi = 100, mi = 100))
 save(list=sprintf("POW%d",1), file="data/power_bm.rdat")
 @
@@ -367,11 +367,12 @@ ggplot(POW1, aes(size, est, min=low, max=high)) +
     geom_point(size=4) +
     labs(x="(Re)Sample size", y="Estimated power") +
     scale_x_continuous(limits=c(0,50)) +
-    scale_y_continuous(limits=c(0,1.01), breaks=c(seq(0,0.8,0.2), 0.9, 1)) +
+    scale_y_continuous(limits=c(0,1.02), breaks=c(seq(0,0.8,0.2), 0.9, 1)) +
     theme_classic() +
     geom_abline(intercept=0.8, slope=0, lty=2) +
     geom_abline(intercept=0.9, slope=0, lty=3)
 @
+So you should probably use at least 35 individuals.
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{References}
