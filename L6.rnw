@@ -28,7 +28,7 @@ rm(HANDOUT)
 
 \title{Introduction to Biostatistics \\ Lecture 6}
 \author{Henrik Renlund}
-\date{2014-10-13}
+\date{2015-02-02}
 
 <<cache=FALSE, echo=FALSE, include=FALSE>>=
 .yellow <- wes.palette(5, "Cavalcanti")[1]

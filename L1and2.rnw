@@ -75,7 +75,7 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
 
 \title{Introduction to Biostatistics \\ Lecture 1B and 2}
 \author{Henrik Renlund}
-\date{2014-10-06/07}
+\date{2015-01-26/27}
 
 \begin{document} % >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 \frame{ % -------------------------------------------------------------------->
