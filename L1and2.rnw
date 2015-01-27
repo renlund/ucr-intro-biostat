@@ -87,7 +87,7 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
 \frame{ % -------------------------------------------------------------------->
 \titlepage
 \begin{center}
-\includegraphics[scale=0.8]{pics/ucrlogo.pdf}
+\includegraphics[scale=0.2]{pics/ucrlogo.pdf}
 \end{center}
 }
 \frame{ % -------------------------------------------------------------------->
@@ -510,14 +510,13 @@ x <- sample(LETTERS[1:5], size = 250, replace = T, prob = c(5,2,1,4,3))
 a_table <- table(x); save(a_table, file="a_table.rdata")
 barchart(a_table, col = wes.palette(5, "Cavalcanti"))
 pie(a_table, col = wes.palette(5, "Cavalcanti"))
-
 @
 Is it of interest to be able to compare summation of levels?
 
 (Are A + B + C smaller than D + E?)
 
 <<show_pie, results='asis'>>=
-plot_code <- sprintf("\\includegraphics[scale=0.48]{figure/%s}\n", paste0("pie",1:2))
+plot_code <- sprintf("\\includegraphics[scale=0.48]{figure/%s}\n", paste0("pie-",1:2))
 cat(plot_code, sep="")
 @
 }
@@ -562,7 +561,7 @@ Then $\pr(Z=k)=1/6$ for all $k=1,2,\ldots,6$, or, equivalently
 
 \begin{center}\begin{tabular}{|c|cccccc|} \hline
 Value $k$ & 1  & 2 & 3 & 4 & 5 & 6 \\
-$\pr(X=k)$ & 1/6 & 1/6 & 1/6 & 1/6 & 1/6 & 1/6\\ \hline
+$\pr(Z=k)$ & 1/6 & 1/6 & 1/6 & 1/6 & 1/6 & 1/6\\ \hline
 \end{tabular}\end{center}
 
 \rymd Others are difficult. Let $Y=$'the number of cigarettes a person selected at random smoked yesterday'.
@@ -771,7 +770,7 @@ text( 0,0.15, "68%",cex=2)
 @
 
 <<plot_code_normal_stuff, results='asis'>>=
-plot_code <- sprintf("\\includegraphics[scale=0.48]{figure/%s}\n", paste0("normal_stuff",1:2))
+plot_code <- sprintf("\\includegraphics[scale=0.48]{figure/%s}\n", paste0("normal_stuff-",1:2))
 cat(plot_code, sep="")
 @
 }
@@ -1016,8 +1015,8 @@ good approximation) Normal by choosing $n$ large enough.
 \begin{itemize}
    \item How large does $n$ have to be? \\Depends on how skew the population density is. \\
       \begin{itemize}
-         \item In general $n=20$ will suffice. )
-         \item If population is Normal then $n=1$ is enough.)
+         \item In general $n=20$ will suffice.
+         \item If population is Normal then $n=1$ is enough.
       \end{itemize}
    \item CLT applies to many 'statistics' (= functions of samples).
 \end{itemize}
@@ -1036,7 +1035,7 @@ for(k in 1:5){
    curve(n*dgamma(x*n, shape=n), from=0, to=5, add=TRUE, lty=k, col=COL[k], lwd=2)
 }
 abline(v=1, col=COL[1], lwd=1, lty=1)
-legend("topright", legend=ns, col=COL, lwd=2, lty=1:4, title="Sample size", bty='n', cex=1.5)
+legend("topright", legend=c("Population", ns[-1]), col=COL, lwd=2, lty=1:4, title="Sample size", bty='n', cex=1.5)
 @
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1045,7 +1044,7 @@ legend("topright", legend=ns, col=COL, lwd=2, lty=1:4, title="Sample size", bty=
 
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Quantiles?}
-Quantiles refer to any way of dividing you data in (roughly) equal piles.
+Quantiles divides your data into (roughly) equal piles.
 \begin{itemize}
 \item the median is the 2-quantile
 \item the tertiles are the 3-quantiles (the $33\frac 13$ percentile and
