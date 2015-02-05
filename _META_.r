@@ -2,7 +2,7 @@ library(proh)
 library(knitr)
 library(Hmisc)
 library(RColorBrewer)
-library(weanderson)
+library(wesanderson)
 library(graphics)
 
 opts_chunk$set(
