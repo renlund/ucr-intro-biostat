@@ -35,7 +35,7 @@ rm(HANDOUT)
 .grey <- wes.palette(5, "Cavalcanti")[3]
 .blue <- wes.palette(5, "Cavalcanti")[4]
 .red <- wes.palette(5, "Cavalcanti")[5]
-.seq3 <- brewer.pal(5,"YlGn")[2:4]
+.seq3 <- brewer.pal(5, "YlGn")[2:4]
 @
 
 
@@ -49,7 +49,7 @@ rm(HANDOUT)
 \frame{ % -------------------------------------------------------------------->
 \titlepage
 \begin{center}
-\includegraphics[scale=0.8]{pics/ucrlogo.pdf}
+\includegraphics[scale=0.2]{pics/ucrlogo.pdf}
 \end{center}
 }
 % \frame{ % -------------------------------------------------------------------->
@@ -167,7 +167,7 @@ vizP(n=10, out=FALSE)
 @
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{A sample size of 25}
+\frametitle{A sample size of 15}
 <<n25>>=
 vizP(n=15, out=FALSE)
 @
@@ -308,7 +308,7 @@ WT <- wilcox.test(y-x,conf.int = T, exact=F)
 # wilcox.test(y,x, paired = TRUE, exact=F)$p.value
 # WT$estimate
 @
-The null hypothesis of no difference was tested with the Wilcoxon (Mann-Whitney) test. (This actually tests for a shift in median.)
+The null hypothesis of no difference was tested with the Wilcoxon signed rank test. (This  tests for a shift in median.)
 
 The $p$-value was \Sexpr{signif(wilcox.test(y-x, exact=F)$p.value,1)}
 }
@@ -340,7 +340,7 @@ Now lets repeat this process 100 times. What kind of $p$-values do we get?
 <<echo=FALSE, include=TRUE, fig.width=11, fig.height=4, cache=FALSE>>=
 load("data/F4_breastfeeding.Rdata"); x <- x[-1]; y <- y[-1]
 peas <- p_boot(things=y-x, 13)
-hist(peas, breaks=seq(0,1,0.05), col=.blue, main="") # col=c(.green, rep(.blue, 19)))
+hist(peas, breaks=seq(0,1,0.05), col=.blue, main="", xlab="P-values") # col=c(.green, rep(.blue, 19)))
 p_star <- sum(peas<=0.05)/100
 @
 }
