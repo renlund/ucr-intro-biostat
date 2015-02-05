@@ -58,7 +58,7 @@ rm(HANDOUT)
 \frame{ % -------------------------------------------------------------------->
 \titlepage
 \begin{center}
-\includegraphics[scale=0.8]{pics/ucrlogo.pdf}
+\includegraphics[scale=0.2]{pics/ucrlogo.pdf}
 \end{center}
 }
 % \frame{ % -------------------------------------------------------------------->
