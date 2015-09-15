@@ -27,14 +27,14 @@ rm(HANDOUT)
 
 \title{Introduction to Biostatistics \\ Lecture 9A}
 \author{Henrik Renlund}
-\date{2015-02-05}
+\date{October 16, 2015}
 
 <<cache=FALSE, echo=FALSE, include=FALSE>>=
-.yellow <- wes.palette(5, "Cavalcanti")[1]
-.green <- wes.palette(5, "Cavalcanti")[2]
-.grey <- wes.palette(5, "Cavalcanti")[3]
-.blue <- wes.palette(5, "Cavalcanti")[4]
-.red <- wes.palette(5, "Cavalcanti")[5]
+.yellow <- wes_palette("Cavalcanti", 5)[1]
+.green <- wes_palette("Cavalcanti", 5)[2]
+.grey <- wes_palette("Cavalcanti", 5)[3]
+.blue <- wes_palette("Cavalcanti", 5)[4]
+.red <- wes_palette("Cavalcanti", 5)[5]
 .seq3 <- brewer.pal(5, "YlGn")[2:4]
 @
 

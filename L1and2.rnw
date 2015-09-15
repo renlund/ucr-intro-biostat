@@ -59,11 +59,11 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
    else
       points(x=x, y=revsort(y,perm), ...)
 }
-.yellow <- wes.palette(5, "Cavalcanti")[1]
-.green <- wes.palette(5, "Cavalcanti")[2]
-.grey <- wes.palette(5, "Cavalcanti")[3]
-.blue <- wes.palette(5, "Cavalcanti")[4]
-.red <- wes.palette(5, "Cavalcanti")[5]
+.yellow <- wes_palette("Cavalcanti", 5)[1]
+.green <- wes_palette("Cavalcanti", 5)[2]
+.grey <- wes_palette("Cavalcanti", 5)[3]
+.blue <- wes_palette("Cavalcanti", 5)[4]
+.red <- wes_palette("Cavalcanti", 5)[5]
 @
 
 \newcommand{\pr}{\mathbf{Prob}}
@@ -75,7 +75,7 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
 
 \title{Introduction to Biostatistics \\ Lecture 1B and 2}
 \author{Henrik Renlund}
-\date{2015-01-26/27}
+\date{October 5-6, 2015}
 
 \begin{document} % >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 \frame{ % -------------------------------------------------------------------->
@@ -508,8 +508,8 @@ boxplot(dd$s100b, add=TRUE, horizontal=TRUE, at=0.5, boxwex=1, lwd=2)
 <<pie, include=FALSE, fig.height=5, fig.width=5>>=
 x <- sample(LETTERS[1:5], size = 250, replace = T, prob = c(5,2,1,4,3))
 a_table <- table(x); save(a_table, file="a_table.rdata")
-barchart(a_table, col = wes.palette(5, "Cavalcanti"))
-pie(a_table, col = wes.palette(5, "Cavalcanti"))
+barchart(a_table, col = wes_palette("Cavalcanti", 5))
+pie(a_table, col = wes_palette("Cavalcanti", 5))
 @
 Is it of interest to be able to compare summation of levels?
 
@@ -922,7 +922,7 @@ abline(v=179, lty=2, col="darkgray", lwd=2)
 if(use.sd.here) text(x=min(MAT)-DD, y=m+0.5, labels="Sample s.d.", xpd=TRUE, pos=2, offset=1)
 for(k in 1:m){
    tmp <- MAT[k,]
-   col <- if(m<=5) wes.palette(5, "Cavalcanti")[k]
+   col <- if(m<=5) wes_palette("Cavalcanti", 5)[k]
    mtm <- mean(tmp)
    sdt <- sd(tmp)
    if(use.sd.here) text(x=min(MAT)-DD, y=m+1-k, labels=round(sdt,1), xpd=TRUE, pos=2, offset=1)
@@ -961,7 +961,7 @@ abline(v=179, lty=2, col="darkgray", lwd=2)
 text(x=min(MAT)-DD, y=m+0.5, labels="Sample s.d.", xpd=TRUE, pos=2, offset=1)
 for(k in 1:m){
    tmp <- MAT[k,]
-   col <- if(m<=5) wes.palette(5, "Cavalcanti")[k]
+   col <- if(m<=5) wes_palette("Cavalcanti", 5)[k]
    mtm <- mean(tmp)
    sdt <- sd(tmp)
    text(x=min(MAT)-DD, y=m+1-k, labels=round(sdt,1), xpd=TRUE, pos=2, offset=1)
@@ -1026,7 +1026,7 @@ good approximation) Normal by choosing $n$ large enough.
 \frametitle{Attempt to visualize CLT (for means)}
 The distribution of sample means from a skewed distribution.
 <<exp_mean>>=
-COL <- wes.palette(5, "Cavalcanti") #brewer.pal(5, "Set2")
+COL <- wes_palette("Cavalcanti", 5) #brewer.pal(5, "Set2")
 par(mar=c(4,4,1,1))
 plot(1,1,type='n', xlim=c(0,2.5), ylim=c(0,1.8), xlab="Outcome", ylab="Density")
 ns <- c(1,2,5,10,20)
