@@ -251,40 +251,40 @@ see how estimates vary (multiple imputation).
 A sufficiently small data set might not need visualization.
 
 \rymda
-The level of the protein fibrinogen was recorded in a
-sample (of size 8) of women (20-40 years of age):
-<<show_fibrogen, results='asis'>>=
-load("data/F3_fibrinogen.Rdata")
-out <- paste(fibr, collapse="\\quad")
+The level of the protein albumin was recorded in a
+sample (of size 8) of mice (56 days old):
+<<show_albumin, results='asis'>>=
+load("data/F3_albumin.Rdata")
+out <- paste(alb, collapse="\\quad")
 cat("\\[", out, "\\]")
 @
-(measured in g/L - this data set will return in lecture 3).
+(measured in g/dL - this data set will return in lecture 3).
 
 \rymda One simple way to get some handle on data is to order it:
-<<show_fibrinogen_sorted, results='asis'>>=
-load("data/F3_fibrinogen.Rdata")
-out <- paste(sort(fibr), collapse="\\quad")
+<<show_albumin_sorted, results='asis'>>=
+load("data/F3_albumin.Rdata")
+out <- paste(sort(alb), collapse="\\quad")
 cat("\\[", out, "\\]")
 @
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Dotplot of fibrinogen data}
+\frametitle{Dotplot of albumin data}
 A dotplot is a one dimensional plot of the data.
 
 If there are non-unique (or close) points, the data set
 may appear smaller than it is. (Perturbation solves this.)
 
-<<plot_fib, fig.align='center', fig.height=5, fig.width=11>>=
-load("data/F3_fibrinogen.Rdata")
+<<plot_alb, fig.align='center', fig.height=5, fig.width=11>>=
+load("data/F3_albumin.Rdata")
 par(mar=c(4,9,0,0))
 plot(
-   x = fibr, y = rep(2,8),
+   x = alb, y = rep(2,8),
    yaxt='n', ylab="", ylim=c(0.5,2.5),
-   xlab="gram / litre",
+   xlab="g / dL",
    cex.lab=1.2,
    main=""
 )
-points(sort(fibr), c(1.1,0.9, rep(1,6)))
+points(sort(alb), c(1.1,0.9, rep(1,6)))
 wtf <- axis(2, at=1:2, labels=FALSE)
 text(
    x=2.1, y=wtf,
