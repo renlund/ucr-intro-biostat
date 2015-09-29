@@ -235,28 +235,26 @@ Missing data is usually a problem for observational studies.
 \rymd Suppose we investigate death within one year of myocardial infarction with a model that includes gender, age, BMI (some missing) and smoking status (some missing).
 
 \rymd The statistical software default is to include only those individuals with complete case data on all variables that you include.
+
+\rymd \emph{Complete case analysis} will only give an unbiased result if the reason that a value is missing has nothing to do with the actual value.
+
+\rymd If the missing mechanism is known this might be utilized in the analysis.
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Solutions}
+\frametitle{Solutions\ldots ish}
 There is no trick that guarantees a non-biased analysis.
 
-\rymd Maybe there are problem specific information. Is there e.g.\
-a known mechanism that created the missing data?
+\rymd \textbf{Single imputation:} replace missing value with a "typical" value for that variable (e.g. mean or median). Better: try to model the variable and predict it from the other variables. Both methods underestimates the variance in the variable and will give overly optimistic results.
 
-\rymd General strategies:
-\begin{itemize}
-\item Is missing data exist for 5\% or less, usually
-a complete case analysis is sufficient. \\
-Describe the missing data separately.
-\item One can impute the missing values. Imputation methods
-range from
-\begin{itemize}
-\item replace missing with the median/mode value for that variable,
-\item predict it from other models, and
-\item randomly select from data or prediction models repeatedly and
-see how estimates vary (multiple imputation).
-\end{itemize}
-\end{itemize}
+\rymd \textbf{Multiple imputation:} create multiple imputed data sets where the missing values are replaced differently in each, e.g. drawn at random from the non-missing values.  Better: use (random) estimates from modeling the variable.
+
+\rymd
+\begin{quote}
+"It is not that multiple imputation is so good, it is that all other methods are so bad."
+\begin{flushright}
+(Donald Rubin)
+\end{flushright}
+\end{quote}
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Visualization of (continuous) data}
