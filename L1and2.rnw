@@ -70,6 +70,7 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
 \newcommand{\el}{\mbox{\;or\;}}
 \newcommand{\rymd}{\vspace{0.3cm}}
 \newcommand{\rymda}{\vspace{0.5cm}}
+\newcommand{\code}{\texttt}
 %\setbeamersize{text margin left=6mm, text margin right=2mm}  % DEFAULT
 \setbeamersize{text margin left=3mm, text margin right=2mm}
 
@@ -131,66 +132,77 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Types of data}
 A data set contains one or more \emph{variables}, typically arranged as:
-\begin{center}\begin{tabular}{ccccc}
-Individual & Sex & Age & Height & Happiness \\
-1 & M & 29 & 1.77 & {\LARGE $\smile$ } \\
-2 & F & 37 & 1.80 & {\LARGE $\frown$ } \\
-3 & F & 25 & 1.68 & {\LARGE $-\phantom{.}$} \\
+\begin{center}\begin{tabular}{cccccc}
+\code{Individual} & \code{Gender} & \code{Age} & \code{Albumin} & \code{Diabetes} & \code{Happiness} \\
+1 & M & 29 & 3.92 & 0 & {\LARGE $\smile$ } \\
+2 & F & 37 & 4.12 & 0 & {\LARGE $\frown$ } \\
+3 & F & 25 & 4.75 & 1 & {\LARGE $-\phantom{.}$} \\
 $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$
 \end{tabular}\end{center}
-Data:
+Theoretical data categories:
 \begin{itemize}
    \item Numerical
       \begin{itemize}
-         \item discrete; typically integer valued 1, 2, \ldots, \emph{or}
-         \item continuous; i.e.\ any value in an interval.
+         \item discrete; typically integer valued 1, 2, \ldots, like \code{Age}, \emph{or}
+         \item continuous; i.e.\ any value in an interval, like \code{Albumin}.
       \end{itemize}
    \item Categorical
       \begin{itemize}
-         \item nominal, e.g.\ M, F, \emph{or}
-         \item ordinal, e.g.\ "Happiness" is ordered: $\frown, -, \smile$.
+         \item nominal, e.g.\ \code{Gender}, \emph{or}
+         \item ordinal, e.g.\ \code{Happiness}: $\frown, -, \smile$.
       \end{itemize}
 \end{itemize}
 }
 \frame{ % -------------------------------------------------------------------->
+\frametitle{How statisticians spend their time}
+In practice data might be stored in the wrong format.
+
+\rymd
+\textbf{Check this prior to analysis!}
+This is especially important if data has been transferred (between formats, different OS, etc).
+
+\rymd
+Common problems:
+\begin{itemize}
+   \item date- and categorical data suddenly stored as integers
+   \item numerical values stored as text (due to ',/.")
+\end{itemize}
+
+\rymd
+Usually (bias alert!) one only needs to distinguish
+\begin{itemize}
+   \item measurements (\code{Age}, \code{Albumin}) are numerical
+   \item categories (Gender, \code{Diabetes}, \code{Happiness}) are categorical.
+\end{itemize}
+}
+\frame{ % -------------------------------------------------------------------->
 \frametitle{"Table 1"}
-It is usual to provide a summary table of the variables you are working with.
-
-\rymd These may contain "the" average and "the" spread (continuous variables) or counts of levels (for categorical variables)
-
+It is useful to provide a summary table of the variables you are working with.
+Choice of descriptive measures may be context dependent.
 \begin{table}\begin{center}
-\caption{Description of data set.}
-\begin{tabular}{|cccc|} \hline
-Variable & n  & median/mode$^*$ & IQR  \\  \hline
-Sex  & 42    & F$^*$ & -  \\
-Age & 42  & 33.3 & 17.2 \\
-Height & 40  & 176.5 & 21.0 \\
-Happiness & 29  & $\frown^*$ & - \\ \hline
+%\caption{Data set on 84 individuals.}
+\begin{tabular}{|l|cc|cc|} \hline
+\emph{variable} &  \multicolumn{2}{c|}{\texttt{Diabetes No}} & \multicolumn{2}{c|}{\texttt{Diabetes Yes}}\\
+\multicolumn{1}{|r|}{\emph{value}} &  \emph{mean} & \emph{sd}  & \emph{mean} & \emph{sd} \\  \hline %\cline{3-4}
+\code{Age}   & 32.0 & 15.9 & 32.5 & 14.1\\
+\code{Albumin}  & 4.20 & 0.37 & 3.80 & 0.50\\ \cline{2-5}
+   & \emph{percent} & \emph{n} & \emph{percent} & \emph{n} \\ \cline{2-5}
+\code{Gender} &&&& \\
+\multicolumn{1}{|r|}{M}  & 64\% & 27 & 52\% & 22 \\
+ \multicolumn{1}{|r|}{F} & 36\% & 15 & 48\% & 20 \\
+\code{Happiness} &&&& \\
+\multicolumn{1}{|r|}{$\frown$}   & 61\% & 19 & 36\% & 15 \\
+\multicolumn{1}{|r|}{$-$}        & 23\% & 7  & 36\% & 15 \\
+\multicolumn{1}{|r|}{$\smile$}   & 16\% & 5  & 36\% & 12 \\ \hline
 \end{tabular}
 \end{center}\end{table}
 }
-\frame{ % -------------------------------------------------------------------->
-\begin{table}\begin{center}
-\caption{Data set on 42 individuals.}
-\begin{tabular}{|cccc|} \hline
-Variable & missing & mean & sd  \\  \hline
-Age  & 0 & 32.0 & 15.9 \\
-Height & 2 & 181.1 & 27.3 \\
- &  & Values & n \\\cline{3-4}
-Sex & 0 & M & 15 \\
- & & F & 27 \\
-Happiness & 11 &  $\frown$ & 19 \\
- && $-$ & 7 \\
- && $\smile$ & 5 \\ \hline
-\end{tabular}
-\end{center}\end{table}
-}
-\frame{ % -------------------------------------------------------------------->
-Example: Table 1 from "The effect of obesity on antibiotic treatment failure: a historical cohort study", \emph{Pharmacoepidemiol.\ Drug. Saf.} (2013)
-\begin{center}
-\includegraphics[scale=.65]{pics/table1_ex3.png}
-\end{center}
-}
+% \frame{ % -------------------------------------------------------------------->
+% Example: Table 1 from "The effect of obesity on antibiotic treatment failure: a historical cohort study", \emph{Pharmacoepidemiol.\ Drug. Saf.} (2013)
+% \begin{center}
+% \includegraphics[scale=.65]{pics/table1_ex3.png}
+% \end{center}
+% }
 % @article{longo2013effect,
 %   title={The effect of obesity on antibiotic treatment failure: a historical cohort study},
 %   author={Longo, Cristina and Bartlett, Gillian and MacGibbon, Brenda and Mayo, Nancy and Rosenberg, Ellen and Nadeau, Lyne and Daskalopoulou, Stella S},
