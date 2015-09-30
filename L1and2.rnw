@@ -391,7 +391,7 @@ load("data/F10B_subarach.Rdata")
 par(mar=c(4,4,0,0))
 plot.ecdf(ecdf(dd$s100b),  verticals=TRUE, do.points=FALSE, ylab="",
           xlab="microgram / litre", main="", ylim=c(-0.08,1), cex.lab=1.2)
-points(dd$s100b, rep(-0.05,113))
+points(dd$s100b, rep(-0.05,113), pch =16, col = rgb(0,0,0,alpha = 0.4))
 @
 }
 \frame{ % -------------------------------------------------------------------->
@@ -414,7 +414,7 @@ representative of the entire data set.
 
 \begin{itemize}
 \item  \textbf{The mode:} is the single most common data point. \\
-(Mostly meaningful for categorical, or possibly discrete, data.)
+(Mostly meaningful for categorical data.)
 
 \rymd
 \item  \textbf{The median:} is the midpoint of the ordered numerical sample.
@@ -439,7 +439,7 @@ Mean   & 22.6 & 28 \\ \hline
 \vspace{0.5cm}
 Some points:
 \begin{itemize}
-   \item Small data sets does not really need summary measures.
+   \item Small data sets might not  need summary measures.
    \item Symmetric data has mean $\approx$ median.
    \item (Easy enough to calculate both.)
 \end{itemize}
@@ -459,7 +459,7 @@ Some points:
 % \item variance is measured in (units)$^2$
 % \item $\sum (x_i-\bar x) \equiv 0$ so squaring is needed.
 
-   \item \textbf{Standard deviation} S.d.\ is given by the formula,
+   \item \textbf{Standard deviation (sd)} is given by the formula,
    \[ s = \sqrt{\frac{1}{n-1}\sum_{i=1}^n (x_i-\bar x)^2}. \]
    %It is a measure of spread with expressed in the same unit as the data.
    Where $x_1, x_2, \ldots, x_n$ is the sample ($n=35$ in our example) and
@@ -537,7 +537,7 @@ pie(a_table, col = wes_palette("Cavalcanti", 5))
 @
 Is it of interest to be able to compare summation of levels?
 
-(Are A + B + C smaller than D + E?)
+(Is A + B + C smaller than D + E?)
 
 <<show_pie, results='asis'>>=
 plot_code <- sprintf("\\includegraphics[scale=0.48]{figure/%s}\n", paste0("pie-",1:2))
