@@ -558,8 +558,6 @@ cat(plot_code, sep="")
    \rymd \item The basic rule of probability is that if $A$ and $B$ are
 mutually exclusive events the \[ \pr(A \el B)=\pr(A)+\pr(B). \] (Probability is a "measure". \\ But what does it measure?) \\
 \end{itemize}
-
-
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Probability models for categorical or integer-valued data}
@@ -602,7 +600,7 @@ in lecture 8.)
 of unique values (often categorical). They are visual analogous
 of tables.
 
-\rymd Ex: how do ages distributed over smoking status?
+\rymd Ex: how do the ages distribute over smoking status?
 <<tab_smoker, results='asis'>>=
 load("data/F8_smoking.Rdata") # dd
 with(dd, tabsmok <<- table( age=age, smoker=smoker))
@@ -697,7 +695,7 @@ h0 <- hist(dd$fev, plot=FALSE)
 par(mar=c(4,4,0,0))
 h <- hist(dd$fev, freq=FALSE, ylim=c(0,1.05*max(h0$density)),
           xlab="FEV (L)", main="", col=.blue) # col="grey80")
-text(h$mids, h$density,labels=round(h$counts/sum(h$counts),3),pos=3)
+text(h$mids, h$density,labels=paste0(round(100 * h$counts/sum(h$counts),1), "%"),pos=3)
 @
 }
 \frame{ % -------------------------------------------------------------------->
@@ -709,7 +707,7 @@ h <- hist(dd$fev, plot=FALSE)
 par(mar=c(4,4,0,0))
 h1 <- hist(dd$fev, freq=FALSE, breaks=seq(1,6,1), ylim=c(0,1.05*max(h$density)),
            xlab="FEV (L)", main="", col=.blue) #col="grey80")
-text(h1$mids, h1$density,round(h1$counts/sum(h1$counts),3),pos=3)
+text(h1$mids, h1$density,paste0(round(100 * h1$counts/sum(h1$counts),1), "%"),pos=3)
 @
 }
 \frame{ % -------------------------------------------------------------------->
@@ -717,11 +715,27 @@ text(h1$mids, h1$density,round(h1$counts/sum(h1$counts),3),pos=3)
 \ldots and could be varying.
 <<fev4>>=
 load("data/F8_smoking.Rdata") # dd
-h <- hist(dd$fev, plot=FALSE)
+#h <- hist(dd$fev, plot=FALSE)
 par(mar=c(4,4,0,0))
 h2 <- hist(dd$fev, freq=FALSE, breaks=c(1,2,2.5,2.75,3,3.5,4,6),
            ylim=c(0,1.05*max(h$density)), xlab="FEV (L)", main="", col=.blue) #col="grey80")
-text(h2$mids, h2$density,round(h2$counts/sum(h2$counts),2),pos=3)
+text(h2$mids, h2$density,paste0(round(100 * h2$counts/sum(h2$counts),1), "%"),pos=3)
+@
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Histograms with counts}
+The scale of histograms with counts depends on chosen interval width and sample size. Below is the FEV data set with different widths.
+
+<<>>=
+load("data/F8_smoking.Rdata") # dd
+layout(matrix(1:2,nrow=1))
+h1 <- hist(dd$fev, plot=FALSE, breaks=seq(1,6,1))
+par(mar=c(4,4,0,0))
+hist(dd$fev, freq=TRUE, breaks=seq(1,6,1), ylim=c(0,1.05*max(h1$counts)),
+           xlab="FEV (L)", main="", col=.blue)
+hist(dd$fev, freq=TRUE, ylim=c(0,1.05*max(h1$counts)),
+          xlab="FEV (L)", main="", col=.blue)
+layout(matrix(1,nrow = 1))
 @
 }
 \frame{ % -------------------------------------------------------------------->
@@ -748,16 +762,18 @@ load("data/F8_smoking.Rdata") # dd
 n <- 11
 par(mar=c(4,4,0,0))
 h0 <- hist(dd$fev, plot=FALSE)
-h <- hist(
+curve(dnorm(x,mean(dd$fev), sd(dd$fev)), from=1, to=6, lwd=2,ylim=c(0,1.05*max(h0$density)))
+hist(
    dd$fev,
    freq=FALSE,
    ylim=c(0,1.05*max(h0$density)),
    xlab="FEV (L)",
    main="",
    col=.blue, #col="grey80",
-   breaks=seq(1,6,length.out=n)
+   breaks=seq(1,6,length.out=n),
+   add = TRUE
 )
-curve(dnorm(x,mean(dd$fev), sd(dd$fev)), from=-1, to=8, add=TRUE, lwd=2)
+curve(dnorm(x,mean(dd$fev), sd(dd$fev)), from=1, to=6, lwd=2, add =TRUE, lty = 2)
 @
 }
 \frame{ % --------------------------------------------------------------------->
@@ -798,7 +814,6 @@ plot_code <- sprintf("\\includegraphics[scale=0.48]{figure/%s}\n", paste0("norma
 cat(plot_code, sep="")
 @
 }
-
 \frame{ % --------------------------------------------------------------------->
 \frametitle{The Normal distribution N$(\mu,\sigma)$}
 is determined by its mean ($\mu$) and standard deviation ($\sigma$). \\
