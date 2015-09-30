@@ -888,12 +888,25 @@ set_params <- function(){
    d <<- 0.3
    DD <<- 1.5
    COL <<- "black" # "red"
+   alfa <<- 255
+   wes_rgb <<- c(
+      rgb(216, 183, 10,  alpha = alfa, maxColorValue = 255),
+      rgb(2,   64,  27,  alpha = alfa, maxColorValue = 255),
+      rgb(162, 164, 117, alpha = alfa, maxColorValue = 255),
+      rgb(129, 168, 141, alpha = alfa, maxColorValue = 255),
+      rgb(151, 45,  21,  alpha = alfa, maxColorValue = 255)
+   )
 }
 @
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Attempt to visualize sampling from a given model}
-Assume that height of individuals in some population is Normally distributed with
-mean 179 (cm) and s.d. 6.35 (cm).
+
+\rymd Assume that height of individuals in some population
+\begin{itemize}
+   \item is Normally distributed,
+   \item has mean ($\mu$) 179 (cm), and,
+   \item has s.d. ($\sigma$) 6.35 (cm).
+\end{itemize}
 
 \rymd The following three slides show histogram of samples of sizes 10, 50 and 500, respectively.
 }
@@ -903,7 +916,7 @@ mean 179 (cm) and s.d. 6.35 (cm).
 set_params()
 curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,
       xlab="Outcome", ylab="Density", ylim=c(-0.005,yMax))
-points(x=x1,y=rep(-0.005, length(x1)))
+points(x=x1,y=rep(-0.005, length(x1)), pch = 16, col = rgb(0,0,0,alpha = 0.3))
 hist(x1, add=TRUE, prob=TRUE, breaks=B, col=.blue)
 curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,lty=2, add=TRUE)
 @
@@ -914,7 +927,7 @@ curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,lty=2, add=TRUE)
 set_params()
 curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,
       xlab="Outcome", ylab="Density", ylim=c(-0.005,yMax))
-points(x=x2,y=rep(-0.005, length(x2)))
+points(x=x2,y=rep(-0.005, length(x2)), pch = 16, col = rgb(0,0,0,alpha = 0.3))
 hist(x2, add=TRUE, prob=TRUE, breaks=B, col=.blue)
 curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,lty=2, add=TRUE)
 @
@@ -926,7 +939,7 @@ set_params()
 B <- seq(from=145,to=215,by=2.5)
 curve(dnorm(x, mean=Mu, sd=Sd), from=Min, to=Max,
       xlab="Outcome", ylab="Density", ylim=c(-0.005,yMax))
-points(x=x3,y=rep(-0.005, length(x3)))
+points(x=x3,y=rep(-0.005, length(x3)), pch = 16, col = rgb(0,0,0,alpha = 0.3))
 hist(x3, add=TRUE, prob=TRUE, breaks=B, col=.blue)
 curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,lty=2, add=TRUE)
 @
@@ -934,16 +947,23 @@ curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,lty=2, add=TRUE)
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Properties of samples and sample means}
 Suppose we have a sample of size 10 from the population.
-Recall that the s.d. is (approx.) the average distance
-to the average value.
 
-\rymd We want to know the population mean ($\mu$).
+\rymd We want to know the \emph{population mean} ($\mu$).
 
-\rymd We can estimate with the sample mean ($\mu^*$).
+\rymd We can estimate with the \emph{sample mean}($\mu^*$).
 
-\rymd To know how good this is we need to know properties of
-samples of size 10. This can be achieved by considering
-repeated samples of size 10.
+\rymd But how good a guess is $\mu^*$?
+
+Well\ldots if the sample is drawn at random\footnote{All possible samples are equiprobable} then $\mu^*$ is \emph{unbiased} (on average correct).
+
+\rymd  \emph{If we knew} that the sd of $\mu^* = 180$ was, say 3.0, then there is an
+(approximate!) interpretation.
+\begin{quotation}
+The estimated value 180 (cm) is on average off by 3.0  (cm).
+\end{quotation}
+But what \emph{is} the standard deviation of a sample mean?
+
+\rymd Consider several iterations of the procedure of drawing a sample of size 10.
 }
 \frame{ % -------------------------------------------------------------------->
 %\frametitle{Properties of samples and sample means}
@@ -954,18 +974,20 @@ MAT <- matrix( rnorm(n*m, mean=Mu, sd=Sd), ncol=n, nrow=m )
 save(MAT, file="data/MAT.rdata")
 if(use.sd.here) par(mar=c(5, 7, 4, 2)) else par(mar=c(5,4,4,2) + 0.1) # default c(5,4,4,2) + 0.1
 plot( x=c(min(MAT), max(MAT)), y=c(0,m), type='n',
-      xlab="Outcome", ylab="", yaxt='n', bty='o',
+      xlab="Outcome", ylab="", yaxt='n', bty='o', xaxt = 'n',
       main=paste(m, "samples of size", n, "with population mean =", Mu, "and sd. = ", Sd)
 )
+axis(1, at = c(170,179,190))
 abline(v=179, lty=2, col="darkgray", lwd=2)
 if(use.sd.here) text(x=min(MAT)-DD, y=m+0.5, labels="Sample s.d.", xpd=TRUE, pos=2, offset=1)
 for(k in 1:m){
    tmp <- MAT[k,]
-   col <- if(m<=5) wes_palette("Cavalcanti", 5)[k]
+   #col <- if(m<=5) wes_palette("Cavalcanti", 5)[k]
+   col <- if(m<=5) wes_rgb[k]
    mtm <- mean(tmp)
    sdt <- sd(tmp)
    if(use.sd.here) text(x=min(MAT)-DD, y=m+1-k, labels=round(sdt,1), xpd=TRUE, pos=2, offset=1)
-   points(x=tmp, y=rep(m+1-k,n), pch=k, col=col)
+   points(x=tmp, y=rep(m+1-k,n), pch=20+k, bg=col, cex = 1.5)
 }
 @
 }
@@ -993,20 +1015,22 @@ load(file="data/MAT.rdata")
 set_params()
 par(mar=c(5, 7, 4, 2) )# default c(5,4,4,2) + 0.1
 plot( x=c(min(MAT), max(MAT)), y=c(0,m), type='n',
-      xlab="Outcome", ylab="", yaxt='n', bty='o',
+      xlab="Outcome", ylab="", yaxt='n', bty='o', xaxt = 'n',
       main=paste(m, "samples of size", n, "with population mean =", Mu, "and sd. = ", Sd)
 )
+axis(1, at = c(170,179,190))
 abline(v=179, lty=2, col="darkgray", lwd=2)
 text(x=min(MAT)-DD, y=m+0.5, labels="Sample s.d.", xpd=TRUE, pos=2, offset=1)
 for(k in 1:m){
    tmp <- MAT[k,]
-   col <- if(m<=5) wes_palette("Cavalcanti", 5)[k]
+   #col <- if(m<=5) wes_palette("Cavalcanti", 5)[k]
+   col <- if(m<=5) wes_rgb[k]
    mtm <- mean(tmp)
    sdt <- sd(tmp)
    text(x=min(MAT)-DD, y=m+1-k, labels=round(sdt,1), xpd=TRUE, pos=2, offset=1)
-   points(x=tmp, y=rep(m+1-k,n), pch=k, col=col)
-   points(x=mtm, y=m+1-k, cex=2, col=col, pch=k, lwd=3)
-   points(x=mtm, y=0, cex=2, col=col, pch=k, lwd=3)
+   points(x=tmp, y=rep(m+1-k,n), pch=20+k, bg=col, cex = 1.5)
+   points(x=mtm, y=m+1-k, cex=3, bg=col, pch=20+k, lwd=2)
+   points(x=mtm, y=0, cex=3, bg=col, pch=20+k, lwd=2)
    segments(x0 = mtm, y0 = 0.3, x1 = mtm, y1 = m+0.7-k, col = col, lty = 2)
 }
 tmp <- rowMeans(MAT)
@@ -1017,11 +1041,15 @@ text(x=min(MAT)-DD, y=0, labels=paste("SEM ~",round(sd(tmp),1)), xpd=TRUE, pos=2
 \frame{ % -------------------------------------------------------------------->
 <<pop_and_mean>>=
 set_params()
-curve(dnorm(x,Mu,Sd), from=165,to=195, ylim=c(0,0.22), ylab="Density",
-      xlab="", lty=1, lwd=2)
+curve(dnorm(x,Mu,Sd), from=min(MAT),to=max(MAT), ylim=c(0,0.20), ylab="Density",
+      xlab="", lty=1, lwd=2, xaxt = 'n')
+axis(1, at = c(170, 179, 190))
 curve(dnorm(x,Mu,Sd/sqrt(10)), from=165,to=195, add=TRUE, lty=2, lwd=2)
-legend("topleft", legend=c("population", "mean of sample (with n=10)"),
-       title="Distribution of:", lty=1:2, lwd=2, bty='n', cex=1.5)
+legend("topleft",
+       legend=c(expression(N(mu, sigma) - population),
+                expression(N(mu,sigma/sqrt(10)) - `sample mean`),
+                expression(mu==`179.0`,sigma==6.35)),
+       title="Distribution of:", lty=c(1:2,0,0), lwd=c(2,2,0,0), bty='n', cex=1.5)
 @
 }
 \frame{ % -------------------------------------------------------------------->
@@ -1062,7 +1090,7 @@ good approximation) Normal by choosing $n$ large enough.
 }
 
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Attempt to visualize CLT (for means)}
+\frametitle{Attempt to visualize CLT for the sample mean}
 The distribution of sample means from a skewed distribution.
 <<exp_mean>>=
 COL <- wes_palette("Cavalcanti", 5) #brewer.pal(5, "Set2")
@@ -1073,8 +1101,8 @@ for(k in 1:5){
    n <- ns[k]
    curve(n*dgamma(x*n, shape=n), from=0, to=5, add=TRUE, lty=k, col=COL[k], lwd=2)
 }
-abline(v=1, col=COL[1], lwd=1, lty=1)
-legend("topright", legend=c("Population", ns[-1]), col=COL, lwd=2, lty=1:4, title="Sample size", bty='n', cex=1.5)
+abline(v=1, col="grey", lwd=1, lty=1)
+legend("topright", legend=c("1 (Population)", ns[-1]), col=COL, lwd=2, lty=1:4, title="Sample size", bty='n', cex=1.5)
 @
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1088,7 +1116,7 @@ Quantiles divides your data into (roughly) equal piles.
 \item the median is the 2-quantile
 \item the tertiles are the 3-quantiles (the $33\frac 13$ percentile and
 the $66\frac 23$ percentile)
-\item the quartiles Q1, Q2 and Q3 are the 4-quantiles.
+\item the quartiles (Q1, Q2 and Q3) are the 4-quantiles.
 \item \ldots and so on.
 \end{itemize}
 }
@@ -1111,8 +1139,9 @@ A histogram with best normal density fit.
 <<pev_h, cache=FALSE>>=
 load("data/F4_crossover.Rdata")
 par(mar=c(4,4,0,0))
-hist(y-x, freq=FALSE, breaks=seq(-50,150,len=10), xlab="Differences (formoterol-sabutamol) L/min", xlim=c(-60,160), ylim=c(0,.018), main="", col=.blue)
-curve( dnorm(t, mean(y-x), sd(y-x)), from=-250, to=200, lty=2, add=TRUE, xname="t")
+curve( dnorm(t, mean(y-x), sd(y-x)), from=-60, to=160, ylim=c(0,.016), lty=1, xname="t", xlab="Differences (formoterol-sabutamol) L/min", main="", ylab = "Density", xlim = c(-50, 150))
+hist(y-x, freq=FALSE, breaks=seq(-50,150,len=10),  xlim=c(-60,160), ylim=c(0,.018),  col=.blue, add = TRUE)
+curve( dnorm(t, mean(y-x), sd(y-x)), from=-50, to=150, lty=2, add=TRUE, xname="t")
 @
 }
 \frame{ % -------------------------------------------------------------------->
