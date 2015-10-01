@@ -1,4 +1,3 @@
-library(proh)
 library(knitr)
 library(Hmisc)
 library(RColorBrewer)
@@ -6,12 +5,11 @@ library(wesanderson)
 library(graphics)
 
 opts_chunk$set(
-   cache=TRUE, # default: FALSE
-   #include=TRUE, # default: TRUE
-   echo=FALSE, # default: TRUE
-   message=FALSE, # default: TRUE
-   error=FALSE, # default: TRUE
-   warning=FALSE, # default: TRUE
+   cache=TRUE,
+   echo=FALSE,
+   message=FALSE,
+   error=FALSE,
+   warning=FALSE,
    fig.align='center',
    fig.width=11,
    fig.height=5
@@ -38,6 +36,6 @@ knit2pdf("L1and2.rnw", clean=TRUE)
 .alsHO("L1and2.rnw")
 
 # clean'n'kill --------------------------
-proh::clean()
-proh::killCache()
+# proh::clean()
+# proh::killCache()
 # rm(list=setdiff(ls(), "set_params"))
