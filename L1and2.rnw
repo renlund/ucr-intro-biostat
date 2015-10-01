@@ -81,9 +81,14 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
 \begin{document} % >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Introduction to Biostatistics}
+\begin{center}
 \begin{figure}
-\includegraphics[scale=0.35]{pics/livinghistogram.jpg}
+\includegraphics[scale=0.39]{pics/livinghistogram.jpg}
 \end{figure}
+\end{center}
+\begin{flushright}
+{\tiny Arranged by Linda Strausbaugh (Genetics 147:5, 1997)}
+\end{flushright}
 }
 \frame{ % -------------------------------------------------------------------->
 \titlepage
@@ -100,7 +105,7 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
 \begin{itemize}
    \item Data description
       \begin{itemize}
-         \item Graphs %: barcharts, ecdf, boxplot, histogams, QQplots
+         \item Graphs
          \item Tables and summary measures
       \end{itemize}
    \item Probability Models
@@ -114,21 +119,7 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section[Descriptions]{Data and descriptive statistics} %%%%%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \frame{
-% \frametitle{Importing data into your software of choice}
-%
-% \begin{itemize}
-% \item  Is the file format readable?
-% \end{itemize}
-% Data tabulated in text files is (universally?) readable. If so;
-% \begin{itemize}
-% \item  Does the first line contain variable names?
-% \item  What separates values ('space', 'tab', ',')?
-% \item  How are decimals written, as 8.1 or 8,1?
-% \item  How are missing values coded?
-% \item  Are some categorical values coded as integers?
-% \end{itemize}
-% }
+
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Types of data}
 A data set contains one or more \emph{variables}, typically arranged as:
@@ -197,19 +188,6 @@ Choice of descriptive measures may be context dependent.
 \end{tabular}
 \end{center}\end{table}
 }
-% \frame{ % -------------------------------------------------------------------->
-% Example: Table 1 from "The effect of obesity on antibiotic treatment failure: a historical cohort study", \emph{Pharmacoepidemiol.\ Drug. Saf.} (2013)
-% \begin{center}
-% \includegraphics[scale=.65]{pics/table1_ex3.png}
-% \end{center}
-% }
-% @article{longo2013effect,
-%   title={The effect of obesity on antibiotic treatment failure: a historical cohort study},
-%   author={Longo, Cristina and Bartlett, Gillian and MacGibbon, Brenda and Mayo, Nancy and Rosenberg, Ellen and Nadeau, Lyne and Daskalopoulou, Stella S},
-%   journal={Pharmacoepidemiology and drug safety},
-%   year={2013},
-%   publisher={Wiley Online Library}
-% }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Some points on tables (for publication)}
 \begin{itemize}
@@ -451,13 +429,6 @@ Some points:
    \item  \textbf{Range} The difference between the maximum and the minimum value.
 
    \item  \textbf{Interquartile range (IQR)}: Q3-Q1.
-% \item  The \textbf{variance} is (almost) the average \emph{squared} distance to the mean value.
-% Formula:
-% \[ s^2 = \frac{1}{n-1}\sum_{i=1}^n (x_i-\bar x)^2 = \frac{(x_1-\bar x)^2+\cdots +(x_n-\bar x)^2}{n-1}. \]
-% Note:
-% \begin{itemize}
-% \item variance is measured in (units)$^2$
-% \item $\sum (x_i-\bar x) \equiv 0$ so squaring is needed.
 
    \item \textbf{Standard deviation (sd)} is given by the formula,
    \[ s = \sqrt{\frac{1}{n-1}\sum_{i=1}^n (x_i-\bar x)^2}. \]
@@ -669,23 +640,6 @@ A continuous RV is described by its \emph{density function}.
 If $X$ has density function $f$ as above, then we compute probabilities as
 \[ \pr( a\leq X \leq b)=\;\mbox{Area(a,b)}. \]
 }
-% <<fev1>>=
-% load("data/F8_smoking.Rdata") # dd
-% h <- hist(dd$fev, plot=FALSE)
-% pdf("data/graf/fev_h1.pdf", height=7, width=11)
-% par(mar=c(4,4,0,0))
-% h <- hist(dd$fev, freq=FALSE, ylim=c(0,1.05*max(h$density)), xlab="FEV", main="",
-%    col="grey80")
-% text(h$mids, h$density,labels=h$counts,pos=3)
-%
-% @
-% \frame{
-% \frametitle{Histogram (with density) of 'FEV'}
-% The histogram estimates the density function.
-% \begin{center}
-% \includegraphics[scale=\plot]{data/graf/fev_h1.pdf}
-% \end{center}
-% }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Histogram (with density) of FEV}
 The histogram (with density on the y-axis) estimates the density function.
@@ -740,7 +694,6 @@ layout(matrix(1,nrow = 1))
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Summary}
-%\begin{table}
 \begin{center}
 \begin{tabular}{|c|c|p{5cm}|} \hline
 Graph & Summary Measure & Theory \\ \hline \hline
@@ -752,7 +705,6 @@ Histograms & & Density functions (continuous RV)\\ \hline
 & mean, s.d. & symmetrical distribution ($\approx$ Normal distribution) \\ \hline
 \end{tabular}
 \end{center}
-%\end{table}
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Assuming Normality}

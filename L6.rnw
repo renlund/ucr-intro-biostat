@@ -42,18 +42,18 @@ rm(HANDOUT)
 
 \begin{document} % >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-% \frame{ % -------------------------------------------------------------------->
-% \begin{center}
-% \begin{figure}
-% \includegraphics[scale=0.45]{pics/Karl_Pearson_2.jpg}
-% \caption{Karl Pearson introduced the $\chi^2$-test in ''On the Criterion that a Given System of Deviations from the Probable in the Case of a Correlated System of Variables is such that it can be Reasonably Supposed to have Arisen from Random Sampling'' (1900) }
-% \end{figure}
-% \end{center}
-% }
 \frame{ % -------------------------------------------------------------------->
 \begin{center}
-\includegraphics[scale=0.5]{pics/Betting-Odds.jpg}
+\includegraphics[scale=0.24]{pics/Tote_Board.jpg}
 \end{center}
+\begin{flushright}
+ {\tiny
+  "Tote Board, Hollywood Park, Century, Inglewood, CA, US" by jondoeforty1\\
+  \url{http://www.flickr.com/photos/jondoeforty1/2602455841/}\\
+  Licensed under CC BY 2.0 via Commons\\
+  %\url{https://commons.wikimedia.org/wiki}
+ }
+\end{flushright}
 }
 \frame{ % -------------------------------------------------------------------->
 \titlepage
@@ -350,9 +350,6 @@ RR $=$ & 1.6 & 3.6 & 8.3 \\ \hline
 In a sense this gives us a confidence interval $p_1$
 but it is "too" wide since it takes into account the
 uncertainty of $p_2$.
-% Of course there are reasons to be interested in e.g.\
-% the absolute risk
-% as well as the risk difference.
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Absolute risk}

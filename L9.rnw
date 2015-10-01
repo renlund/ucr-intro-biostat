@@ -43,8 +43,15 @@ rm(HANDOUT)
 
 \frame{ % -------------------------------------------------------------------->
 \begin{center}
-\includegraphics[scale=0.30]{pics/StatPower.png}
+\includegraphics[scale=0.65]{pics/stats_spiderman.jpg}
+%\includegraphics[scale=0.30]{pics/StatPower.png}
 \end{center}
+\begin{flushright}
+ {\tiny
+  "Statistical Spidey knows the score." by Matthew B. Wall\\
+  \url{https://computingforpsychologists.wordpress.com/2013/04/11/comment-on-the-button-et-al-2013-neuroscience-power-failure-article-in-nrn/}\\
+ }
+\end{flushright}
 }
 \frame{ % -------------------------------------------------------------------->
 \titlepage
