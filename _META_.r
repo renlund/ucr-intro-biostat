@@ -22,8 +22,7 @@ opts_chunk$set(
    inName <- paste0(fileName(name)$name, ".pdf")
    outName <- paste0(fileName(name)$name, "_handout.pdf")
    file.rename(from = inName, to = outName)
-   HANDOUT <- FALSE; knit2pdf(name)
-   proh::clean()
+   HANDOUT <- FALSE; knit2pdf(name, clean = TRUE)
 }
 
 # LECTURE 9 ----------------------------
