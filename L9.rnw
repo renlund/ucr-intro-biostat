@@ -29,7 +29,7 @@ rm(HANDOUT)
 \author{Henrik Renlund}
 \date{October 16, 2015}
 
-<<cache=FALSE, echo=FALSE, include=FALSE>>=
+<<colors, cache=FALSE, echo=FALSE, include=FALSE>>=
 .yellow <- wes_palette("Cavalcanti", 5)[1]
 .green <- wes_palette("Cavalcanti", 5)[2]
 .grey <- wes_palette("Cavalcanti", 5)[3]
@@ -293,7 +293,7 @@ search <- function(things, m, bi=100, mi=100, thresh=0.05, probs=c(0.05,0.5,.95)
 \frametitle{Sample size calculations without a model}
 Recall the breastfeeding example from lecture 4.
 {\tiny
-<<echo=FALSE, include=TRUE, results='asis', cache=FALSE>>=
+<<bootstrap1, echo=FALSE, include=TRUE, results='asis', cache=FALSE>>=
 load("data/F4_breastfeeding.Rdata"); x <- x[-1]; y <- y[-1]
 bord <- rbind(y,x,y-x, rank(abs(y-x)))
 colnames(bord) <- 1:13
@@ -301,7 +301,7 @@ rownames(bord) <- c("bottle", "breast", "diff", "rank")
 latex(bord,file="", title="pair")
 @
 }
-<<echo=FALSE, include=TRUE, results='asis'>>=
+<<bootstrap2, echo=FALSE, include=TRUE, results='asis'>>=
 neg <- bord[4,bord[3,]<0]
 pos <- bord[4,bord[3,]>0]
 df <- data.frame(
@@ -328,14 +328,14 @@ Think of this as being a pilot study and assume the data is representative of so
     \item "Pull yourself up by your own bootstraps" - resample from the pilot study data.
 \end{itemize}
 In the latter case we will simulate a study (actually, many) by using the given sample:
-<<echo=FALSE, include=TRUE, results='asis'>>=
+<<bootstrap3, echo=FALSE, include=TRUE, results='asis'>>=
 load("data/F4_breastfeeding.Rdata"); x <- x[-1]; y <- y[-1]
 cat("\\[", paste((y-x), collapse=", "), "\\]")
 @
 }
 \frame{ % -------------------------------------------------------------------->
 Resampling using the same same sample size (13).
-<<echo=FALSE, include=TRUE, results='asis', cache=FALSE>>=
+<<bootstrap4, echo=FALSE, include=TRUE, results='asis', cache=FALSE>>=
 load("data/F4_breastfeeding.Rdata"); x <- x[-1]; y <- y[-1]
 re1 <- sample(y-x, 14, T)
 wt1 <- wilcox.test(re1, exact=F)
@@ -344,7 +344,7 @@ cat("\\[", paste(re1, collapse=", "), "\\]")
 We are interested in the power of the test, so we want to see how often the null is rejected. For that purpose we collect the $p$-value. In  this case it is \Sexpr{signif(wt1$p.value, 2)}.
 
 Now lets repeat this process 100 times. What kind of $p$-values do we get?
-<<echo=FALSE, include=TRUE, fig.width=11, fig.height=4, cache=FALSE>>=
+<<bootstrap5, echo=FALSE, include=TRUE, fig.width=11, fig.height=4, cache=FALSE>>=
 load("data/F4_breastfeeding.Rdata"); x <- x[-1]; y <- y[-1]
 peas <- p_boot(things=y-x, 13)
 hist(peas, breaks=seq(0,1,0.05), col=.blue, main="", xlab="P-values") # col=c(.green, rep(.blue, 19)))
@@ -357,14 +357,15 @@ $\Sexpr{signif(p_star,2)}$.
 
 This is an estimate! (The error will depend on both the resample \emph{and} inital sample.)
 
-<<echo=FALSE, include=FALSE, eval=FALSE>>=
+<<bootstrap6, echo=FALSE, include=FALSE>>=
 load("data/F4_breastfeeding.Rdata"); x <- x[-1]; y <- y[-1]
+set.seed(18870412)
 (POW1 <- search(things=y-x, m=c(10,15,20,25,30,35,40,45), bi = 100, mi = 100))
-save(list=sprintf("POW%d",1), file="data/power_bm.rdat")
+save(list=sprintf("POW%d",1), file="data/power_bm.Rdata")
 @
 The plot shows a bootstrap estimate for varying sample sizes:
-<<echo=FALSE, include=TRUE, fig.width=11, fig.height=4>>=
-load("data/power_bm.rdat")
+<<bootstrap7, echo=FALSE, include=TRUE, fig.width=11, fig.height=4>>=
+load("data/power_bm.Rdata")
 names(POW1) <- c("size", "low", "est", "high")
 err_guess <- 2*0.5*(1-0.5)/13
 POW1$low <- POW1$low - err_guess

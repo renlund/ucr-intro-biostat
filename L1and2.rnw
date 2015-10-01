@@ -16,6 +16,7 @@ rm(HANDOUT)
 library(knitr)
 library(Hmisc)
 library(RColorBrewer)
+library(wesanderson)
 opts_chunk$set(
    cache=TRUE, # default: FALSE
    #include=TRUE, # default: TRUE
@@ -500,9 +501,9 @@ boxplot(dd$s100b, add=TRUE, horizontal=TRUE, at=0.5, boxwex=1, lwd=2)
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{In defense of pie charts}
-<<pie, include=FALSE, fig.height=5, fig.width=5>>=
+<<pie, include=FALSE, fig.height=5, fig.width=5, fig.keep = TRUE>>=
 x <- sample(LETTERS[1:5], size = 250, replace = T, prob = c(5,2,1,4,3))
-a_table <- table(x); save(a_table, file="a_table.rdata")
+a_table <- table(x); save(a_table, file="data/a_table.rdata")
 barchart(a_table, col = wes_palette("Cavalcanti", 5))
 pie(a_table, col = wes_palette("Cavalcanti", 5))
 @
@@ -680,7 +681,7 @@ text(h2$mids, h2$density,paste0(round(100 * h2$counts/sum(h2$counts),1), "%"),po
 \frametitle{Histograms with counts}
 The scale of histograms with counts depends on chosen interval width and sample size. Below is the FEV data set with different widths.
 
-<<>>=
+<<fev5>>=
 load("data/F8_smoking.Rdata") # dd
 layout(matrix(1:2,nrow=1))
 h1 <- hist(dd$fev, plot=FALSE, breaks=seq(1,6,1))
@@ -709,7 +710,7 @@ Histograms & & Density functions (continuous RV)\\ \hline
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Assuming Normality}
 Often we assume that the population follows a Normal density curve.
-<<fev5>>=
+<<fev6>>=
 load("data/F8_smoking.Rdata") # dd
 n <- 11
 par(mar=c(4,4,0,0))

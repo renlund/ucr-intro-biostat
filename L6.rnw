@@ -30,7 +30,7 @@ rm(HANDOUT)
 \author{Henrik Renlund}
 \date{October 12, 2015}
 
-<<cache=FALSE, echo=FALSE, include=FALSE>>=
+<<"colors", cache=FALSE, echo=FALSE, include=FALSE>>=
 .yellow <- wes_palette("Cavalcanti", 5)[1]
 .green <- wes_palette("Cavalcanti", 5)[2]
 .grey <- wes_palette("Cavalcanti", 5)[3]
@@ -243,7 +243,7 @@ for(k in seq_along(THE)){
    abline(a=0, b=THE[k], col="blue", lty=2)
 }
 @
-\begin{center} \includegraphics[scale=0.4]{figure/OR} \end{center}
+\begin{center} \includegraphics[scale=0.4]{figure/OR-1} \end{center}
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Fishers exact test}
@@ -605,7 +605,7 @@ barplot(prop.table(chd,2),
 @
 
 <<case_cont_code, results='asis'>>=
-plot_code <- sprintf("\\includegraphics[scale=0.48]{figure/%s}\n", paste0("case_cont",1:2))
+plot_code <- sprintf("\\includegraphics[scale=0.48]{figure/%s}\n", paste0("case_cont-",1:2))
 cat(plot_code, sep="")
 @
 }
