@@ -144,8 +144,8 @@ Common problems:
 \rymd
 Usually (bias alert!) one only needs to distinguish
 \begin{itemize}
-   \item measurements (\code{Age}, \code{Albumin}) are numerical
-   \item categories (Gender, \code{Diabetes}, \code{Happiness}) are categorical.
+   \item measurements (\code{Age}, \code{Albumin} are numerical), and
+   \item categories (Gender, \code{Diabetes}, \code{Happiness} are categorical).
 \end{itemize}
 }
 \frame{ % -------------------------------------------------------------------->
@@ -196,7 +196,7 @@ Missing data is usually a problem for observational studies.
 
 \rymd The statistical software default is to include only those individuals with complete case data on all variables that you include.
 
-\rymd \emph{Complete case analysis} will only give an unbiased result if the reason that a value is missing has nothing to do with the actual value.
+\rymd \emph{Complete case analysis} will only give an unbiased result if the reason that a variable is missing has nothing to do with the actual value.
 
 \rymd If the missing mechanism is known this might be utilized in the analysis.
 }
@@ -210,7 +210,7 @@ There is no trick that guarantees a non-biased analysis.
 
 \rymd
 \begin{quote}
-"It is not that multiple imputation is so good, it is that all other methods are so bad."
+"It is not that multiple imputation is so good; it is really that other methods for adressing missing data are so bad."
 \begin{flushright}
 (Donald Rubin)
 \end{flushright}
@@ -466,6 +466,26 @@ boxplot(dd$s100b, add=TRUE, horizontal=TRUE, at=0.5, boxwex=1, lwd=2)
 @
 }
 \frame{ % -------------------------------------------------------------------->
+\frametitle{Pattern or detail?}
+Here is fake data whith 7 subgroups (a-g).
+
+<<multiple-ecdf-vs-boxplots, include = TRUE, fig.heigth = 8>>=
+m <- 7; n <- 50
+set.seed(19791224)
+x <- factor(rep(letters[1:m], each = n))
+s <- rep(runif(m), each = n)
+y <- rnorm(n * m, as.numeric(x) + 5, 3 * (s + .1))
+layout(matrix(1:2, nrow = 2))
+par(mar=c(1,5,0,0))
+boxplot(y ~x, horizontal = TRUE, ylim = c(3, 20), xaxt = 'n', ylab = "Groups")
+te <- tapply(y, x, ecdf)
+par(mar=c(2,5,0,0))
+plot(te[[1]], main = "", verticals = TRUE, do.points = FALSE, xlim = c(3, 20), xlab = "", ylab = "Ecdf:s")
+for(k in 2:m) plot(te[[k]], verticals = TRUE, do.points = FALSE, add = TRUE, lty = k)
+layout(matrix(1, nrow = 1))
+@
+}
+\frame{ % -------------------------------------------------------------------->
 \frametitle{Some points on graphs (for publication)}
 \begin{itemize}
    \item Graph and caption should be self-contained.
@@ -481,7 +501,7 @@ boxplot(dd$s100b, add=TRUE, horizontal=TRUE, at=0.5, boxwex=1, lwd=2)
 \end{itemize}
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{In defense of pie charts}
+\frametitle{In defense of pie charts?}
 <<pie, include=FALSE, fig.height=5, fig.width=5, fig.keep = TRUE>>=
 x <- sample(LETTERS[1:5], size = 250, replace = T, prob = c(5,2,1,4,3))
 a_table <- table(x); save(a_table, file="data/a_table.rdata")
