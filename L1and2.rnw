@@ -204,9 +204,9 @@ Missing data is usually a problem for observational studies.
 \frametitle{Solutions\ldots ish}
 There is no trick that guarantees a non-biased analysis.
 
-\rymd \textbf{Single imputation:} replace missing value with a "typical" value for that variable (e.g. mean or median). Better: try to model the variable and predict it from the other variables. Both methods underestimates the variance in the variable and will give overly optimistic results.
+\rymd \textbf{Single imputation} e.g.\ replace missing value with a "typical" value for that variable (e.g. mean or median). This method (and similar ones) underestimates the variance in the variable and will give overly optimistic results.
 
-\rymd \textbf{Multiple imputation:} create multiple imputed data sets where the missing values are replaced differently in each, e.g. drawn at random from the non-missing values.  Better: use (random) estimates from modeling the variable.
+\rymd \textbf{Multiple imputation} create multiple imputed data sets where the missing values are replaced differently in each iteration, e.g. drawn at random from the non-missing values.
 
 \rymd
 \begin{quote}
@@ -215,6 +215,7 @@ There is no trick that guarantees a non-biased analysis.
 (Donald Rubin)
 \end{flushright}
 \end{quote}
+\textbf{N.B.} we typically do not impute our outcome data!
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Visualization of (continuous) data}
