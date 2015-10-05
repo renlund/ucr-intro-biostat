@@ -17,8 +17,8 @@ opts_chunk$set(
 
 .alsHO <- function(name){
    HANDOUT <- TRUE; knit2pdf(name, clean=TRUE)
-   inName <- paste0(fileName(name)$name, ".pdf")
-   outName <- paste0(fileName(name)$name, "_handout.pdf")
+   inName <- paste0(proh::fileName(name)$name, ".pdf")
+   outName <- paste0(proh::fileName(name)$name, "_handout.pdf")
    file.rename(from = inName, to = outName)
    HANDOUT <- FALSE; knit2pdf(name, clean = TRUE)
 }
