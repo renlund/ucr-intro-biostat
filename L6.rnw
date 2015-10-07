@@ -16,6 +16,7 @@ rm(HANDOUT)
 \usepackage[english]{babel}
 \usepackage[latin1]{inputenc}
 \usepackage{multicol}
+\usepackage{multirow}
 
 \newcommand{\plot}{0.42}
 \newcommand{\pr}{\mathbf{Prob}}
@@ -71,12 +72,19 @@ rm(HANDOUT)
 Many analyses and concepts that relates to count data (tables).
 
 \rymd For tables relating dichotomous data (event or non-event)
- what can be said about risk, both compared to a model
- and between subgroups?
+ what can be said about risk, both
+\begin{itemize}
+   \item compared to a model (probability specification), and
+   \item between subgroups?
+\end{itemize}
 
 \rymd For tables relating counts of a categorical variable,
 how can we test the distribution of values against
-a model or between subgroups.
+\begin{itemize}
+   \item a model, or
+   \item between subgroups.
+\end{itemize}
+
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section[Risk measures]{Risk measures and their estimates} %%%%%%%%%%%%%%%%%%%%
@@ -86,7 +94,7 @@ a model or between subgroups.
 \frametitle{Dabigatran data}
 Dagbigatran is an anticoagulant used for e.g.\
 stroke prevention in patients with atrial fibrillation.
-The following example only looks at side effects.
+\emph{The following example only looks at side effects.}
 
 \rymd 718 people were randomized to Dabigatran or placebo
 and observed for some set time for bleeding.
@@ -116,10 +124,10 @@ Sum & 35 & 683 & 718 \\
 \end{center}
 Measures for dabigatran:
 \begin{itemize}
-\item Risk is probability of an unwanted event. \\
+\item \textbf{Risk} (probability of an unwanted event) \\
 Risk of bleeding $= 27/347 = 7.8\%$
-\item Odds is how much more likely it is to
-experience an event compared to not experience it.
+\item \textbf{Odds} (how much more likely it is, versus not, to
+experience an event)\\
 Odds of bleeding
 \[ = \frac{27/347}{320/347} = \frac{27}{320} = 8.4\% \]
 \end{itemize}
@@ -169,7 +177,7 @@ for(k in seq_along(X)){
    \rymd \item in a betting game where you stand to win 1 unit of money, your stake $S$ (\emph{if this is kept when winning}) should not exceed the odds
       \begin{itemize}
          \item 'expected' profit $=1\frac{\theta}{1+\theta}-S\frac{1}{1+\theta}\geq 0$ is equivalent to $S\leq \theta$
-         \item If your offered $x$ units of money for a game you think has odds 2 (in your favor) then do not bet more than $2x$. \\ Betting $2x$ makes the game "fair".
+         \item If you are offered $x$ units of money for a game you think has odds 2 (in your favor) then do not bet more than $2x$. \\ Betting $2x$ makes the game "fair".
       \end{itemize}
 
    \rymd \item there are multiple systems of betting (sports) 'odds', that are not odds in the sense of this course!
@@ -188,9 +196,9 @@ Sum & 35 & 683 & 718 \\
 \end{center}
 Measures for risk of dabigatran versus placebo
 \begin{itemize}
-\item (Risk ratio $ = \frac{27/347}{8/371} \approx 3.6$)
-\item Odds ratio $ = \frac{27/320}{8/363} \approx 3.8$
-\item Risk difference $= 27/347 - 8/371 \approx 0.056$
+\item (\textbf{Risk ratio (RR)} $ = \frac{27/347}{8/371} \approx 3.6$)
+\item \textbf{Odds ratio (OR)} $ = \frac{27/320}{8/363} \approx 3.8$
+\item \textbf{Risk difference} $= 27/347 - 8/371 \approx 0.056$
 \end{itemize}
 }
 \frame{ % -------------------------------------------------------------------->
@@ -341,8 +349,8 @@ The placebo risk is $p_2=8/371\approx 2.2\%$ so we can
 use an earlier formula to get $p_1=$ risk with dabigatran:
 
 \begin{center}\begin{tabular}{|c|lll|} \hline
-OR & 1.66 & 3.82 & 9.88 \\ \hline
-$p_1\approx$ & 3.6\% & 8.2\% & 21\% \\ \hline
+OR & 1.66 & 3.83 & 9.88 \\ \hline
+$p_1\approx$  & 3.6\% & 8.2\% & 21\% \\ \hline
 $p_1 =$ & 3.5\% & 7.8\% & 18\% \\ \hline
 RR $=$ & 1.6 & 3.6 & 8.3 \\ \hline
 \end{tabular}\end{center}
@@ -385,6 +393,21 @@ We get a 95\% confidence interval for the difference with
 (This allows for test of model.)
 }
 \frame{ % -------------------------------------------------------------------->
+\frametitle{Have we exhausted the Dabigatran example yet?}
+
+\rymda \textbf{Summary of the dabigatran example}:
+
+\begin{center}
+\begin{tabular}{|l|lr@{,}l|} \hline
+Quantity & Estimate & \multicolumn{2}{c|}{Confidence interval} \\ \hline
+$p_1$     & 0.078 & $(0.050$ & \,$0.11)$ \\
+%$p_2$     & 0.022 & $(0.007$ & $0.037)$ \\
+$p_1-p_2$ & 0.056 & $(0.024$ & \,$0.088)$ \\
+OR (p1 vs. p2) & 3.82 & $(1.7$ & \,$9.9)$ \\ \hline
+\end{tabular}
+\end{center}
+}
+\frame{ % -------------------------------------------------------------------->
 \frametitle{Cosmetic skin testing}
 To prove a new product is hypoallergenic it should provoke
 no more skin reactions than current market leader.
@@ -413,7 +436,16 @@ Is the new product as good as the market leader?\\
  new & 32 & 8  \\ \hline
 \end{tabular}\end{center}
 
-The rows are dependent. This makes e.g.\ test of risk difference faulty.
+\emph{The rows are dependent.} %This makes e.g.\ test of risk difference faulty.
+
+\rymd \textbf{Note:} \\
+
+\rymd One \emph{can} estimate (and get confidence intervals) for
+$p_1$ and $p_2$ (risk of skin reaction with new and old, respectively).
+
+\rymd \emph{But} it is harder to quantify the SE for risk difference and OR, due to
+the dependence.
+
 }
 <<mcnemar, include=FALSE>>=
 mcbord <- matrix(c(17,5,15,3), byrow=TRUE, ncol=2)
@@ -433,12 +465,12 @@ prop.test(mcwrong)
 \frame{ % -------------------------------------------------------------------->
 \frametitle{McNemars test for paired data}
 \begin{center}
-\begin{tabular}{c|cc|c}
-\multicolumn{1}{c}{} & \multicolumn{2}{c}{new} & \\ \cline{2-3}
-market & no & yes & Sum \\ \hline
-no & 17 & 5 & 22 \\
-yes & 15 & 3 & 18 \\ \hline
-Sum & 32 & 8 & 40 \\
+\begin{tabular}{c|c|cc|c}
+\multicolumn{2}{c}{} & \multicolumn{2}{c}{new} & \\ \cline{3-4}
+\multicolumn{2}{c|}{}  & no & yes & $\sum$ \\ \cline{2-5}
+\multirow{2}{*}{market} & no & 17 & 5 & 22 \\ %
+& yes & 15 & 3 & 18 \\ \cline{2-5}
+\multicolumn{1}{c}{} & $\sum$ & 32 & 8 & 40 \\
 \end{tabular}
 \end{center}
 
@@ -459,22 +491,20 @@ $p$-value for $H_0$:'no difference' is approx 4\%.
 \frametitle{Other situations}
 
 Twins being randomized to intervention or placebo:
-\begin{center}\begin{tabular}{c|cc}
-\multicolumn{1}{c}{} & \multicolumn{2}{c}{Placebo}  \\ \cline{2-3}
-Intervention & improvement & non  \\ \hline
-improvement & a & b \\
-non & c & d \\ \hline
+\begin{center}\begin{tabular}{c|c|cc|}
+\multicolumn{2}{c}{} & \multicolumn{2}{c}{Placebo}  \\ \cline{3-4}
+\multicolumn{2}{c|}{}   & improvement & non  \\ \cline{2-4}
+\multirow{2}{*}{Intervention} & improvement & a & b \\
+ & non & c & d \\ \cline{2-4}
 \end{tabular}\end{center}
 
-\rymda Case control study:
-\begin{center}
-\begin{tabular}{c|cc}
-\multicolumn{1}{c}{} & \multicolumn{2}{c}{Cases}  \\ \cline{2-3}
-Controls & exposure & non \\ \hline
-exposure & a & b \\
-non & c & d \\ \hline
-\end{tabular}
-\end{center}
+\rymda Before/after data:
+\begin{center}\begin{tabular}{c|c|cc|}
+\multicolumn{2}{c}{} & \multicolumn{2}{c}{Before}  \\ \cline{3-4}
+\multicolumn{2}{c|}{}   & event & non  \\ \cline{2-4}
+\multirow{2}{*}{After} & event & a & b \\
+ & non & c & d \\ \cline{2-4}
+\end{tabular}\end{center}
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section[$\chi^2$]{$\chi^2$-tests} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
