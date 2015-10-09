@@ -25,7 +25,7 @@ rm(HANDOUT)
 %\setbeamersize{text margin left=6mm, text margin right=2mm}  % DEFAULT
 \setbeamersize{text margin left=3mm, text margin right=2mm}
 
-\title{Introduction to Biostatistics \\ Lecture 9A}
+\title{Introduction to Biostatistics \\ Lecture 10A}
 \author{Henrik Renlund}
 \date{October 16, 2015}
 
