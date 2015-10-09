@@ -14,11 +14,27 @@ opts_chunk$set(
    fig.width=11,
    fig.height=5
 )
-
+# copy-paste from package 'proh' to remove dependency
+fileName <- function(filename){
+   ext <- rep(NA_character_, length(filename))
+   main <- ext
+   for(k in seq_along(filename)){
+      K <- filename[k]
+      test <- regmatches(K, regexpr("\\.[A-Za-z0-9]*$", K))
+      ext[k] <- if(length(test)>0) test else ""
+      main[k] <- sub( paste0(ext[k], "$"), "", K)
+   }
+   R <- data.frame(
+      name = main,
+      extension = ext
+   )
+   rownames(R) <- filename
+   R
+}
 .alsHO <- function(name){
    HANDOUT <- TRUE; knit2pdf(name, clean=TRUE)
-   inName <- paste0(proh::fileName(name)$name, ".pdf")
-   outName <- paste0(proh::fileName(name)$name, "_handout.pdf")
+   inName <- paste0(fileName(name)$name, ".pdf")
+   outName <- paste0(fileName(name)$name, "_handout.pdf")
    file.rename(from = inName, to = outName)
    HANDOUT <- FALSE; knit2pdf(name, clean = TRUE)
 }
