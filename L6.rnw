@@ -71,20 +71,16 @@ rm(HANDOUT)
 
 Many analyses and concepts that relates to count data (tables).
 
-\rymd For tables relating dichotomous data (event or non-event)
- what can be said about risk, both
-\begin{itemize}
-   \item compared to a model (probability specification), and
-   \item between subgroups?
-\end{itemize}
+\rymd An overly optimistic description: Lectures 3-5 but for categorical, rather than numerical, data.
 
 \rymd For tables relating counts of a categorical variable,
 how can we test the distribution of values against
 \begin{itemize}
-   \item a model, or
+   \item a model (probability specification), or
    \item between subgroups.
 \end{itemize}
 
+\rymd We will start with the special case of dichotomous/binary data (event or non-event).
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section[Risk measures]{Risk measures and their estimates} %%%%%%%%%%%%%%%%%%%%
@@ -209,34 +205,36 @@ If you know the 'denominator' probability ($p_2$) then the 'numerator'
 probability ($p_1$) can be calculated
 \[ p_1 = \frac{\text{OR}\cdot p_2}{1+(\text{OR}-1)\cdot p_2}. \]
 
-More importantly, for small values of $p_2$ and 'moderate' values of OR,
-one essentially has
+For small values of $p_2$ and 'moderate' values of OR
 \[ p_1 \approx \text{OR}\cdot p_2. \]
+Deviation (\%) between approximation and exact formula:
 <<tab_odds, results='asis'>>=
 THE <- c(0.1, 0.5, 1, 2, 10)
-xs <- c(0.75, 0.55, 0.47, 0.4, 0.23)
+#xs <- c(0.75, 0.55, 0.47, 0.4, 0.23)
 ps <- c(0.01, 0.05, 0.1, 0.5)
 M <- matrix(NA, nrow=length(ps), ncol=length(THE))
-rownames(M) <- ps
+L <- matrix(NA, nrow=length(ps), ncol=length(THE))
+rownames(M) <- sprintf("%d %%", 100*ps)
 colnames(M) <- THE
 for(i in 1:length(ps)){
    for(j in 1:length(THE)){
       M[i,j] <- THE[j]*ps[i]/(1+(THE[j]-1)*ps[i])
+      L[i,j] <- THE[j]*ps[i]
    }
 }
 latex(
-   signif(M,2),
+   signif(100*(L-M)/M,2),
    file="",
    title="'denominator' ($p_2$)",
    caption.loc="bottom",
-   cgroup="Odds Ratio (OR)",
-   row.title="'denominator'"
+   cgroup="Odds Ratio (OR)"#,
+   #rowlabel="'denominator'"
    )
 @
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{OR and probabilities}
-The blue dotted lines are the 'corresponding slopes'.
+The blue dotted lines are the approximations.
 <<OR, fig.width=7, fig.height=7, include=FALSE>>=
 par(mar=c(4,4.2,1,1))
 THE <- c(0.1, 0.5, 1, 2, 10)
@@ -271,8 +269,22 @@ independent of intervention. ($H_0$: "odds ratio = 1".)
 of the study population (of size 718) and we would expect
 that $X/35=347/718\approx 48\%$.
 
-\rymd We can calculate \emph{exactly} what the distribution
-of $X$ is \emph{given} $H_0$.
+\rymd We would expect $X$ to be 17-18, but is $X = 27$ within some acceptable range of possiblities?
+}
+\frame{ % -------------------------------------------------------------------->
+<<approx-fisher, cache = FALSE>>=
+set.seed(201107253)
+x <- rhyper(500, 347, 371, 35)
+@
+Simulate (500 times) the experiment of randomly selecting 35 people from the study population and record the number who got dabigatran (\Sexpr{paste0(x[1:5], collapse = ", ")}\ldots)
+<<approx-fisher-plot, include = TRUE, fig.height = 4>>=
+#hist(x, breaks = 4:30, xlab = "Assigned Dabigatran (if $H_0$ true)", freq = FALSE, main = "")
+y <- factor(x, levels = 4:30)
+barplot(table(y)/length(y),  xlab = "Assigned Dabigatran",  main = "", space = 0, xaxt = 'n')
+   axis(1, at = seq(1.5,27.5,5), tick = TRUE, labels = seq(5,30,5))
+@
+However, we can calculate \emph{exactly} what the distribution
+of $X$ is \emph{given} $H_0$ (in this case).
 
 \rymd The $p$-value is the probability of a discrepancy
 the size of that between the observed and the expected.
@@ -334,30 +346,26 @@ Probabilities are small, so risk of dabigatran is (approx.) between
 1.7 and 9.9 times larger than placebo risk.
 \end{frame}
 \frame{ % -------------------------------------------------------------------->
-\frametitle{What question did we answer?}
-Calculating the OR is a very 'standard' analysis.
-
-\vspace{0.2cm}
-It is worth reiterating that this is a relative measure
-and answers a question along the lines of
+\frametitle{Risk Ratio?}
+So
 \begin{quote}
-how much does the odds of bleeding - measured in units of the placebo odds - change with
-this drug?
-Answer: 3.83 (1.66--9.88).
+The odds ratio of bleeding with dabigatran \\ versus placebo is 3.8 (1.7--9.9).
 \end{quote}
-The placebo risk is $p_2=8/371\approx 2.2\%$ so we can
-use an earlier formula to get $p_1=$ risk with dabigatran:
+
+The placebo risk is $p_2=8/371\approx 2.2\%$ so we can use an earlier formula to get $p_1=$ (risk with dabigatran) and thus the RR:
 
 \begin{center}\begin{tabular}{|c|lll|} \hline
-OR & 1.66 & 3.83 & 9.88 \\ \hline
-$p_1\approx$  & 3.6\% & 8.2\% & 21\% \\ \hline
+OR & 1.7 & 3.8 & 9.9 \\ \hline
+%$p_1\approx$  & 3.6\% & 8.2\% & 21\% \\ \hline
 $p_1 =$ & 3.5\% & 7.8\% & 18\% \\ \hline
 RR $=$ & 1.6 & 3.6 & 8.3 \\ \hline
 \end{tabular}\end{center}
-
-In a sense this gives us a confidence interval $p_1$
-but it is "too" wide since it takes into account the
-uncertainty of $p_2$.
+So
+\begin{quote}
+The risk ratio of bleeding with dabigatran \\ versus placebo is 3.6 (1.6--8.3).
+\end{quote}
+(\textbf{N.B} The implied confidence interval (above) for $p_1$ is "too wide"
+since it takes to much uncertainty into account.)
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Absolute risk}
@@ -478,13 +486,11 @@ McNemars test only considers the pairs were
 the results are different.
 
 \rymd With new product there are 8 reactions but 3
-of them would have happened anyway.
-The new product 'creates' 5 reactions.\\
+of them would have happened anyway. The new product 'creates' 5 reactions, whereas the market leader 'creates' 15 reactions. \\
 
-\rymd Similarily, the market leader 'creates' 15 reactions. \\
-(15 benefits, 5 are worse off and 20 are unchanged.)
+\rymd Switching from the market leader to the new product would benefit 15, make it worse for 5, and have no effect on 20. (In terms of skin reactions.)
 
-\rymd A test statistic is created using '5' and '15'.
+\rymd A test statistic can be calculated.
 $p$-value for $H_0$:'no difference' is approx 4\%.
 }
 \frame{ % -------------------------------------------------------------------->
