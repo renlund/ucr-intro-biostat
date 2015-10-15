@@ -132,10 +132,7 @@ Generally, it '$H_0$ not rejected' is uninformative
 \emph{unless} we know that the study had a good chance
 of detecting an effect that is interesting.
 
-\rymd E.g:  "Two methods of pain relief were compared. The
-%median
-difference % of 4 on the VAS scale
-was not statistically significant."
+\rymd E.g:  "Two methods of pain relief were compared. The difference was not statistically significant."
 
 \rymd This would be enhanced by;
 
@@ -157,24 +154,24 @@ before and after taking the drug.
 the drug works. We assume these are Normal
 with a standard deviation of 1 unit.
 
-\rymd $H_0:$"average effect $= 0$" is determinded
+\rymd $H_0:$"average effect $= 0$" is determined
 by creating a 95\% confidence interval for
 the mean effect.
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{A sample size of 5}
+\frametitle{15 samples of size 5}
 <<n5>>=
 vizP(n=5, out=FALSE)
 @
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{A sample size of 10}
+\frametitle{15 samples of size 10}
 <<n10>>=
 vizP(n=10, out=FALSE)
 @
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{A sample size of 15}
+\frametitle{15 samples of size 15}
 <<n25>>=
 vizP(n=15, out=FALSE)
 @
@@ -187,67 +184,24 @@ of rejecting the null hypothesis.
 \rymd The power depends on
 \begin{itemize}
 \item effect size
-\item sample size
+\item sample size (maybe under your control)
 \item the spread of the data
 \item (the statistical test, significance level, etc.)
 \end{itemize}
 
-\rymd If there is no effect, the power = the significance level (the probability of rejecting a true null hypothesis)
+%\rymd (If there is no effect, the power = the error rate (the probability of rejecting a true null hypothesis.)
 
 \rymd We want a test to have high power as soon as the effect is \emph{interesting}.
-}
-\frame{ %--------------------------------------------------------------------->
-\frametitle{Some points}
 
+\rymd The power is often thought of as a function of sample size ($n$) and effect. Set
 \begin{itemize}
-    \item In an experimental setting, you can control the sample size.
-
-    \rymd \item (You might be able to reduce measurement error.)
-
-    \rymd \item We usually express the power as a function of effect- and sample size.\\
-
-    \rymd \item We usually want high power ($\geq 80\%$) at some minimally interesting effect size.
-    \rymd \item Sample size calculations are generally gruesome, but
-    \begin{itemize}
-        \item software exists, and
-        \item other techniques might suffice.
-    \end{itemize}
+   \item the power wanted,
+   \item the effect to be \emph{at least interesting},
 \end{itemize}
+and figure out what $n$ needs to be.
 }
-
-% \frame{ % -------------------------------------------------------------------->
-% \frametitle{Breastfeeding example from Lecture 3}
-% Duration of middle-ear infection between breast- and bottle fed babies.
-% <<breast_ex, echo=FALSE, include=TRUE, results='asis'>>=
-% load("data/F4_breastfeeding.Rdata")
-% bord <- rbind(y,x,y-x,c(NA,rank(abs((y-x)[-1]))))
-% colnames(bord) <- 1:14
-% rownames(bord) <- c("bottle", "breast", "diff.", "rank")
-% latex(bord, file="", title="pair")
-% @
-% To answer the question if bottle or breast
-% <<>>=
-% data.frame(
-%    part = c("negative", "positive"),
-%    ranks = c(paste0(bord[4,bord[3,]<0], collapse=", "), paste0(bord[4,bord[3,]>0], collapse=", ")),
-%    sum = c(19.5, 71)
-% )
-% @
-%
-% <<echo=FALSE, include=FALSE, eval=FALSE>>=
-% library(reshape2)
-% library(ggplot2)
-%
-% load("data/F4_breastfeeding.Rdata")
-% hist(x, breaks=seq(0,200,25))
-% hist(y, breaks=seq(0,200,25))
-% df <- model.frame(~x+y)
-% df$id <- 1:dim(df)[1]
-% @
-% }
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section[Bootstrap example]{Examples} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[Bootstrap example]{Examples} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 <<foonctions, cache=FALSE, echo=FALSE, include=FALSE>>=
 # load("data/F4_breastfeeding.Rdata")
@@ -337,6 +291,7 @@ cat("\\[", paste((y-x), collapse=", "), "\\]")
 Resampling using the same same sample size (13).
 <<bootstrap4, echo=FALSE, include=TRUE, results='asis', cache=FALSE>>=
 load("data/F4_breastfeeding.Rdata"); x <- x[-1]; y <- y[-1]
+set.seed(20010713)
 re1 <- sample(y-x, 14, T)
 wt1 <- wilcox.test(re1, exact=F)
 cat("\\[", paste(re1, collapse=", "), "\\]")
