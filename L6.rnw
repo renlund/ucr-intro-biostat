@@ -82,6 +82,15 @@ how can we test the distribution of values against
 
 \rymd We will start with the special case of dichotomous/binary data (event or non-event).
 }
+\frame{ % -------------------------------------------------------------------->
+\frametitle{A note on categorical data}
+We generally talk differently about categorical data depending on the number of unique values.
+
+\rymd \textbf{Dichotomous/binary data} is typically yes/no- or event/non-event data.
+We talk about this data in terms of the probability of one of the events (often the one with the smallest probability). If $\pr($event$)$ is modelled, then $\pr($non-event$)$ is implicit (since $\pr($non-event)=1-$\pr($event$)$).
+
+\rymd \textbf{"Non-binary" categorical data} has more than 2 values ($A$, $B$, $C$, \ldots). We talk about this data in terms of the entire \emph{distribution}, i.e. the probability function $(\pr(A), \pr(B), \pr(C), \ldots)$. Of course we could omit one of these, since it would be implicit, but it is unconvenient.
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section[Risk measures]{Risk measures and their estimates} %%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
