@@ -487,6 +487,26 @@ layout(matrix(1, nrow = 1))
 @
 }
 \frame{ % -------------------------------------------------------------------->
+\frametitle{Advanced graphics\ldots}
+Anyone seriously interested in graphics might want to look at Wilkinson's \emph{The Grammar of Graphics}, which provides a frame work for thinking about data visualization. These ideas are implemented in the R package \textbf{ggplot2} - which provides tools for mapping variables to aestic properties, adding layers of statistical computations, faceting, etc.
+
+<<ggplot2-promotion, include = TRUE>>=
+mtcars$am <- as.logical(mtcars$am)
+mtcars$vs <- factor(mtcars$vs, labels = c("V engine", "Straight engine"))
+ggplot(mtcars, aes(disp, mpg)) +
+   geom_point(aes(shape =  factor(am), color = factor(gear), size = qsec)) +
+   geom_smooth(method = "lm", color = "black") +
+   facet_wrap(~vs, nrow = 2, scales = "free_y") +
+   scale_color_manual(values = wes_palette("Cavalcanti", 5)[c(1,2,5)], name = "Gears") +
+   scale_size(range = c(3,12), name = "Mile time") +
+   scale_shape_discrete(name = "Manual") +
+   labs(x = "Miles per Gallon", y = "Displacement") +
+   theme_bw()
+@
+
+
+}
+\frame{ % -------------------------------------------------------------------->
 \frametitle{Some points on graphs (for publication)}
 \begin{itemize}
    \item Graph and caption should be self-contained.
@@ -522,20 +542,34 @@ cat(plot_code, sep="")
 \section[Models]{Probability theory and models} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Probability theory and models}
+\textbf{Probability} theory studies models of random data. A \textbf{model} is a way of specifying the range of possible values and the probability with which these occur.
 \begin{itemize}
-   \item Probabilities are numbers between (and including) 0 and 1.
-(0\% and 100\%.)\\
+   \item \textbf{Probability functions} describe discrete numeric/categorical data
+   \item \textbf{Density functions} describe continuous (numeric) data
+\end{itemize}
 
-   \rymd \item $\pr(A)$ denotes "the probability of the event $A$".
+\rymd The \textbf{cumulative distribution function} is a universal way of describing all random (numeric) data. (Will not be discussed.)
 
-   \rymd \item The basic rule of probability is that if $A$ and $B$ are
-mutually exclusive events the \[ \pr(A \el B)=\pr(A)+\pr(B). \] (Probability is a "measure". \\ But what does it measure?) \\
+\begin{itemize}
+   \item \textbf{Probability theory:} given model (model parameters, or other aspects) - describe how data behave. E.g.\
+   \begin{itemize}
+      \item specific results: how likely are deviations from what we expect
+      \item general results: Law of Large Numbers, Central Limit Theorem, etc.
+   \end{itemize}
+   \item \textbf{Inference theory:}  given data what is a likely model/parameters or other aspects of the underlying distribution (without specifying model = non-parametric statistics).
 \end{itemize}
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Probability models for categorical or integer-valued data}
 A yet undetermined random value is called a \emph{random variable} (RV).
+
+\rymd Let $Z=$'the outcome of the throw of a die'.
+Then $\pr(Z=k)=1/6$ for all $k=1,2,\ldots,6$, or, equivalently
+
+\begin{center}\begin{tabular}{|c|cccccc|} \hline
+Value $k$ & 1  & 2 & 3 & 4 & 5 & 6 \\
+$\pr(Z=k)$ & 1/6 & 1/6 & 1/6 & 1/6 & 1/6 & 1/6\\ \hline
+\end{tabular}\end{center}
 
 \rymd Suppose that in the population there are 49 \% non-smokers, 20 \% former smokers
 and 31\% current smokers. Then the smoking status $X$ of a person selected
@@ -547,22 +581,36 @@ Value $v$  & non  & former & current \\
 $\pr(X=v)$ & 0.49 & 0.20   & 0.31 \\ \hline
 \end{tabular}\end{center}
 }
-
 \frame{ % -------------------------------------------------------------------->
-Integer-valued RV's are also described by
-probability functions.
+Five samples from three different sampling sizes from previous distribution
+<<fig.height = 7>>=
+set.seed(20101212)
+foo_bar <- function(n, l = FALSE){
+   values <- c("non", "former", "current")
+   pf <- c(0.49,0.20,0.31)
+   # n <- 30
+   m <- 5
+   s <- factor(sample(values, size = m*n, replace = TRUE,
+                      prob = pf), levels = values)
+   g <- rep(sprintf("%d",1:m), each = n)
+#    barplot(pf, width = m, border = "black", col = "black",
+#            density = 9, ylim = c(0,0.7), lwd = 2, angle = +45, main = paste0("Sample size ", n))
+   barplot(prop.table(table(g, s),1), col = wes_palette("Cavalcanti", 5),
+           beside = TRUE, legend = l,  ylim = c(0,0.7), main = paste0("Sample size ", n),
+           args.legend = list(x="topright", title = "Sample", horiz = TRUE))
+   barplot(pf, width = m, border = "black", col = "black",
+           density = 15, lwd = 2, angle = +45, add = TRUE)
+}
 
-\rymd Some are easy to model realistically, let e.g.\ $Z=$'the outcome of the throw of a die'.
-Then $\pr(Z=k)=1/6$ for all $k=1,2,\ldots,6$, or, equivalently
-
-\begin{center}\begin{tabular}{|c|cccccc|} \hline
-Value $k$ & 1  & 2 & 3 & 4 & 5 & 6 \\
-$\pr(Z=k)$ & 1/6 & 1/6 & 1/6 & 1/6 & 1/6 & 1/6\\ \hline
-\end{tabular}\end{center}
-
-\rymd Others are difficult. Let $Y=$'the number of cigarettes a person selected at random smoked yesterday'.
-
-\rymd It is difficult to know what the probability function of $Y$ is.
+par(mar=c(4,5,2,1))
+layout(matrix(1:4, nrow = 2, byrow = TRUE))
+barplot(pf, width = m, border = "black", col = "black", legend = l2, ylim = c(0,0.7),
+        main = "True distribution", density = 15, lwd = 2, angle = +45)
+foo_bar(25)
+foo_bar(100)
+foo_bar(1000, l = TRUE)
+layout(matrix(1, nrow = 1))
+@
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{FEV data set}
@@ -622,7 +670,7 @@ barplot(tabsmok3, beside=TRUE, legend=TRUE, ylab="Percent", col=brewer.pal(9, "Y
 @
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Visualizing 'smoking' versus 'age' as percentages within age groups}
+\frametitle{Visualizing 'smoking' versus 'age' as percentages within age groups, stacked}
 <<plot_smoker3>>=
 load("data/F8_smoking.Rdata")
 dd$age <- factor(dd$age)
@@ -632,8 +680,6 @@ ggplot(dd, aes(age, fill=smoker)) +
    scale_fill_manual(values=c(.blue, .yellow), name="Smoker") +
    theme_classic()  +
    scale_y_continuous(breaks = seq(0, 1, by = 0.25), labels = sprintf("%s%%",seq(0,100,by=25)))
-
-
 @
 }
 \frame{ % -------------------------------------------------------------------->
@@ -646,6 +692,34 @@ A continuous RV is described by its \emph{density function}.
 
 If $X$ has density function $f$ as above, then we compute probabilities as
 \[ \pr( a\leq X \leq b)=\;\mbox{Area(a,b)}. \]
+}
+\frame{ % -------------------------------------------------------------------->
+The shape of a histogram estimates the shape of the density function.
+<<test-hist, fig.height = 4>>=
+load("data/F8_smoking.Rdata")
+# h <- hist(dd$fev, plot = FALSE)
+par(mar=c(4,5,2,1))
+z <- 1.5
+u <- z
+layout(matrix(1:3, nrow = 1))
+hist(dd$fev, main = "", xlab = "FEV (L)", ylab = "Count", col=.blue, cex.axis = z, cex.lab = u)
+hist(dd$fev, freq = FALSE, main = "", xlab = "FEV (L)", yaxt = 'n', ylab = "Percent", col=.blue, cex.axis = z, cex.lab = u)
+vid <- seq(0,0.5,0.1); axis(2, at = vid, labels = sprintf("%d%%", .5*100*vid), cex.axis = z)
+hist(dd$fev, freq = FALSE, main = "", xlab = "FEV (L)", col=.blue, cex.axis = z, cex.lab = u)
+# b <- c(1,2,2.5,3,3.5,4,6)
+# h2 <- hist(dd$fev, plot = FALSE, breaks = b)
+# h2_mod <- h2
+# h2_mod$density <- h2$density * diff(h2$breaks)
+# plot(h2_mod, main = "", xlab = "FEV (L)", col=.blue, ylab = "Percent")
+# hist(dd$fev, breaks = b, main = "", xlab = "FEV (L)", col=.blue)
+layout(matrix(1,nrow = 1))
+@
+"Density" is more abstract but
+\begin{itemize}
+   \item gives right scale for density function estimate (easy to correctly plot candidate model on top of histogram)
+   \item allows for varying "bins"
+   \item allows for comparison between very different sample sizes
+\end{itemize}
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Histogram (with density) of FEV}
@@ -683,22 +757,22 @@ h2 <- hist(dd$fev, freq=FALSE, breaks=c(1,2,2.5,2.75,3,3.5,4,6),
 text(h2$mids, h2$density,paste0(round(100 * h2$counts/sum(h2$counts),1), "%"),pos=3)
 @
 }
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Histograms with counts}
-The scale of histograms with counts depends on chosen interval width and sample size. Below is the FEV data set with different widths.
-
-<<fev5>>=
-load("data/F8_smoking.Rdata") # dd
-layout(matrix(1:2,nrow=1))
-h1 <- hist(dd$fev, plot=FALSE, breaks=seq(1,6,1))
-par(mar=c(4,4,0,0))
-hist(dd$fev, freq=TRUE, breaks=seq(1,6,1), ylim=c(0,1.05*max(h1$counts)),
-           xlab="FEV (L)", main="", col=.blue)
-hist(dd$fev, freq=TRUE, ylim=c(0,1.05*max(h1$counts)),
-          xlab="FEV (L)", main="", col=.blue)
-layout(matrix(1,nrow = 1))
-@
-}
+%' \frame{ % -------------------------------------------------------------------->
+%' \frametitle{Histograms with counts}
+%' The scale of histograms with counts depends on chosen interval width and sample size. Below is the FEV data set with different widths.
+%'
+%' <<fev5>>=
+%' load("data/F8_smoking.Rdata") # dd
+%' layout(matrix(1:2,nrow=1))
+%' h1 <- hist(dd$fev, plot=FALSE, breaks=seq(1,6,1))
+%' par(mar=c(4,4,0,0))
+%' hist(dd$fev, freq=TRUE, breaks=seq(1,6,1), ylim=c(0,1.05*max(h1$counts)),
+%'            xlab="FEV (L)", main="", col=.blue)
+%' hist(dd$fev, freq=TRUE, ylim=c(0,1.05*max(h1$counts)),
+%'           xlab="FEV (L)", main="", col=.blue)
+%' layout(matrix(1,nrow = 1))
+%' @
+%' }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Summary}
 \begin{center}
@@ -721,7 +795,7 @@ load("data/F8_smoking.Rdata") # dd
 n <- 11
 par(mar=c(4,4,0,0))
 h0 <- hist(dd$fev, plot=FALSE)
-curve(dnorm(x,mean(dd$fev), sd(dd$fev)), from=1, to=6, lwd=2,ylim=c(0,1.05*max(h0$density)))
+curve(dnorm(x,mean(dd$fev), sd(dd$fev)), from=1, to=6, lwd=2,ylim=c(0,1.05*max(h0$density)), ylab = "Density", xlab  = "FEV (L)")
 hist(
    dd$fev,
    freq=FALSE,
@@ -1185,6 +1259,8 @@ Good, the Bad, and How Not to Be the Latter}, American Society for Surgery of th
 \textbf{37A} (2012) 591-596.
 \item Kelleher \& Wagener. \emph{Ten guidelines for effective data visualization in scientific
 publications}, Environmental Modelling \& Software \textbf{26} (2011) 822-827.
+\item L.\ Wilkinson, \emph{The Grammar of Graphics}, 2$^{\mbox{nd}}$ ed., Springer 2005.
+%\item H. Wickham, \emph{ggplot2}, 2$^{\mbox{nd}}$ ed. TO APPEAR
 \end{itemize}
 }
 \end{document} % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
