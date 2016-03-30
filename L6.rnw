@@ -29,7 +29,7 @@ rm(HANDOUT)
 
 \title{Introduction to Biostatistics \\ Lecture 6}
 \author{Henrik Renlund}
-\date{October 12, 2015}
+\date{April 11, 2015}
 
 <<"colors", cache=FALSE, echo=FALSE, include=FALSE>>=
 .yellow <- wes_palette("Cavalcanti", 5)[1]
