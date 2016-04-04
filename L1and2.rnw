@@ -58,7 +58,7 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
 
 \title{Introduction to Biostatistics \\ Lecture 1B and 2}
 \author{Henrik Renlund}
-\date{April 4-5, 2015}
+\date{April 4-5, 2016}
 
 \begin{document} % >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 \frame{ % -------------------------------------------------------------------->
@@ -138,7 +138,7 @@ This is especially important if data has been transferred (between formats, diff
 Common problems:
 \begin{itemize}
    \item date- and categorical data suddenly stored as integers
-   \item numerical values stored as text (due to ',/.")
+   \item numerical values stored as text (due to ',' vs. '.')
 \end{itemize}
 
 \rymd
@@ -416,7 +416,7 @@ Some points:
    \item \textbf{Standard deviation (sd)} is given by the formula,
    \[ s = \sqrt{\frac{1}{n-1}\sum_{i=1}^n (x_i-\bar x)^2}. \]
    %It is a measure of spread with expressed in the same unit as the data.
-   Where $x_1, x_2, \ldots, x_n$ is the sample ($n=35$ in our example) and
+   Where $x_1, x_2, \ldots, x_n$ is the sample  and
    \[ \bar x=\frac 1n\sum_{i=1}^n x_i \] is the (sample) mean.
 
    \rymd It is (approximately) the mean distance to the mean value.
