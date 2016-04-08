@@ -68,12 +68,16 @@ rm(HANDOUT)
 This:
 \rymd
 \begin{itemize}
-    \item statistical power and it's relation to
-
-    \rymd\item sample size calculations (to  get power), and give an
-
-    \rymd\item example using resampling (bootstrap).
+    \item statistical power
 \end{itemize}
+\rymd
+and its relation to
+\rymd
+\begin{itemize}
+    \item sample size calculations.
+ \end{itemize}
+ \rymd
+(Bootstrap example in notes outside the scope of this course.)
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section[Power]{Power} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -201,7 +205,7 @@ of rejecting the null hypothesis.
 and figure out what $n$ needs to be.
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section[Bootstrap example]{Examples} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[Example]{Example} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 <<foonctions, cache=FALSE, echo=FALSE, include=FALSE>>=
 # load("data/F4_breastfeeding.Rdata")
@@ -244,7 +248,7 @@ search <- function(things, m, bi=100, mi=100, thresh=0.05, probs=c(0.05,0.5,.95)
 # search(things=y-x, m=c(10,15))
 @
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Sample size calculations without a model}
+\frametitle{Sample size calculation}
 Recall the breastfeeding example from lecture 4.
 {\tiny
 <<bootstrap1, echo=FALSE, include=TRUE, results='asis', cache=FALSE>>=
@@ -278,16 +282,40 @@ Think of this as being a pilot study and assume the data is representative of so
 
 \noindent \textbf{Two possible approaches:}
 \begin{itemize}
-    \item Make a model for the data (possibly transforming to the Normal distribution if possible) and solve analytically (via software most likely)
+    \item Make a  model (Normal? via transformation?) for the data and solve
+    analytically or with software
     \item "Pull yourself up by your own bootstraps" - resample from the pilot study data.
 \end{itemize}
-In the latter case we will simulate a study (actually, many) by using the given sample:
+In either case we will use the given sample:
 <<bootstrap3, echo=FALSE, include=TRUE, results='asis'>>=
 load("data/F4_breastfeeding.Rdata"); x <- x[-1]; y <- y[-1]
-cat("\\[", paste((y-x), collapse=", "), "\\]")
+cat("\\[z = \\{", paste((y-x), collapse=", "), "\\}\\]")
 @
 }
+\begin{frame}[fragile] % ---------------------------------------------------->
+\frametitle{Approximation with the R software}
+Simple sample-size software exists on-line and possibly in your statistical
+software. In (base) R we can use function for $t$-test to get a ballpark figure.
+<<"power-calc",  echo = TRUE, results = 'hide'>>=
+power.t.test(power = 0.8, delta = mean(z), sd = sd(z),
+             type = "one.sample")
+@
+\begin{verbatim}
+     One-sample t test power calculation
+
+              n = 35.94785
+          delta = 29.07692
+             sd = 60.49995
+      sig.level = 0.05
+          power = 0.8
+    alternative = two.sided
+\end{verbatim}
+
+Since the distribution is so skewed it is not unreasonable to think that the
+Wilcoxon-test will be more powerful.
+\end{frame}
 \frame{ % -------------------------------------------------------------------->
+\frametitle{Bootstrap method}
 Resampling using the same same sample size (13).
 <<bootstrap4, echo=FALSE, include=TRUE, results='asis', cache=FALSE>>=
 load("data/F4_breastfeeding.Rdata"); x <- x[-1]; y <- y[-1]
@@ -302,8 +330,12 @@ Now lets repeat this process 100 times. What kind of $p$-values do we get?
 <<bootstrap5, echo=FALSE, include=TRUE, fig.width=11, fig.height=4, cache=FALSE>>=
 load("data/F4_breastfeeding.Rdata"); x <- x[-1]; y <- y[-1]
 peas <- p_boot(things=y-x, 13)
-hist(peas, breaks=seq(0,1,0.05), col=.blue, main="", xlab="P-values") # col=c(.green, rep(.blue, 19)))
 p_star <- sum(peas<=0.05)/100
+hist(peas, breaks=seq(0,1,0.05), col=.blue, main="", xlab="P-values") # col=c(.green, rep(.blue, 19)))
+tmp <- round(100*p_star)
+arrows(x0 = 0.2, x1 = 0.06, y0 = tmp-1)
+text(x=0.2, y = tmp-1, pos = 4, cex = 1.5,
+     labels = paste0(tmp, "% of p-values below 0.05"))
 @
 }
 \frame{ % -------------------------------------------------------------------->
@@ -335,7 +367,7 @@ ggplot(POW1, aes(size, est, min=low, max=high)) +
     geom_abline(intercept=0.8, slope=0, lty=2) +
     geom_abline(intercept=0.9, slope=0, lty=3)
 @
-So you should probably use at least 35 individuals.
+So you should probably use at least 35 individuals. (There the power is estimated to be at least 80\%.)
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{References}
@@ -344,3 +376,41 @@ So you should probably use at least 35 individuals.
 \end{itemize}
 }
 \end{document} % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+<<"a-kinda-test", eval = FALSE, include = FALSE>>=
+## z <- c(1,-2,3,-4,-6,7,11,-12,12,17,24,158,169)
+## power.t.test(n = length(z), delta = mean(z), sd = sd(z), type = "one.sample")
+
+load("data/F4_breastfeeding.Rdata"); x <- x[-1]; y <- y[-1]
+z <- y - x
+
+t.test(x, y, paired = TRUE)
+wilcox.test(x, y, paired = TRUE, exact = FALSE, conf.int = TRUE)
+
+hist(z, breaks = seq(-12.5,175, by =12.5))
+mean(z)
+median(z)
+sd(z)
+
+power.t.test(delta = 29, sd = 60.5, power = 0.8, type = "one.sample")
+
+min(z)
+z2 <- log(z+13)-log(13)
+t.test(z2)
+## 0 --> log(13)
+sort(z2)
+qqnorm(z2)
+hist(z2)
+
+mean(z2)
+sd(z2)
+
+power.t.test(delta = mean(z2), sd = sd(z2), power = 0.8, type = "one.sample")
+
+l <- 45
+z_test <- log(z+l)-log(l)
+t.test(z_test)
+power.t.test(delta = mean(z_test), sd = sd(z_test), power = 0.8, type = "one.sample")
+@
+
