@@ -39,10 +39,6 @@ fileName <- function(filename){
    HANDOUT <- FALSE; knit2pdf(name, clean = TRUE)
 }
 
-# LECTURE 9 ----------------------------
-knit2pdf("L9.rnw", clean=TRUE)
-.alsHO("L9.rnw")
-
 # LECTURE 6 ----------------------------
 knit2pdf("L6.rnw", clean=TRUE)
 .alsHO("L6.rnw")

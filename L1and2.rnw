@@ -58,7 +58,7 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
 
 \title{Introduction to Biostatistics \\ Lecture 1B and 2}
 \author{Henrik Renlund}
-\date{April 4-5, 2016}
+\date{October 10-11, 2016}
 
 \begin{document} % >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 \frame{ % -------------------------------------------------------------------->
@@ -488,7 +488,7 @@ layout(matrix(1, nrow = 1))
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Advanced graphics\ldots}
-Anyone seriously interested in graphics might want to look at Wilkinson's \emph{The Grammar of Graphics}, which provides a frame work for thinking about data visualization. These ideas are implemented in the R package \textbf{ggplot2} - which provides tools for mapping variables to aestic properties, adding layers of statistical computations, faceting, etc.
+Anyone seriously interested in graphics might want to look at Wilkinson's \emph{The Grammar of Graphics}, which provides a framework for thinking about data visualization. These ideas are implemented in the R package \textbf{ggplot2} - which provides tools for mapping variables to aestic properties, adding layers of statistical computations, faceting, etc.
 
 <<ggplot2-promotion, include = TRUE>>=
 mtcars$am <- as.logical(mtcars$am)
@@ -585,17 +585,18 @@ $\pr(X=v)$ & 0.49 & 0.20   & 0.31 \\ \hline
 Five samples from three different sampling sizes from previous distribution
 <<fig.height = 7>>=
 set.seed(20101212)
+pf <- c(0.49,0.20,0.31)
+m <- 5
+
 foo_bar <- function(n, l = FALSE){
    values <- c("non", "former", "current")
-   pf <- c(0.49,0.20,0.31)
    # n <- 30
-   m <- 5
    s <- factor(sample(values, size = m*n, replace = TRUE,
                       prob = pf), levels = values)
    g <- rep(sprintf("%d",1:m), each = n)
 #    barplot(pf, width = m, border = "black", col = "black",
 #            density = 9, ylim = c(0,0.7), lwd = 2, angle = +45, main = paste0("Sample size ", n))
-   barplot(prop.table(table(g, s),1), col = wes_palette("Cavalcanti", 5),
+   barplot(prop.table(table(g, s),1), col = wesanderson::wes_palette("Cavalcanti", 5),
            beside = TRUE, legend = l,  ylim = c(0,0.7), main = paste0("Sample size ", n),
            args.legend = list(x="topright", title = "Sample", horiz = TRUE))
    barplot(pf, width = m, border = "black", col = "black",
@@ -604,8 +605,8 @@ foo_bar <- function(n, l = FALSE){
 
 par(mar=c(4,5,2,1))
 layout(matrix(1:4, nrow = 2, byrow = TRUE))
-barplot(pf, width = m, border = "black", col = "black", legend = l2, ylim = c(0,0.7),
-        main = "True distribution", density = 15, lwd = 2, angle = +45)
+barplot(pf, width = m, border = "black", col = "black", ylim = c(0,0.7),
+        main = "True distribution", density = 15, lwd = 2, angle = +45) ## legend = l2,
 foo_bar(25)
 foo_bar(100)
 foo_bar(1000, l = TRUE)
