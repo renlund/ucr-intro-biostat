@@ -69,7 +69,8 @@ rm(HANDOUT)
 \frame{ % -------------------------------------------------------------------->
 \frametitle{What shall we learn today?}
 
-Many analyses and concepts that relates to count data (tables).
+Many analyses and concepts that relates to count data (tables), in particular
+odds.
 
 \rymd An overly optimistic description: Lectures 3-5 but for categorical, rather than numerical, data.
 
@@ -130,11 +131,11 @@ Sum & 35 & 683 & 718 \\
 Measures for dabigatran:
 \begin{itemize}
 \item \textbf{Risk} (probability of an unwanted event) \\
-Risk of bleeding $= 27/347 = 7.8\%$
+Risk of bleeding $= 27/347 = 0.078$
 \item \textbf{Odds} (how much more likely it is, versus not, to
 experience an event)\\
 Odds of bleeding
-\[ = \frac{27/347}{320/347} = \frac{27}{320} = 8.4\% \]
+\[ = \frac{27/347}{320/347} = \frac{27}{320} = 0.084 \]
 \end{itemize}
 (Odds? Sometimes this is easier to model.)
 }
@@ -172,20 +173,22 @@ for(k in seq_along(X)){
 @
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{More on odds}
+\frametitle{A few remarks on odds}
 \begin{itemize}
    \item if an event has odds $\theta$, then its probability $p$ is $p=\theta/(1+\theta)$ \\
-      $\theta = 2$ corresponds to $p=2/3$. \\
-      $\theta = 1$ corresponds to $p=1/2$. \\
-      $\theta = 1/100$ corresponds to $p=1/101$.
+      E.g. \begin{itemize}
+              \item $\theta = 2$ corresponds to $p=2/3$. \\
+              \item $\theta = 1$ corresponds to $p=1/2$. \\
+              \item $\theta = 1/100$ corresponds to $p=1/101$.
+           \end{itemize}
+
+   \rymd \item there are multiple systems of betting (sports) 'odds', that are not odds in the sense of this course!
 
    \rymd \item in a betting game where you stand to win 1 unit of money, your stake $S$ (\emph{if this is kept when winning}) should not exceed the odds
       \begin{itemize}
-         \item 'expected' profit $=1\frac{\theta}{1+\theta}-S\frac{1}{1+\theta}\geq 0$ is equivalent to $S\leq \theta$
-         \item If you are offered $x$ units of money for a game you think has odds 2 (in your favor) then do not bet more than $2x$. \\ Betting $2x$ makes the game "fair".
+         \item 'expected' profit $=1p-S(1-p)\geq 0$ is equivalent to $S\leq\frac{p}{1-p}=\theta$
+         \item E.g.\ if you are offered $x$ units of money for a game you think has odds 2 (in your favor) then do not bet more than $2x$. \\ (Betting $2x$ makes the game \emph{fair}.)
       \end{itemize}
-
-   \rymd \item there are multiple systems of betting (sports) 'odds', that are not odds in the sense of this course!
 \end{itemize}
 }
 \frame{ % -------------------------------------------------------------------->
@@ -208,58 +211,62 @@ Measures for risk of dabigatran versus placebo
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Odds ratio (OR)}
-The OR contains no information about the probabilities.
+Probabilities cannot be retrieved from the OR alone.
 
+\vspace{0.2cm}
 If you know the 'denominator' probability ($p_2$) then the 'numerator'
 probability ($p_1$) can be calculated
 \[ p_1 = \frac{\text{OR}\cdot p_2}{1+(\text{OR}-1)\cdot p_2}. \]
 
 For small values of $p_2$ and 'moderate' values of OR
-\[ p_1 \approx \text{OR}\cdot p_2. \]
-Deviation (\%) between approximation and exact formula:
-<<tab_odds, results='asis'>>=
-THE <- c(0.1, 0.5, 1, 2, 10)
-#xs <- c(0.75, 0.55, 0.47, 0.4, 0.23)
-ps <- c(0.01, 0.05, 0.1, 0.5)
-M <- matrix(NA, nrow=length(ps), ncol=length(THE))
-L <- matrix(NA, nrow=length(ps), ncol=length(THE))
-rownames(M) <- sprintf("%d %%", 100*ps)
-colnames(M) <- THE
-for(i in 1:length(ps)){
-   for(j in 1:length(THE)){
-      M[i,j] <- THE[j]*ps[i]/(1+(THE[j]-1)*ps[i])
-      L[i,j] <- THE[j]*ps[i]
-   }
-}
-latex(
-   signif(100*(L-M)/M,2),
-   file="",
-   title="'denominator' ($p_2$)",
-   caption.loc="bottom",
-   cgroup="Odds Ratio (OR)"#,
-   #rowlabel="'denominator'"
-   )
+\[ p_1 \approx \text{OR}\cdot p_2, \]
+i.e.
+\[ \text{OR} \approx \frac{p1}{p2} = \text{RR}. \]
+
+% Deviation (\%) between approximation and exact formula:
+<<tab_odds, results='asis', eval = FALSE>>=
+## THE <- c(0.1, 0.5, 1, 2, 10)
+## #xs <- c(0.75, 0.55, 0.47, 0.4, 0.23)
+## ps <- c(0.01, 0.05, 0.1, 0.5)
+## M <- matrix(NA, nrow=length(ps), ncol=length(THE))
+## L <- matrix(NA, nrow=length(ps), ncol=length(THE))
+## rownames(M) <- sprintf("%d %%", 100*ps)
+## colnames(M) <- THE
+## for(i in 1:length(ps)){
+##    for(j in 1:length(THE)){
+##       M[i,j] <- THE[j]*ps[i]/(1+(THE[j]-1)*ps[i])
+##       L[i,j] <- THE[j]*ps[i]
+##    }
+## }
+## latex(
+##    signif(100*(L-M)/M,2),
+##    file="",
+##    title="'denominator' ($p_2$)",
+##    caption.loc="bottom",
+##    cgroup="Odds Ratio (OR)"#,
+##    #rowlabel="'denominator'"
+##   )
 @
 }
-\frame{ % -------------------------------------------------------------------->
-\frametitle{OR and probabilities}
-The blue dotted lines are the approximations.
-<<OR, fig.width=7, fig.height=7, include=FALSE>>=
-par(mar=c(4,4.2,1,1))
-THE <- c(0.1, 0.5, 1, 2, 10)
-xs <- c(0.75, 0.55, 0.47, 0.4, 0.23)
-plot(1,1,type='n', xlim=0:1, ylim=0:1,
-         xlab="Probability of 'denominator event'",
-      ylab="Probability of 'numerator' event",
-   cex.lab=1.5, las=1)
-for(k in seq_along(THE)){
-   curve(THE[k]*x/(1+(THE[k]-1)*x), from=0, to=1,add=TRUE, lwd=2)
-   text(x=xs[k], y=THE[k]*xs[k]/(1+(THE[k]-1)*xs[k]), label=paste("OR =", THE[k]), srt=45, cex=1.2, pos=3)
-   abline(a=0, b=THE[k], col="blue", lty=2)
-}
+% \frame{ % -------------------------------------------------------------------->
+% \frametitle{OR and probabilities}
+% The blue dotted lines are the approximations.
+<<OR, fig.width=7, fig.height=7, include=FALSE, eval = FALSE>>=
+## par(mar=c(4,4.2,1,1))
+## THE <- c(0.1, 0.5, 1, 2, 10)
+## xs <- c(0.75, 0.55, 0.47, 0.4, 0.23)
+## plot(1,1,type='n', xlim=0:1, ylim=0:1,
+##          xlab="Probability of 'denominator event'",
+##       ylab="Probability of 'numerator' event",
+##    cex.lab=1.5, las=1)
+## for(k in seq_along(THE)){
+##    curve(THE[k]*x/(1+(THE[k]-1)*x), from=0, to=1,add=TRUE, lwd=2)
+##    text(x=xs[k], y=THE[k]*xs[k]/(1+(THE[k]-1)*xs[k]), label=paste("OR =", THE[k]), srt=45, cex=1.2, pos=3)
+##    abline(a=0, b=THE[k], col="blue", lty=2)
+## }
 @
-\begin{center} \includegraphics[scale=0.4]{figure/OR-1} \end{center}
-}
+% \begin{center} \includegraphics[scale=0.4]{figure/OR-1} \end{center}
+% }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Fishers exact test}
 \begin{center}
@@ -309,7 +316,7 @@ bord
 fishers_p <- fb$pvalue
 rm(bord, fb)
 @
-Sum the red values to get $p=0.00045$. % <------------------------------------------ \Sexpr here?
+Sum the yellow values to get $p=0.00045$. % <------------------------------------------ \Sexpr here?
 <<hyper>>=
 par(mar=c(4,4.1,1,1))
 xx <- 4:30
@@ -318,13 +325,13 @@ plot(xx, dhyper(xx, 347, 371, 35), type='h', xlab="Outcome", ylab="Probability",
 points(8:26, dhyper(8:26,347, 371, 35), pch=16)
 points(17, dhyper(17,347, 371, 35), pch=4, cex=1.7, lwd=3)
 text(17, dhyper(17,347, 371, 35), pos=3, label="Mean under H0", offset=1, cex=1.5)
-points(c(4:7,27:30), dhyper(c(4:7,27:30),347, 371, 35), pch=16, col=.red)
-points(27, dhyper(27,347, 371, 35), pch=4, cex=1.7, col=.red, lwd=3)
-text(27, dhyper(27,347, 371, 35), pos=3, col=.red, label="Observed", offset=2, cex=1.5)
+points(c(4:7,27:30), dhyper(c(4:7,27:30),347, 371, 35), pch=16, col=.yellow)
+points(27, dhyper(27,347, 371, 35), pch=4, cex=1.7, col=.yellow, lwd=3)
+text(27, dhyper(27,347, 371, 35), pos=3, col=.yellow, label="Observed", offset=2, cex=1.5)
 arrows(x0=17.5, y0=dhyper(17,347, 371, 35),x1=26.5, y1=dhyper(17,347, 371, 35))
-abline(v=27, lty=2, col=.red)
+abline(v=27, lty=2, col=.yellow)
 arrows(x0=16.5, y0=dhyper(17,347, 371, 35),x1=7.5, y1=dhyper(17,347, 371, 35))
-abline(v=7, lty=2, col=.red)
+abline(v=7, lty=2, col=.yellow)
 text(x=23.5, y=dhyper(17,347, 371, 35), pos=3, label="Discrepancy")
 
 d <- 6; p <- sum(dhyper((17-d):(17+d), 347, 371, 35) )
@@ -354,28 +361,28 @@ So odds ratio is between 1.7 and 9.9. (Allows for test of model.)\\
 Probabilities are small, so risk of dabigatran is (approx.) between
 1.7 and 9.9 times larger than placebo risk.
 \end{frame}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Risk Ratio?}
-So
-\begin{quote}
-The odds ratio of bleeding with dabigatran \\ versus placebo is 3.8 (1.7--9.9).
-\end{quote}
+% \frame{ % -------------------------------------------------------------------->
+% \frametitle{Risk Ratio?}
+% So
+% \begin{quote}
+% The odds ratio of bleeding with dabigatran \\ versus placebo is 3.8 (1.7--9.9).
+% \end{quote}
 
-The placebo risk is $p_2=8/371\approx 2.2\%$ so we can use an earlier formula to get $p_1=$ (risk with dabigatran) and thus the RR:
+% The placebo risk is $p_2=8/371\approx 2.2\%$ so we can use an earlier formula to get $p_1=$ (risk with dabigatran) and thus the RR:
 
-\begin{center}\begin{tabular}{|c|lll|} \hline
-OR & 1.7 & 3.8 & 9.9 \\ \hline
-%$p_1\approx$  & 3.6\% & 8.2\% & 21\% \\ \hline
-$p_1 =$ & 3.5\% & 7.8\% & 18\% \\ \hline
-RR $=$ & 1.6 & 3.6 & 8.3 \\ \hline
-\end{tabular}\end{center}
-So
-\begin{quote}
-The risk ratio of bleeding with dabigatran \\ versus placebo is 3.6 (1.6--8.3).
-\end{quote}
-(\textbf{N.B} The implied confidence interval (above) for $p_1$ is "too wide"
-since it takes to much uncertainty into account.)
-}
+% \begin{center}\begin{tabular}{|c|lll|} \hline
+% OR & 1.7 & 3.8 & 9.9 \\ \hline
+% %$p_1\approx$  & 3.6\% & 8.2\% & 21\% \\ \hline
+% $p_1 =$ & 3.5\% & 7.8\% & 18\% \\ \hline
+% RR $=$ & 1.6 & 3.6 & 8.3 \\ \hline
+% \end{tabular}\end{center}
+% So
+% \begin{quote}
+% The risk ratio of bleeding with dabigatran \\ versus placebo is 3.6 (1.6--8.3).
+% \end{quote}
+% (\textbf{N.B} The implied confidence interval (above) for $p_1$ is "too wide"
+% since it takes to much uncertainty into account.)
+% }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Absolute risk}
 What can we say about the \emph{absolut} risk of bleeding with dabigatran?
@@ -411,6 +418,8 @@ We get a 95\% confidence interval for the difference with
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Have we exhausted the Dabigatran example yet?}
+
+It certainly seems so (but it will actually return again later in the lecture!)
 
 \rymda \textbf{Summary of the dabigatran example}:
 
@@ -554,14 +563,13 @@ data.
 a  sample against a model
 or, compare 2 or more samples against each other.
 
-\rymd $\chi^2$-tests can be applied to all tables (non-paired data)
-presented so far.
+\rymd We can apply $\chi^2$-tests to binary data, e.g. the Dabigatran data.
 
 \rymd $\chi^2$ tests typically calculate a test statistic $Q$ according to the formula
 \[ Q = \sum \frac{ (\mbox{observed - expected})^2 }{\mbox{expected}}. \]
 $Q$ is compared to a $\chi^2$ distribution with
 a parameter (degrees of freedom) that depends on
-the situation.
+the situation. (This is not an exact test.)
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Comparing data to a model}
@@ -610,10 +618,10 @@ text(x=obs+0.5, y=0, "observed", pos=3, cex=1.5)
 A case control study of coronary heart disease and drinking (none, moderate, heavy). Cases were matched on age, gender and smoking habits.
 
 \begin{center}\begin{tabular}{|c|ccc|c|} \hline
- & non & moderate & heavy & sum \\ \hline
- cases & 34 & 80 & 18 & 132\\
- controls & 156 & 334 & 37 & 527 \\ \hline
- sum & 190  &    414  &     55 & 659 \\ \hline
+          & non & moderate & heavy & sum \\ \hline
+ cases    &  34 &       80 &    18 & 132\\
+ controls & 156 &      334 &    38 & 528 \\ \hline
+ sum &      190 &      414 &    56 & 660 \\ \hline
 \end{tabular}\end{center}
 
 Does drinking habits differ between cases and controls?
@@ -622,25 +630,25 @@ If they do not ($H_0$), their distributions should be close to
 
 \begin{center}\begin{tabular}{ccc} \hline
 non & moderate & heavy  \\ \hline
-28.8\%\,(190/659) & 62.8\%\,(414/659) & 8.3\%\,(55/659) \\ \hline
+28.8\%\,(190/660) & 62.7\%\,(414/660) & 8.48\%\,(56/660) \\ \hline
 \end{tabular}\end{center}
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Visualizing the distributions}
-<<case_cont, fig.width=5, fig.height=5, include=FALSE>>=
+<<case_cont, fig.width=10, fig.height=5, include=FALSE>>=
 cases <- c(34,80,18)
-controls <- c(156, 334, 37)
+controls <- c(156, 334, 38)
 chd <- cbind(cases, controls)
 save(chd, file="data/chd.rdata")
 rownames(chd) <- c("non","moderate","heavy")
-barplot(prop.table(chd),
-   beside=TRUE,
-   legend=TRUE,
-   main="Proportions within dataset",
-   col=.seq3,
-   args.legend=c(x="top"))
-points(x=c(1,8), y=c(0,0.5), type='l', lwd=5)
-points(x=c(1,8), y=c(0.5,0), type='l', lwd=5)
+## barplot(prop.table(chd),
+##    beside=TRUE,
+##    legend=TRUE,
+##    main="Proportions within dataset",
+##    col=.seq3,
+##    args.legend=c(x="top"))
+## points(x=c(1,8), y=c(0,0.5), type='l', lwd=5)
+## points(x=c(1,8), y=c(0.5,0), type='l', lwd=5)
 barplot(prop.table(chd,2),
    beside=TRUE,
    legend=TRUE,
@@ -657,15 +665,15 @@ cat(plot_code, sep="")
 \frame{ % -------------------------------------------------------------------->
 Are drinking categories equidistributed for cases and controls?
 \begin{center}\begin{tabular}{|c|ccc|c|} \hline
- & non & moderate & heavy & Sum \\ \hline
- observed cases & 34 & 80 & 18 & 132 \\
- observed controls & 156 & 334 & 37 & 527 \\ \hline \hline
- sum & 190 &414 &55& 659 \\
- prop. (p=sum/659) & 0.29 & 0.63 &  0.08 & (1)\\ \hline
- expected cases (132$\cdot p$) & 38.1 &82.9 &11.0 & (132)\\
- expected controls (527$\cdot p$) & 152.0 &331.0& 44.0 & (527) \\ \hline
- Q cases ((Obs.-Exp.)$^2$/Exp.) & 0.43&0.10&4.4 & Tot:\\
- Q controls & 0.11&0.026& 1.1 & 6.2\\ \hline
+                   & non  & moderate & heavy & Sum \\ \hline
+ observed cases    & 34   &       80 &    18 & 132 \\
+ observed controls & 156  &      334 &    38 & 528 \\ \hline \hline
+ sum               & 190  &      414 &    56 & 660 \\
+ prop. (p=sum/660) & 0.29 &     0.63 &  0.08 & (1) \\ \hline
+ expected cases (132$\cdot p$)    & 38.1  & 82.9  & 11.0 & (132) \\
+ expected controls (528$\cdot p$) & 152.0 & 331.0 & 44.0 & (527) \\ \hline
+ Q cases ((Obs.-Exp.)$^2$/Exp.)   & 0.43  & 0.10  & 4.4  & Tot: \\
+ Q controls                       & 0.11  & 0.026 & 1.1  & 6.2 \\ \hline
 \end{tabular}\end{center}
 The test statistic $Q=6.2$ should be compared to a $\chi^2$ with
 (rows-1)$\times$(columns-1)=1*2=2 degrees of freedom.
@@ -681,13 +689,12 @@ differences).
 \vspace{0.2cm}
 Do not forget to look at the estimates!
 
-
 \begin{center}
 \begin{tabular}{|c|ccc|} \hline
- & non & moderate & heavy  \\ \hline
-proportion  cases  & 0.26 &0.61&0.13 \\
-proportion  controls &0.30&0.63&0.07 \\ \hline
-proportion total & 0.29 & 0.63 & 0.08 \\ \hline
+                    &  non & moderate & heavy \\ \hline
+proportion cases    & 0.26 &     0.61 &  0.13 \\
+proportion controls & 0.30 &     0.63 &  0.07 \\ \hline
+proportion total    & 0.29 &     0.63 &  0.08 \\ \hline
 \end{tabular}
 \end{center}
 
@@ -773,30 +780,31 @@ rm(mhbord)
 \begin{center}\begin{tabular}{|c|cc||cc|cc|}
 \multicolumn{3}{c}{} & \multicolumn{4}{c}{Adjusted for size} \\ \cline{4-7}
 \multicolumn{1}{c}{}&\multicolumn{2}{c||}{Total} & \multicolumn{2}{c|}{Small stones} & \multicolumn{2}{c|}{Large stones} \\ \cline{2-7}
-\multicolumn{1}{c|}{}&OS & PN & OS & PN & OS & PN \\ \hline
-Success & 273 & 289 & 81 & 234 & 192 & 55 \\  \hline
-Failure & 77 & 61 & 6   & 36 & 71 & 25 \\ \hline \hline
-Odds (for success) &  3.5 & 4.7 & 13.5 &  6.5 & 2.7 & 2.2 \\ \hline
+\multicolumn{1}{c|}{} &  OS &  PN &   OS &  PN &  OS &  PN \\ \hline
+Success               & 273 & 289 &   81 & 234 & 192 &  55 \\  \hline
+Failure               &  77 &  61 &    6 &  36 &  71 &  25 \\ \hline \hline
+Odds (for success)    & 3.5 & 4.7 & 13.5 & 6.5 & 2.7 & 2.2 \\ \hline
 Odds ratio (OS / PN) &\multicolumn{2}{c||}{0.75} &\multicolumn{2}{c|}{2.1} & \multicolumn{2}{c|}{1.2} \\ \hline
 \end{tabular}\end{center}
 
 Here it seems like we should adjust for stone size. \\
-\textbf{The Mantel-Haenszel} test is a way to analyse several contingency tables.
+(\textbf{The Mantel-Haenszel} test is a way to analyse several contingency tables.)
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Adjusting for multiple confounders}
 In observational studies we typically gather more information. E.g.\
 \begin{center}\begin{tabular}{|ccccccc|} \hline
 Ind.\ & Bleeding & DE Dose & Age & Gender & Weight & \ldots \\ \hline
-1 & Yes & 50 & 75 & M & 83 & \ldots \\
-2 & No & 75 & 64 & F & 77 & \ldots  \\
+1     &      Yes &      50 &  75 &      M &     83 & \ldots \\
+2     &       No &      75 &  64 &      F &     77 & \ldots  \\
 $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ &  \\ \hline
 \end{tabular}\end{center}
 
 When medicine is not randomized a simple cross tabulation analysis of 'Bleeding'
 versus 'DE Dose' is likely to be confounded.
 
-One way to deal with this is to do a logistic regression. More on that in Lecture 10.
+\vspace{0.2cm}
+One way to deal with this is logistic regression (more on that in Lecture 10).
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -142,7 +142,7 @@ Common problems:
 \end{itemize}
 
 \rymd
-Usually (bias alert!) one only needs to distinguish
+Usually one only needs to distinguish
 \begin{itemize}
    \item measurements (\code{Age}, \code{Albumin} are numerical), and
    \item categories (Gender, \code{Diabetes}, \code{Happiness} are categorical).
@@ -204,9 +204,11 @@ Missing data is usually a problem for observational studies.
 \frametitle{Solutions\ldots ish}
 There is no trick that guarantees a non-biased analysis.
 
-\rymd \textbf{Single imputation} e.g.\ replace missing value with a "typical" value for that variable (e.g. mean or median). This method (and similar ones) underestimates the variance in the variable and will give overly optimistic results.
+\rymd \textbf{Single imputation} e.g.\ replace missing value with a "typical" value for that variable (e.g. mean or median). This method underestimates the variance in the variable and will give overly optimistic results.
 
-\rymd \textbf{Multiple imputation} create multiple imputed data sets where the missing values are replaced differently in each iteration, e.g. drawn at random from the non-missing values.
+\rymd \textbf{Multiple imputation} create multiple imputed data sets where the
+missing values are replaced differently in each iteration (e.g. drawn at random
+from the non-missing values).
 
 \rymd
 \begin{quote}
@@ -587,9 +589,9 @@ Five samples from three different sampling sizes from previous distribution
 set.seed(20101212)
 pf <- c(0.49,0.20,0.31)
 m <- 5
+values <- c("non", "former", "current")
 
 foo_bar <- function(n, l = FALSE){
-   values <- c("non", "former", "current")
    # n <- 30
    s <- factor(sample(values, size = m*n, replace = TRUE,
                       prob = pf), levels = values)
@@ -605,7 +607,7 @@ foo_bar <- function(n, l = FALSE){
 
 par(mar=c(4,5,2,1))
 layout(matrix(1:4, nrow = 2, byrow = TRUE))
-barplot(pf, width = m, border = "black", col = "black", ylim = c(0,0.7),
+barplot(pf, width = m, names.arg = values, border = "black", col = "black", ylim = c(0,0.7),
         main = "True distribution", density = 15, lwd = 2, angle = +45) ## legend = l2,
 foo_bar(25)
 foo_bar(100)
@@ -665,8 +667,8 @@ latex(
 \frametitle{Visualizing 'age' versus 'smoking' as percentages within smoking groups}
 <<plot_smoker2>>=
 load("data/F8_smoking.Rdata")
-with(dd, tabsmok3 <<- prop.table(table( age=age, smoker=smoker), 2))
-par(mar=c(4,4,0,0))
+with(dd, tabsmok3 <<- 100*prop.table(table( age=age, smoker=smoker), 2))
+par(mar=c(4,4,1,0))
 barplot(tabsmok3, beside=TRUE, legend=TRUE, ylab="Percent", col=brewer.pal(9, "YlGn"))
 @
 }
