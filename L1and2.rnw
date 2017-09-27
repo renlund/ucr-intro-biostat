@@ -58,7 +58,7 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
 
 \title{Introduction to Biostatistics \\ Lecture 1B and 2}
 \author{Henrik Renlund}
-\date{October 10-11, 2016}
+\date{January 23-24, 2017}
 
 \begin{document} % >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 \frame{ % -------------------------------------------------------------------->
@@ -196,7 +196,7 @@ Missing data is usually a problem for observational studies.
 
 \rymd The statistical software default is to include only those individuals with complete case data on all variables that you include.
 
-\rymd \emph{Complete case analysis} will only give an unbiased result if the reason that a variable is missing has nothing to do with the actual value.
+\rymd \emph{Complete case analysis} will only give an unbiased result if the reason that a variable is missing has nothing to do with the actual value (and/or the outcome).
 
 \rymd If the missing mechanism is known this might be utilized in the analysis.
 }
@@ -376,7 +376,7 @@ An average value is a single value meant to be
 representative of the entire data set.
 
 \begin{itemize}
-\item  \textbf{The mode:} is the single most common data point. \\
+\item  \textbf{The mode:} is the single most common value of a data point. \\
 (Mostly meaningful for categorical data.)
 
 \rymd
@@ -1223,6 +1223,61 @@ curve(pnorm(x, mean(t), sd(t)), from=-1, to=2, add=TRUE, lty=2, col="grey60")
 qqnorm(t, ylim=c(-0.2, 1.2))
 qqline(t)
 @
+}
+\frame{ %  ------------------------------------------------------------------->
+\frametitle{A reminder ahead of time}
+\begin{center}
+\fbox{\textbf{It is very rarely the actual data that is tested for normality!}}
+\end{center}
+Most of the time the models that assume normality does so for the ''error''
+terms, i.e.\ there is a model, depending on the covariates $x$, for the outcome
+$Y$ such that
+\[ Y = \mbox{some deterministic function of x} + \mbox{noise}. \]
+
+E.g.\ a 2-sample $t$-test assumes that an outcome is normally distributed around a
+group-specific mean. Data for such a test might look like this
+
+\begin{center}\begin{tabular}{|c|rrrrrr} \hline
+ outcome ($Y$) & 5.1 & 6.2 & 7.9 & 9.2 & 4.7 & $\ldots$ \\
+ group ($x$)   &   A &   A &   B &   B &   A & $\ldots$ \\ \hline
+\end{tabular}\end{center}
+
+We cannot test the entire $Y$ data for normality. This is evident if imagine the
+group effect to be very large\ldots
+}
+\frame{ %  ------------------------------------------------------------------->
+<<fig.height = 2.7>>=
+n <- 250
+a_mean <- 6
+b_mean <- 10
+set.seed(12345678)
+df <- data.frame(
+    x = rep(LETTERS[1:2], each = n),
+    Y = rnorm(2*n, rep(c(a_mean,b_mean), each = n), 1)
+)
+df$resid = df$Y - ifelse(df$x=="A", a_mean, b_mean)
+ggplot(df, aes(Y, group = x)) +
+    geom_histogram(aes(y = ..density..), binwidth = 0.75) +
+    stat_function(fun = dnorm, size = 1, lty = 2,
+                  args = list(mean = a_mean)) +
+    stat_function(fun = dnorm, size = 1, lty = 2,
+                  args = list(mean = b_mean)) +
+    labs(x = "Outcome (Y)", y = "Density") +
+    theme_bw()
+@
+
+It is the deviations (noise/error term) around each group-specific mean that
+is supposed to be normal, an estimation of which is called \emph{residuals}.
+Subtract the (estimated) group effect from each datapoint to get:
+
+<<fig.height = 2.7>>=
+ggplot(df, aes(resid)) +
+    geom_histogram(aes(y=..density..), binwidth = 0.5) +
+    labs(x = "Residual", y = "Density") +
+    stat_function(fun = dnorm, size = 1, lty = 2) +
+    theme_bw()
+@
+
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{ } %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

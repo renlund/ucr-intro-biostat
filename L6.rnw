@@ -29,7 +29,7 @@ rm(HANDOUT)
 
 \title{Introduction to Biostatistics \\ Lecture 6}
 \author{Henrik Renlund}
-\date{October 17, 2016}
+\date{January 30, 2017}
 
 <<"colors", cache=FALSE, echo=FALSE, include=FALSE>>=
 .yellow <- wes_palette("Cavalcanti", 5)[1]
@@ -557,19 +557,20 @@ $\pr(X=v)$ & 9/16 & 3/16 & 3/16 & 1/16 \\ \hline
 \frametitle{$\chi^2$-tests}
 $\chi^2$ tests are applied to tabulated data
 (i.e. the 'counts'), typically categorical
-data.
+data. (E.g.\ the Dabigatran data.)
 
 \rymd Like the $t$-test, we can use $\chi^2$ to compare
 a  sample against a model
 or, compare 2 or more samples against each other.
 
-\rymd We can apply $\chi^2$-tests to binary data, e.g. the Dabigatran data.
-
 \rymd $\chi^2$ tests typically calculate a test statistic $Q$ according to the formula
 \[ Q = \sum \frac{ (\mbox{observed - expected})^2 }{\mbox{expected}}. \]
 $Q$ is compared to a $\chi^2$ distribution with
 a parameter (degrees of freedom) that depends on
-the situation. (This is not an exact test.)
+the situation.
+\begin{center}
+\fbox{\textbf{This is not an exact test. Rule of thumb: cell count $\geq 5$}.}
+\end{center}
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Comparing data to a model}
