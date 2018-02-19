@@ -29,7 +29,7 @@ rm(HANDOUT)
 
 \title{Introduction to Biostatistics \\ Lecture 6}
 \author{Henrik Renlund}
-\date{January 30, 2017}
+\date{January 29, 2018}
 
 <<"colors", cache=FALSE, echo=FALSE, include=FALSE>>=
 .yellow <- wes_palette("Cavalcanti", 5)[1]
@@ -142,7 +142,7 @@ Odds of bleeding
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Odds}
 For an event with probability $p$, the odds is $p/(1-p)$.
-<<odds_1, fig.height=5>>=
+<<odds_1>>=
 par(mar=c(4,4.1,1,1), "ylog"=TRUE)
 curve(x/(1-x), from=0, to=1, ylab="Odds", xlab="Probability", lwd=2,
    cex.lab=1.5, las=1, yaxp=c(0,100,4))
@@ -152,7 +152,7 @@ curve(x/(1-x), from=0, to=1, ylab="Odds", xlab="Probability", lwd=2,
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Odds}
 For small probabilities: odds $\approx$ probability.
-<<odds_2>>=
+<<odds_2, fig.height = 5>>=
 par(mar=c(4,4.1,1,1))
 curve(x/(1-x), from=0, to=0.75, ylab="Odds", xlab="Probability", lwd=2,
    xaxt='n', yaxt='n',xlim=c(0,0.667), ylim=c(0,2), cex.lab=1.5)
@@ -212,6 +212,13 @@ Measures for risk of dabigatran versus placebo
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Odds ratio (OR)}
 Probabilities cannot be retrieved from the OR alone.
+
+\textbf{N.B.}
+\begin{itemize}
+  \item Odds = 1 means p = 0.5 (as likely to experience event as to not
+experience event)
+ \item OR = 1 means events are equally likely in both groups
+\end{itemize}
 
 \vspace{0.2cm}
 If you know the 'denominator' probability ($p_2$) then the 'numerator'
@@ -285,7 +292,7 @@ independent of intervention. ($H_0$: "odds ratio = 1".)
 of the study population (of size 718) and we would expect
 that $X/35=347/718\approx 48\%$.
 
-\rymd We would expect $X$ to be 17-18, but is $X = 27$ within some acceptable range of possiblities?
+\rymd We would expect $X$ to be around 17, but is $X = 27$ within some acceptable range of possiblities?
 }
 \frame{ % -------------------------------------------------------------------->
 <<approx-fisher, cache = FALSE>>=
@@ -296,7 +303,8 @@ Simulate (500 times) the experiment of randomly selecting 35 people from the stu
 <<approx-fisher-plot, include = TRUE, fig.height = 4>>=
 #hist(x, breaks = 4:30, xlab = "Assigned Dabigatran (if $H_0$ true)", freq = FALSE, main = "")
 y <- factor(x, levels = 4:30)
-barplot(table(y)/length(y),  xlab = "Assigned Dabigatran",  main = "", space = 0, xaxt = 'n')
+barplot(table(y)/length(y),  xlab = "Assigned Dabigatran", ylab = "Probability",
+        main = "", space = 0, xaxt = 'n')
    axis(1, at = seq(1.5,27.5,5), tick = TRUE, labels = seq(5,30,5))
 @
 However, we can calculate \emph{exactly} what the distribution
@@ -317,7 +325,7 @@ fishers_p <- fb$pvalue
 rm(bord, fb)
 @
 Sum the yellow values to get $p=0.00045$. % <------------------------------------------ \Sexpr here?
-<<hyper>>=
+<<hyper, fig.height = 5>>=
 par(mar=c(4,4.1,1,1))
 xx <- 4:30
 plot(xx, dhyper(xx, 347, 371, 35), type='h', xlab="Outcome", ylab="Probability",
@@ -439,7 +447,7 @@ To prove a new product is hypoallergenic it should provoke
 no more skin reactions than current market leader.
 
 \rymd To test a new product 40 individuals got both products applied
-to to patches of skin and observed for reaction (yes/no)
+to patches of skin and observed for reaction (yes/no)
 
 \begin{center}\begin{tabular}{ccc} \\ \hline
 id & new & market \\ \hline
@@ -706,6 +714,7 @@ is for the researcher to discuss.
 \frametitle{Which categories deviate?}
 One can also look at the 'residuals'.
 <<chiq_res>>=
+## 1
 load("data/chd.rdata")
 res <- chisq.test(chd)$resid
 rownames(res) <- c("non", "moderate", "heavy")

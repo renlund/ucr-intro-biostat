@@ -58,7 +58,7 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
 
 \title{Introduction to Biostatistics \\ Lecture 1B and 2}
 \author{Henrik Renlund}
-\date{January 23-24, 2017}
+\date{January 22-23, 2018}
 
 \begin{document} % >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 \frame{ % -------------------------------------------------------------------->
@@ -174,10 +174,10 @@ Choice of descriptive measures may be context dependent.
 \frametitle{Some points on tables (for publication)}
 \begin{itemize}
    \item Table and caption should be self contained.
-   \item Every table should be referred to in text.*
    \item Put captions \emph{above} the table.
    \item Avoid excessive precision. (Mean age 65.63?)
    \item Use adequate measures of location and spread.
+   \item Every table should be referred to in text.*
 \end{itemize}
 
 \rymda *The table should illustrate some part of the data relating to the hypothesis of the paper. Referring to a table should fit the narrative.
@@ -555,7 +555,7 @@ cat(plot_code, sep="")
 \begin{itemize}
    \item \textbf{Probability theory:} given model (model parameters, or other aspects) - describe how data behave. E.g.\
    \begin{itemize}
-      \item specific results: how likely are deviations from what we expect
+      \item specific results: how likely are specific deviations
       \item general results: Law of Large Numbers, Central Limit Theorem, etc.
    \end{itemize}
    \item \textbf{Inference theory:}  given data what is a likely model/parameters or other aspects of the underlying distribution (without specifying model = non-parametric statistics).
@@ -791,8 +791,8 @@ Histograms & & Density functions (continuous RV)\\ \hline
 \end{center}
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Assuming Normality}
-Often we assume that the population follows a Normal density curve.
+\frametitle{The Normal Distribution}
+Sometimes we assume that the population follows a Normal density curve.
 <<fev6>>=
 load("data/F8_smoking.Rdata") # dd
 n <- 11
