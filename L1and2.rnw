@@ -41,11 +41,11 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
    else
       points(x=x, y=revsort(y,perm), ...)
 }
-.yellow <- wes_palette("Cavalcanti", 5)[1]
-.green <- wes_palette("Cavalcanti", 5)[2]
-.grey <- wes_palette("Cavalcanti", 5)[3]
-.blue <- wes_palette("Cavalcanti", 5)[4]
-.red <- wes_palette("Cavalcanti", 5)[5]
+.yellow <- wes_palette("Cavalcanti1", 5)[1]
+.green <- wes_palette("Cavalcanti1", 5)[2]
+.grey <- wes_palette("Cavalcanti1", 5)[3]
+.blue <- wes_palette("Cavalcanti1", 5)[4]
+.red <- wes_palette("Cavalcanti1", 5)[5]
 @
 
 \newcommand{\pr}{\mathbf{Prob}}
@@ -58,7 +58,7 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
 
 \title{Introduction to Biostatistics \\ Lecture 1B and 2}
 \author{Henrik Renlund}
-\date{January 22-23, 2018}
+\date{Fall 2018}
 
 \begin{document} % >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 \frame{ % -------------------------------------------------------------------->
@@ -526,17 +526,18 @@ ggplot(mtcars, aes(disp, mpg)) +
 \frame{ % -------------------------------------------------------------------->
 \frametitle{In defense of pie charts?}
 <<pie, include=FALSE, fig.height=5, fig.width=5, fig.keep = TRUE>>=
+set.seed(20180927)
 x <- sample(LETTERS[1:5], size = 250, replace = T, prob = c(5,2,1,4,3))
 a_table <- table(x); save(a_table, file="data/a_table.rdata")
-barchart(a_table, col = wes_palette("Cavalcanti", 5))
-pie(a_table, col = wes_palette("Cavalcanti", 5))
+barchart(a_table, col = wes_palette("Cavalcanti1", 5))
+pie(a_table, col = wes_palette("Cavalcanti1", 5))
 @
 Is it of interest to be able to compare summation of levels?
 
 (Is A + B + C smaller than D + E?)
 
-<<show_pie, results='asis'>>=
-plot_code <- sprintf("\\includegraphics[scale=0.48]{figure/%s}\n", paste0("pie-",1:2))
+<<show_pie, results='asis', cache = FALSE>>=
+plot_code <- sprintf("\\includegraphics[scale=0.47]{figure/%s}\n", paste0("pie-",1:2))
 cat(plot_code, sep="")
 @
 }
@@ -619,7 +620,7 @@ layout(matrix(1, nrow = 1))
 \frametitle{FEV data set}
 430 children (9-17 years of age) had their age, forced expiratory volume
 in 1 second (FEV) and smoking status (!) recorded. (To be seen again
-in lecture 8.)
+in lecture 9.)
 
 \rymd A barchart is a way to visualize a variable with a small number
 of unique values (often categorical). They are visual analogous
@@ -845,8 +846,8 @@ points( x,y, type='l', lwd=2)
 text( 0,0.15, "68%",cex=2)
 @
 
-<<plot_code_normal_stuff, results='asis'>>=
-plot_code <- sprintf("\\includegraphics[scale=0.48]{figure/%s}\n", paste0("normal_stuff-",1:2))
+<<plot_code_normal_stuff, results='asis', cache = FALSE>>=
+plot_code <- sprintf("\\includegraphics[scale=0.47]{figure/%s}\n", paste0("normal_stuff-",1:2))
 cat(plot_code, sep="")
 @
 }

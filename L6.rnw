@@ -29,14 +29,14 @@ rm(HANDOUT)
 
 \title{Introduction to Biostatistics \\ Lecture 6}
 \author{Henrik Renlund}
-\date{January 29, 2018}
+\date{Fall 2018}
 
 <<"colors", cache=FALSE, echo=FALSE, include=FALSE>>=
-.yellow <- wes_palette("Cavalcanti", 5)[1]
-.green <- wes_palette("Cavalcanti", 5)[2]
-.grey <- wes_palette("Cavalcanti", 5)[3]
-.blue <- wes_palette("Cavalcanti", 5)[4]
-.red <- wes_palette("Cavalcanti", 5)[5]
+.yellow <- wes_palette("Cavalcanti1", 5)[1]
+.green <- wes_palette("Cavalcanti1", 5)[2]
+.grey <- wes_palette("Cavalcanti1", 5)[3]
+.blue <- wes_palette("Cavalcanti1", 5)[4]
+.red <- wes_palette("Cavalcanti1", 5)[5]
 .seq3 <- brewer.pal(5,"YlGn")[2:4]
 @
 
@@ -610,6 +610,7 @@ dfm$type <- factor(paste(dfm$pod, dfm$color, sep=""), levels=c("RY","RG","WY","W
 T2dfm <- table(dfm$type)
 chi <- chisq.test(T2dfm, p=c(9,3,3,1)/16 )
 obs <- chi$statistic
+obs.y <- dchisq(obs,3)
 par(mar=c(4,4,1,1))
 curve(dchisq(x,3), from=0, to=15, xlab="Outcome", ylab="Probability", xlim=c(0,10),
    las=1, cex.lab=1.5, xaxt='n', lwd=2)
@@ -618,8 +619,10 @@ axis(1,at=c(0,obs,5,q, 10), lab=c("0",round(obs,2),"5",round(q,2),"10"))
 abline(v=q, lty=2)
 arrows(x0=q, y0=0.15,x1=10.2,y1=0.15)
 text(x=9, y=0.15, pos=3, label="5%", cex=1.5)
-points(x=obs, y=0, pch=4, cex=2, lwd=2, col=.red)
-text(x=obs+0.5, y=0, "observed", pos=3, cex=1.5)
+## points(x=obs, y=0, pch=4, cex=2, lwd=2, col=.red)
+## text(x=obs+0.5, y=0, "observed", pos=3, cex=1.5)
+points(x=obs, y=obs.y, pch=4, cex=2, lwd=2, col=.red)
+text(x=obs+0.9, y=obs.y-.02, "observed", pos=3, cex=1.5)
 @
 }
 \frame{ % -------------------------------------------------------------------->
@@ -667,7 +670,7 @@ barplot(prop.table(chd,2),
 @
 
 <<case_cont_code, results='asis'>>=
-plot_code <- sprintf("\\includegraphics[scale=0.48]{figure/%s}\n", paste0("case_cont-",1:2))
+plot_code <- sprintf("\\includegraphics[scale=0.48]{figure/%s}\n", paste0("case_cont-",1))
 cat(plot_code, sep="")
 @
 }
