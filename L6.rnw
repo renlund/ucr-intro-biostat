@@ -29,7 +29,7 @@ rm(HANDOUT)
 
 \title{Introduction to Biostatistics \\ Lecture 6}
 \author{Henrik Renlund}
-\date{Fall 2018}
+\date{Fall 2019}
 
 <<"colors", cache=FALSE, echo=FALSE, include=FALSE>>=
 .yellow <- wes_palette("Cavalcanti1", 5)[1]
@@ -92,6 +92,47 @@ We talk about this data in terms of the probability of one of the events (often 
 
 \rymd \textbf{"Non-binary" categorical data} has more than 2 values ($A$, $B$, $C$, \ldots). We talk about this data in terms of the entire \emph{distribution}, i.e. the probability function $(\pr(A), \pr(B), \pr(C), \ldots)$. Of course we could omit one of these, since it would be implicit, but it is unconvenient.
 }
+\frame{ % -------------------------------------------------------------------->
+  \frametitle{Numeric data verses categorical}
+  \textbf{1 sample:}
+
+  \rymd Suppose $x_1, x_2, \ldots, x_n$ is a sample from some population.
+
+  \rymd \emph{Numeric:} population mean $ = \mu$? Answered by 1-sample
+  $t$-test (parametric) or Wilcoxon signed rank test (non-parametric).
+
+  \rymd \emph{Categorical:} is the probability
+  function $ = p(k)$? Or, if binary, is $\pr$(event) = $p$?
+  Answered by $\chi^2-test$.
+
+  \rymd \textbf{(2-sample paired:)}
+
+  \rymd \emph{Numeric:} taking differences reduces this to the 1-sample situation.
+
+  \rymd \emph{Categorical:} Answered by McNemars test.
+
+}
+\frame{ % -------------------------------------------------------------------->
+  \frametitle{Numeric data verses categorical}
+  \textbf{2 samples:}
+
+  \rymd Suppose $x_1, x_2, \ldots, x_n$ and $y_1, y_2, \ldots, y_n$ are samples
+  from possibly different populations.
+
+  \rymd \emph{Numeric:} Are the population means the same? Answered by 2-sample
+  $t$-test (parametric) or Mann-Whitney (non-parametric).
+
+  \rymd \emph{Categorical:} are the probability
+  function the same? Or, if binary, is $\pr$(event) the same?
+  Answered by Fishers exact test or $\chi^2-test$.
+
+  \rymd \textbf{Many samples:}
+
+  \rymd \emph{Numeric:} All means the same? Answered by ANOVA (parametric) or Kruskal-Wallis (non-parametric)
+
+  \rymd \emph{Categorical:} Are all probability functions the same? Answered by $\chi^2$-test.
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section[Risk measures]{Risk measures and their estimates} %%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -821,8 +862,8 @@ One way to deal with this is logistic regression (more on that in Lecture 10).
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{ } %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%\section{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \frame{ % -------------------------------------------------------------------->
 \frametitle{References}
