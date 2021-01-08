@@ -29,7 +29,7 @@ rm(HANDOUT)
 
 \title{Introduction to Biostatistics \\ Lecture 6}
 \author{Henrik Renlund}
-\date{Fall 2019}
+\date{Fall 2020}
 
 <<"colors", cache=FALSE, echo=FALSE, include=FALSE>>=
 .yellow <- wes_palette("Cavalcanti1", 5)[1]
@@ -77,7 +77,7 @@ odds.
 \rymd For tables relating counts of a categorical variable,
 how can we test the distribution of values against
 \begin{itemize}
-   \item a model (probability specification), or
+   \item a model (probability function), or
    \item between subgroups.
 \end{itemize}
 
@@ -103,13 +103,13 @@ We talk about this data in terms of the probability of one of the events (often 
 
   \rymd \emph{Categorical:} is the probability
   function $ = p(k)$? Or, if binary, is $\pr$(event) = $p$?
-  Answered by $\chi^2-test$.
+  Answered by e.g.\ confidence interval for $p$ or $\chi^2-test$.
 
   \rymd \textbf{(2-sample paired:)}
 
   \rymd \emph{Numeric:} taking differences reduces this to the 1-sample situation.
 
-  \rymd \emph{Categorical:} Answered by McNemars test.
+  \rymd \emph{Categorical:}  McNemars test.
 
 }
 \frame{ % -------------------------------------------------------------------->
@@ -124,7 +124,7 @@ We talk about this data in terms of the probability of one of the events (often 
 
   \rymd \emph{Categorical:} are the probability
   function the same? Or, if binary, is $\pr$(event) the same?
-  Answered by Fishers exact test or $\chi^2-test$.
+  Answered by Fishers exact test or $\chi^2$-test.
 
   \rymd \textbf{Many samples:}
 
@@ -256,8 +256,8 @@ Probabilities cannot be retrieved from the OR alone.
 
 \textbf{N.B.}
 \begin{itemize}
-  \item Odds = 1 means p = 0.5 (as likely to experience event as to not
-experience event)
+  \item Odds = 1 means p = 0.5 (as likely to experience the event as to not
+experience the event)
  \item OR = 1 means events are equally likely in both groups
 \end{itemize}
 
@@ -383,12 +383,12 @@ arrows(x0=16.5, y0=dhyper(17,347, 371, 35),x1=7.5, y1=dhyper(17,347, 371, 35))
 abline(v=7, lty=2, col=.yellow)
 text(x=23.5, y=dhyper(17,347, 371, 35), pos=3, label="Discrepancy")
 
-d <- 6; p <- sum(dhyper((17-d):(17+d), 347, 371, 35) )
-arrows(x0=(17-d), x1=(17+d), y0=0.155, y1=0.155, code=3)
-text(17, 0.155, pos=3, label=paste(round(100*p,1), "%", sep=""))
-d <- 5; p <- sum(dhyper((17-d):(17+d), 347, 371, 35) )
-arrows(x0=(17-d), x1=(17+d), y0=0.165, y1=0.165, code=3)
-text(17, 0.165, pos=3, label=paste(round(100*p,1), "%", sep=""))
+## d <- 6; p <- sum(dhyper((17-d):(17+d), 347, 371, 35) )
+## arrows(x0=(17-d), x1=(17+d), y0=0.155, y1=0.155, code=3)
+## text(17, 0.155, pos=3, label=paste(round(100*p,1), "%", sep=""))
+## d <- 5; p <- sum(dhyper((17-d):(17+d), 347, 371, 35) )
+## arrows(x0=(17-d), x1=(17+d), y0=0.165, y1=0.165, code=3)
+## text(17, 0.165, pos=3, label=paste(round(100*p,1), "%", sep=""))
 @
 }
 \begin{frame}[fragile] % ----------------------------------------------------->
@@ -406,7 +406,7 @@ sample estimates:
 odds ratio
   3.821942
 \end{verbatim}
-So odds ratio is between 1.7 and 9.9. (Allows for test of model.)\\
+So odds ratio is between 1.7 and 9.9. (Allows for hypothesis testing.)\\
 Probabilities are small, so risk of dabigatran is (approx.) between
 1.7 and 9.9 times larger than placebo risk.
 \end{frame}
@@ -444,7 +444,10 @@ What can we say about the \emph{absolut} risk of bleeding with dabigatran?
 This yields a 95\% confidence interval given by
    \[ (0.078\pm 1.96\cdot 0.0144)=(0.050, 0.11). \]
 
-(This allows for test of model.)
+   (This allows for hypothesis testing.)
+
+\vspace{0.3cm}
+\fbox{\textbf{Rule of thumb:  $n*\min(p,1-p)\geq 5$}.}
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Risk difference}
@@ -463,8 +466,23 @@ difference &$p_1-p_2=0.056$ & $\sqrt{0.0144^2+0.0075^2}=0.0162$
 
 We get a 95\% confidence interval for the difference with
    \[ (0.056\pm 1.96\cdot 0.0162) = (0.024, 0.088). \]
-(This allows for test of model.)
+(This allows for hypothesis testing.)
 }
+%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{A digression and a toy example}
+%% A study on treatment X for A-individuals found an effect size of 16 with SE
+%% 2.1. An independent study on X for B-individuals found an effect size of 9
+%% with SE 1.7.
+%% <<>>=
+%% plot(x = c(9-2*1.7,16+2*2.1), y = c(0,1), type = 'n',
+%%      xlab = "", yaxt  = 'n', ylab = "")
+%% points(x = c(9,16), y = c(0,1))
+%% lines(x = c(9-1.96*1.7, 9+1.96*1.7), y = c(0,0))
+%% lines(x = c(16-1.96*2.1, 16+1.96*2.1), y =c(1,1))
+%% @
+%% Is the effect for A and B individuals statistically significant different?
+%% We don't know!
+%% }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Have we exhausted the Dabigatran example yet?}
 
@@ -834,11 +852,13 @@ rm(mhbord)
 \begin{center}\begin{tabular}{|c|cc||cc|cc|}
 \multicolumn{3}{c}{} & \multicolumn{4}{c}{Adjusted for size} \\ \cline{4-7}
 \multicolumn{1}{c}{}&\multicolumn{2}{c||}{Total} & \multicolumn{2}{c|}{Small stones} & \multicolumn{2}{c|}{Large stones} \\ \cline{2-7}
-\multicolumn{1}{c|}{} &  OS &  PN &   OS &  PN &  OS &  PN \\ \hline
-Success               & 273 & 289 &   81 & 234 & 192 &  55 \\  \hline
-Failure               &  77 &  61 &    6 &  36 &  71 &  25 \\ \hline \hline
+\multicolumn{1}{c|}{} &  OS  &  PN &   OS &  PN &  OS &  PN \\ \hline
+Success               & 273  & 289 &   81 & 234 & 192 &  55 \\  \hline
+Failure               &  77  &  61 &    6 &  36 &  71 &  25 \\ \hline \hline
 Odds (for success)    & 3.5 & 4.7 & 13.5 & 6.5 & 2.7 & 2.2 \\ \hline
-Odds ratio (OS / PN) &\multicolumn{2}{c||}{0.75} &\multicolumn{2}{c|}{2.1} & \multicolumn{2}{c|}{1.2} \\ \hline
+Odds ratio (OS / PN) &\multicolumn{2}{c||}{0.75} &\multicolumn{2}{c|}{2.1} &
+\multicolumn{2}{c|}{1.2} \\ \hline \hline
+(Percent success      &  78\% & 83\% & 93\% & 87\% & 73\% & 69\%) \\ \hline
 \end{tabular}\end{center}
 
 Here it seems like we should adjust for stone size. \\
@@ -854,11 +874,11 @@ Ind.\ & Bleeding & DE Dose & Age & Gender & Weight & \ldots \\ \hline
 $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ &  \\ \hline
 \end{tabular}\end{center}
 
-When medicine is not randomized a simple cross tabulation analysis of 'Bleeding'
-versus 'DE Dose' is likely to be confounded.
+When medicine is \textbf{not} randomized a simple cross tabulation analysis of 'Bleeding'
+versus 'DE Dose' is at risk of confounding.
 
 \vspace{0.2cm}
-One way to deal with this is logistic regression (more on that in Lecture 10).
+One way to deal with this is logistic regression (more on that in a later lecture).
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -874,3 +894,16 @@ One way to deal with this is logistic regression (more on that in Lecture 10).
 \end{itemize}
 }
 \end{document} # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+<<eval =FALSE>>=
+
+N <- 2000000
+e <- 27
+n <- 27 + 347
+p <- e/n
+n*p*(1-p)
+
+x <- rbinom(n = N, size = n, prob = p)
+hist(x/n, breaks = seq(0.01, .18, by = 0.005))
+
+@
