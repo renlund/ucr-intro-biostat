@@ -893,17 +893,53 @@ One way to deal with this is logistic regression (more on that in a later lectur
 \item Grant, R.\ L.: Converting an odds ratio to a range of plausible relative risks for better communication of research findings, \emph{BMJ} \textbf{348} (2014) 7 pages.
 \end{itemize}
 }
+\frame{ % -------------------------------------------------------------------->
+  \frametitle{First poll}
+  \newcommand{\lada}{\fbox{$\phantom{x}$}}
+\textbf{Question 1:} You are at 3\% risk of a disease. Would you rather
+\begin{itemize}
+\item[\lada] Have a 1\%-point risk reduction?
+\item[\lada] Halve your odds?
+\item[\lada] Doesn't matter
+\end{itemize}
+\textbf{Question 2:} You are facing a 50\% risk of a disease. Would you rather
+\begin{itemize}
+\item[\lada] Halve your risk
+\item[\lada] Halve your odds
+\item[\lada] Doesn't matter
+\end{itemize}
+}
+\frame{ % -------------------------------------------------------------------->
+  \frametitle{Second poll}
+  \newcommand{\lada}{\fbox{$\phantom{x}$}}
+\textbf{Question 1:} The OR for success between procedure A and B is 2. Check
+those that are necessarily true:
+\begin{itemize}
+\item[\lada] the A procedure has >50\% chance of success
+\item[\lada] A has a higher success rate than B
+\item[\lada] A has double the success rate of B
+\end{itemize}
+\textbf{Question 2:} Drug X has a side effect Y, experienced by 5\% of the
+users, a risk researches are trying to halve. A study on a modification of X
+found that the OR for Y is 0.2 (.07, .44) concerning side effects. Did the
+researchers succeed?
+\begin{itemize}
+\item[\lada] Yes
+\item[\lada] No
+\item[\lada] Inconclusive.
+\end{itemize}
+}
+
 \end{document} # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-<<eval =FALSE>>=
 
-N <- 2000000
-e <- 27
-n <- 27 + 347
-p <- e/n
-n*p*(1-p)
-
-x <- rbinom(n = N, size = n, prob = p)
-hist(x/n, breaks = seq(0.01, .18, by = 0.005))
-
-@
+%% \frame{ % -------------------------------------------------------------------->
+%%   \frametitle{poll}
+%%   \newcommand{\lada}{\fbox{$\phantom{x}$}}
+%% \textbf{Question ?:}
+%% \begin{itemize}
+%% \item[\lada] text
+%% \item[\lada] text
+%% \item[\lada] text
+%% \end{itemize}
+%% }
