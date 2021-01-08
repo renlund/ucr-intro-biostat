@@ -3,6 +3,7 @@ library(Hmisc)
 library(RColorBrewer)
 library(wesanderson)
 library(graphics)
+library(ggplot2); theme_set(theme_bw())
 
 opts_chunk$set(
    cache=TRUE,
@@ -13,7 +14,16 @@ opts_chunk$set(
    fig.align='center',
    fig.width=11,
    fig.height=5
-)
+   )
+opts_knit$set(eval.after = "fig.cap")
+.par_reset <- par()
+.par_reset$cin <- NULL
+.par_reset$cra <- NULL
+.par_reset$csi <- NULL
+.par_reset$cxy <- NULL
+.par_reset$din <- NULL
+.par_reset$page <- NULL
+
 # copy-paste from package 'proh' to remove dependency
 fileName <- function(filename){
    ext <- rep(NA_character_, length(filename))
@@ -40,13 +50,14 @@ fileName <- function(filename){
    knit2pdf(name, clean = TRUE)
 }
 
+# LECTURE 1&2  --------------------------
+knit2pdf("L1and2.rnw", clean=TRUE)
+.alsHO("L1and2.rnw")
+
 # LECTURE 6 ----------------------------
 knit2pdf("L6.rnw", clean=TRUE)
 .alsHO("L6.rnw")
 
-# LECTURE 1&2  --------------------------
-knit2pdf("L1and2.rnw", clean=TRUE)
-.alsHO("L1and2.rnw")
 
 # clean'n'kill --------------------------
 # proh::clean()

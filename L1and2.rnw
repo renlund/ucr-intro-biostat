@@ -1,4 +1,4 @@
-<<PRES_OR_HANDOUTS, cache=FALSE, echo=FALSE, include=TRUE, results='asis'>>=
+<<<PRES_OR_HANDOUTS, cache=FALSE, echo=FALSE, include=TRUE, results='asis'>>=
 if(!exists("HANDOUT")) HANDOUT <- FALSE
 if(HANDOUT){
    cat("
@@ -14,6 +14,9 @@ rm(HANDOUT)
 \usepackage{beamerthemeclassic}
 \usepackage[english]{babel}
 \usepackage[latin1]{inputenc}
+\usepackage{hyperref}
+\hypersetup{colorlinks = true, linkcolor = blue}
+
 <<functions, cache=FALSE, include=FALSE>>=
 revsort <- function(sort_x, x_order){
    n <- length(sort_x)
@@ -58,7 +61,7 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
 
 \title{Introduction to Biostatistics \\ Lecture 1B and 2}
 \author{Henrik Renlund}
-\date{Fall 2019}
+\date{Fall 2020}
 
 \begin{document} % >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 \frame{ % -------------------------------------------------------------------->
@@ -83,7 +86,7 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
 \tableofcontents
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{What shall we learn today (and tomorrow)?}
+\frametitle{What shall we learn today?}
 \begin{itemize}
    \item Data description
       \begin{itemize}
@@ -92,8 +95,8 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
       \end{itemize}
    \item Probability Models
       \begin{itemize}
-         \item Glimpse at theory
-         \item Normal distribution and some properties
+         \item Glimpse at theory (models/distributions)
+         \item The Normal distribution
          \item Some properties of samples and the Central Limit Theorem.
       \end{itemize}
 \end{itemize}
@@ -103,135 +106,121 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Types of data}
-A data set contains one or more \emph{variables}, typically arranged as:
-\begin{center}\begin{tabular}{cccccc}
-\code{Individual} & \code{Gender} & \code{Age} & \code{Albumin} & \code{Diabetes} & \code{Happiness} \\
-1 & M & 29 & 3.92 & 0 & {\LARGE $\smile$ } \\
-2 & F & 37 & 4.12 & 0 & {\LARGE $\frown$ } \\
-3 & F & 25 & 4.75 & 1 & {\LARGE $-\phantom{.}$} \\
-$\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$
+  \frametitle{Types of data}
+
+  A data set contains one or more \emph{variables} for each unit of study
+\begin{center}\begin{tabular}{ccccccc}
+\code{ID} & \code{Sex} & Age & \code{Children} & \code{Albumin} & \code{Diabetes} & \code{Happiness} \\
+1 & M & 67 & 0 & 3.92 & 0 & {\LARGE $\smile$ } \\
+2 & F & 71 & 3 & 4.12 & 0 & {\LARGE $\frown$ } \\
+3 & F & 49 & 1 & 4.75 & 1 & {\LARGE $-\phantom{.}$} \\
+$\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$
 \end{tabular}\end{center}
-Theoretical data categories:
+Data categories:
 \begin{itemize}
-   \item Numerical
-      \begin{itemize}
-         \item discrete; typically integer valued 1, 2, \ldots, like \code{Age}, \emph{or}
-         \item continuous; i.e.\ any value in an interval, like \code{Albumin}.
-      \end{itemize}
    \item Categorical
       \begin{itemize}
-         \item nominal, e.g.\ \code{Gender}, \emph{or}
+         \item nominal, e.g.\ \code{Sex}, \code{Diabetes}, \emph{or}
          \item ordinal, e.g.\ \code{Happiness}: $\frown, -, \smile$.
       \end{itemize}
+   \item Numerical
+      \begin{itemize}
+         \item discrete; typically integer valued 0, 1, 2, \ldots, like \code{Children}, \emph{or}
+         \item continuous; i.e.\ any value in an interval, like \code{Albumin}.
+      \end{itemize}
 \end{itemize}
+The category determines what analyses are available.
+
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{How statisticians spend their time}
-In practice data might be stored in the wrong format.
+\frametitle{Data management}
+Make sure you and your software agree on variable formats.
 
 \rymd
-\textbf{Check this prior to analysis!}
-This is especially important if data has been transferred (between formats, different OS, etc).
+This is especially important if data has been transferred, e.g.\ between formats
+or operating systems.
 
 \rymd
 Common problems:
 \begin{itemize}
-   \item date- and categorical data suddenly stored as integers
+   \item date- and categorical data stored as integers
    \item numerical values stored as text (due to ',' vs. '.')
+   \item how are missing values represented? "Unknown"?
 \end{itemize}
 
-\rymd
-Usually one only needs to distinguish
-\begin{itemize}
-   \item measurements (\code{Age}, \code{Albumin} are numerical), and
-   \item categories (Gender, \code{Diabetes}, \code{Happiness} are categorical).
-\end{itemize}
 }
-\frame{ % -------------------------------------------------------------------->
-\frametitle{"Table 1"}
-It is useful to provide a summary table of the variables you are working with.
-Choice of descriptive measures may be context dependent.
-\begin{table}\begin{center}
-%\caption{Data set on 84 individuals.}
-\begin{tabular}{|l|cc|cc|} \hline
-\emph{variable} &  \multicolumn{2}{c|}{\texttt{Diabetes No}} & \multicolumn{2}{c|}{\texttt{Diabetes Yes}}\\
-\multicolumn{1}{|r|}{\emph{value}} &  \emph{mean} & \emph{sd}  & \emph{mean} & \emph{sd} \\  \hline %\cline{3-4}
-\code{Age}   & 32.0 & 15.9 & 32.5 & 14.1\\
-\code{Albumin}  & 4.20 & 0.37 & 3.80 & 0.50\\ \cline{2-5}
-   & \emph{percent} & \emph{n} & \emph{percent} & \emph{n} \\ \cline{2-5}
-\code{Gender} &&&& \\
-\multicolumn{1}{|r|}{M}  & 64\% & 27 & 52\% & 22 \\
- \multicolumn{1}{|r|}{F} & 36\% & 15 & 48\% & 20 \\
-\code{Happiness} &&&& \\
-\multicolumn{1}{|r|}{$\frown$}   & 61\% & 19 & 36\% & 15 \\
-\multicolumn{1}{|r|}{$-$}        & 23\% & 7  & 36\% & 15 \\
-\multicolumn{1}{|r|}{$\smile$}   & 16\% & 5  & 36\% & 12 \\ \hline
-\end{tabular}
-\end{center}\end{table}
-}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Some points on tables (for publication)}
-\begin{itemize}
-   \item Table and caption should be self contained.
-   \item Put captions \emph{above} the table.
-   \item Avoid excessive precision. (Mean age 65.63?)
-   \item Use adequate measures of location and spread.
-   \item Every table should be referred to in text.*
-\end{itemize}
 
-\rymda *The table should illustrate some part of the data relating to the hypothesis of the paper. Referring to a table should fit the narrative.
-
-\rymd Generally bad: "Table 3 displays values of biomarkers in group A and B".
-
-\rymd Better: "The mean level of measured biomarkers are higher in group A compared to B (Table 3)."
-}
-\frame{ % -------------------------------------------------------------------->
+%% \frame{ % -------------------------------------------------------------------->
+%%   \frametitle{Some rules of thumb for tables (for publication)}
+%% \begin{itemize}
+%%    \item Table and caption should be self contained.
+%%    \item Put captions \emph{above} the table.
+%%    \item Avoid excessive precision, e.g.\ probably not clinically meaningful to
+%%      specify a mean age of 65.637 rather than 65.6.
+%%    \item Use adequate measures of location and spread. (We will talk more about this.)
+%%    \item Refer to each table included and perhaps guide to reader as to what the table
+%% illustrates in relation to the narrative of the article.
+%% \end{itemize}
+%% }
+\frame{ %-------------------------------------------------------------------->
 \frametitle{What about missing data?}
-Missing data is usually a problem for observational studies.
 
-\rymd Typically data is missing in explanatory variables.
+\textbf{'Good' scenario:} Suppose in an experiment a batch of samples are
+destroyed throught some random accident. Typically this only leads to a smaller
+sample size, but there is no problem running the analysis as planned.
 
-\rymd Suppose we investigate death within one year of myocardial infarction with a model that includes gender, age, BMI (some missing) and smoking status (some missing).
+%Missing data is usually a problem for observational studies.
 
-\rymd The statistical software default is to include only those individuals with complete case data on all variables that you include.
+%\rymd Typically data is missing in explanatory variables.
 
-\rymd \emph{Complete case analysis} will only give an unbiased result if the reason that a variable is missing has nothing to do with the actual value (and/or the outcome).
+\rymd \textbf{'Bad' scenario:} Suppose we study severity of myocardial
+infarctions with a model that includes sex, age, BMI (some missing) and
+smoking status (some missing). Worry: the reason for missing depends on the
+value.
 
-\rymd If the missing mechanism is known this might be utilized in the analysis.
+\rymd The statistical software default is to include only those individuals with
+complete case data on all variables in the analysis.
+
+\rymd This \textbf{complete case analysis} will only give an unbiased
+result if the reason that a variable is missing has nothing to do with the
+actual value (and/or the outcome).
+
+%\rymd If the missing mechanism is known this might be utilized in the analysis.
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Solutions\ldots ish}
 There is no trick that guarantees a non-biased analysis.
 
-\rymd \textbf{Single imputation} e.g.\ replace missing value with a "typical" value for that variable (e.g. mean or median). This method underestimates the variance in the variable and will give overly optimistic results.
+\rymd \textbf{Single imputation} e.g.\ replace missing value with a "typical"
+value for that variable (e.g. mean or median). This method underestimates the
+variance in the variable and will give overly optimistic results.
 
 \rymd \textbf{Multiple imputation} create multiple imputed data sets where the
-missing values are replaced differently in each iteration (e.g. drawn at random
-from the non-missing values).
+missing values are replaced differently in each iteration (perhaps even
+"predicted" from other covariates).
 
 \rymd
 \begin{quote}
-"It is not that multiple imputation is so good; it is really that other methods for adressing missing data are so bad."
+"It is not that multiple imputation is so good; it is really that other methods
+  for adressing missing data are so bad."
 \begin{flushright}
 (Donald Rubin)
 \end{flushright}
 \end{quote}
-\textbf{N.B.} we typically do not impute our outcome data!
+\textbf{N.B.} we typically do not impute our outcome data.
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Visualization of (continuous) data}
 A sufficiently small data set might not need visualization.
 
 \rymda
-The level of the protein albumin was recorded in a
+The level (g/dL) of the protein albumin was recorded in a
 sample (of size 8) of mice (56 days old):
 <<show_albumin, results='asis'>>=
 load("data/F3_albumin.Rdata")
 out <- paste(alb, collapse="\\quad")
 cat("\\[", out, "\\]")
 @
-(measured in g/dL - this data set will return in lecture 3).
 
 \rymda One simple way to get some handle on data is to order it:
 <<show_albumin_sorted, results='asis'>>=
@@ -247,24 +236,28 @@ A dotplot is a one dimensional plot of the data.
 \rymd
 <<plot_alb, fig.align='center', fig.height=3, fig.width=11>>=
 load("data/F3_albumin.Rdata")
-par(mar=c(4,7,0,0))
+par(mar=c(4,1,1,1))
 plot(
    x = alb, y = rep(2,8),
-   yaxt='n', ylab="", ylim=c(0.8,1.2),
+   yaxt='n', ylab="",
+   ylim=c(0.8,1.2),
+   xlim=c(1.7,2.2),
+   bty = 'n',
    xlab="g / dL",
    cex.lab=1.2,
    main=""
 )
 points(sort(alb), rep(1,8))
-wtf <- axis(2, at=1, labels=FALSE)
-text(
-   x=1.75, y=wtf,
-   labels=c("dots"),
-   cex=1.2,
-   xpd=TRUE,
-   pos=2,
-   offset=0
-)
+## wtf <- axis(2, at=1, labels=FALSE)
+## text(
+##    x=1.75, y=wtf,
+##    labels=c("dots"),
+##    cex=1.2,
+##    xpd=TRUE,
+##    pos=2,
+##    offset=0
+## )
+par(.par_reset)
 @
 
 If there are non-unique (or close) points, the data set
@@ -273,34 +266,36 @@ may appear smaller than it really is.
 \rymd This can be alleviated by
 \begin{itemize}
    \item perturbation, or,
-   \item alpha transparency.
+   \item (alpha) transparency.
 \end{itemize}
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Subarachnoidal bleeding}
-A biomarker - the protein S100$\beta$ - was measured for 113 individuals with aneurysmal subarachnoid hemorrhage. (To return in lecture 10.)
+A biomarker - the protein S100$\beta$ - was measured for 113 individuals with
+aneurysmal subarachnoid hemorrhage.
 
 \rymd
 <<plot_subarach, fig.align='center', fig.height=5, fig.width=11>>=
 load("data/F10B_subarach.Rdata")
 par(mar=c(4,7,0,0))
 plot(
-   x=dd$s100b, y=rep(3,113),
+   x=dd$s100b, y=rep(3,113),bty = 'l',
    ylab="", yaxt='n', ylim=c(0.5,3.2),
    xlab="microgram / litre",
    cex.lab=1.2
 )
-points(x=dd$s100b, y=rep(2,113), pch = 16, col = rgb(0,0,0,0.4))
+points(x=dd$s100b, y=rep(2,113), pch = 16, col = rgb(0,0,0,1/4))
 dotplot(x = dd$s100b, maxi = 0.5)
 wtf <- axis(2, at=1:3, labels=FALSE)
 text(
    x=0, y=wtf,
-   labels=c("Perturbed\ndots", "Alpha-\ntransparency", "Overlapping\ndots"),
+   labels=c("Perturbation", "Transparency", "Overlapping"),
    cex=1.2,
    xpd=TRUE,
    pos=2,
    offset=1
 )
+par(.par_reset)
 @
 }
 \frame{ % -------------------------------------------------------------------->
@@ -317,20 +312,43 @@ bad_col  <- .green
 par(mar=c(4,5,0,0))
 layout(matrix(1:2,nrow=2))
 dotplot( x=dd$s100b, new=TRUE, col=ifelse(dd$outcome=="Good", good_col, bad_col),
-         xlab="", maxi=0.6, skal=75)
+         xlab="", maxi=0.6, skal=75, bty = 'n')
 #legend("bottomright", c("Good", "Poor"), col=c(good_col, bad_col), cex=1.2,
 #       lty=NULL, pch=1, title="Outcome", bty='n')
 legend(x = -0.14, y = 1.5, c("Good", "Poor"), col=c(good_col, bad_col), cex=1.2,
        lty=NULL, pch=1, title="Outcome", bty='n', xpd = TRUE)
 plot(x=dd$s100b,rep(1,113),type='n',xlab="microgram / litre",ylab="",
-     yaxt='n', ylim=c(0.5,2.5), cex.lab=1.2)
+     yaxt='n', ylim=c(0.5,2.5), cex.lab=1.2, bty = 'l')
 dotplot(x, col=bad_col, maxi=0.5)
 dotplot(y, col=good_col, maxi=0.5, yfix=2)
 wtf <- axis(2,at=1:2, labels=FALSE)
 text(x=0, y=wtf, labels=c("Poor", "Good"), cex=1.2,
      xpd=TRUE, pos=2, offset=1)
 layout(matrix(1,nrow=1))
+par(.par_reset)
 @
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{"Table 1"}
+It is useful to provide a summary table of the variables you are working with.
+Choice of descriptive measures may be context dependent.
+\begin{table}\begin{center}
+%%\caption{Data set on 84 individuals.}
+\begin{tabular}{|l|cc|cc|} \hline
+\emph{variable} &  \multicolumn{2}{c|}{\texttt{\underline{Diabetes: No}}} & \multicolumn{2}{c|}{\texttt{\underline{Diabetes: Yes}}}\\
+\multicolumn{1}{|r|}{\emph{value}} &  \emph{mean} & \emph{sd}  & \emph{mean} & \emph{sd} \\  \hline %\cline{3-4}
+\code{Age}   & 32.0 & 15.9 & 32.5 & 14.1\\
+\code{Albumin}  & 4.20 & 0.37 & 3.80 & 0.50\\ \cline{2-5}
+   & \emph{percent} & \emph{n} & \emph{percent} & \emph{n} \\ \cline{2-5}
+\code{Sex} &&&& \\
+\multicolumn{1}{|r|}{M}  & 64\% & 27 & 52\% & 22 \\
+ \multicolumn{1}{|r|}{F} & 36\% & 15 & 48\% & 20 \\
+\code{Happiness} &&&& \\
+\multicolumn{1}{|r|}{$\frown$}   & 61\% & 19 & 36\% & 15 \\
+\multicolumn{1}{|r|}{$-$}        & 23\% & 7  & 36\% & 15 \\
+\multicolumn{1}{|r|}{$\smile$}   & 16\% & 5  & 28\% & 12 \\ \hline
+\end{tabular}
+\end{center}\end{table}
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Percentiles (Measure of location)}
@@ -341,25 +359,45 @@ layout(matrix(1,nrow=1))
 
    \rymd \item \emph{The Quartiles:} Q1 is the 25th percentile, Q2 is the 50th percentile and Q3 is the 75th percentile.
 
-   \rymd \item We can describe all percentiles with the \emph{empirical cumulative distribution function} (ecdf).
-
-   When the sample size is 113 the jumps in the ecdf will be multiples of $1/113\approx 0.01$.
+   \rymd \item We can describe all percentiles with the \emph{cumulative
+     frequency graph} (CF) also called the \emph{emprical cumulative
+     distribution function} (ECDF)
+   %% \emph{empirical cumulative distribution function} (ecdf).
 \end{itemize}
 }
+\frame{ %-------------------------------------------------------------------->
+\frametitle{Creating a CF}
+
+A CF shows the cumulative frequency (or cumulative proportion) and thus starts
+at 0 for points smaller than the smallest point of the data set. Then it is a
+step-wise function with jumps according to:
+
+  \begin{center}\begin{tabular}{|r|r|r|r|} \hline
+      Unique points & Count & Cumulative count & Cumulative proportion \\ \hline
+      0.03 & 1 & 1 & $\frac{1}{113} \approx 0.009$ \\
+      0.04 & 5 & 6 & $\frac{6}{113} \approx 0.053$ \\
+      0.05 & 3 & 9 & $\frac{9}{113} \approx 0.080$ \\
+      $\vdots\phantom{00}$ & $\vdots$ & $\vdots$ & $\vdots\phantom{000}$ \\
+      1.15 & 1 & 113 & 1.000 \\ \hline
+  \end{tabular}\end{center}
+}
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Empirical cumulative distribution function for S100$\beta$}
+\frametitle{Cumulative frequency for S100$\beta$}
 $\phantom X$
 <<subarach_ecdf, fig.align='center', fig.height=5, fig.width=11>>=
 load("data/F10B_subarach.Rdata")
 par(mar=c(4,4,0,0))
 plot.ecdf(ecdf(dd$s100b),  verticals=TRUE, do.points=FALSE, ylab="",
           xlab="microgram / litre", main="", ylim=c(-0.08,1), cex.lab=1.2)
-points(dd$s100b, rep(-0.05,113), pch =16, col = rgb(0,0,0,alpha = 0.4))
+points(dd$s100b, rep(-0.05,113), pch =16, col = rgb(0,0,0,alpha = 1/4))
+par(.par_reset)
 @
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Empirical cumulative distribution function}
-Ecdf's can also display group differences.
+\frametitle{Cumulative frequency function}
+
+CF's can also display group differences.
+
 <<subarach_2ecdf, fig.align='center', fig.height=5, fig.width=11>>=
 load("data/F10B_subarach.Rdata")
 par(mar=c(4,4,0,0))
@@ -368,47 +406,120 @@ plot.ecdf(ecdf(dd$s100b[dd$outcome=="Good"]),  verticals=TRUE, do.points=FALSE,
 plot.ecdf(ecdf(dd$s100b[dd$outcome=="Poor"]),  verticals=TRUE, do.points=FALSE,
           lty=2,add=TRUE)
 legend(x=0.9,y=0.4, c("Good", "Poor"), title="Outcome", lty=c(1,2), bty='n', cex=1.2)
+par(.par_reset)
 @
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{``Average value'' (Measure of location)}
-An average value is a single value meant to be
-representative of the entire data set.
+  \frametitle{Survival curves}
+A survival curve is a CF. Survival (time-to-event) data is typically \emph{right censored} and the
+curve thus needs to be estimated (Kaplan-Meier) - more on that later in the course.
+
+<<"colon-ex", include = TRUE, fig.cap = cap, fig.height = 4>>=
+
+## table("s"=colon$status, "e"= colon$etype)
+## nrow(colon) ## 1858
+## length(unique(colon$id)) ## 929
+## etype == 2 is death, == 1 is recurrence
+
+X <- subset(colon, etype == 2, select = c("id", "rx", "status", "time"))
+
+s <- broom::tidy(survfit(Surv(time, status) ~ rx, data = X))
+s$Treatment <- ifelse(s$strata == "rx=Obs", "Observation",
+                  ifelse(s$strata == "rx=Lev+5FU", "Lev + 5FU", "Lev"))
+## table(s$strata, s$group, useNA="a")
+
+
+ggplot(s, aes(time, estimate, color = Treatment)) +
+    geom_line() +
+    scale_y_continuous(limits = c(0,1)) +
+    scale_x_continuous(limits = c(0, 3000), expand = c(0,0)) +
+    theme(legend.position = "bottom") +
+    labs(x="Days until death or censoring", y = "Survival")
+
+cap <- paste0("Survival curves for 3 different treatments of colon cancer; ",
+              "observation only, Levasimole, or Levasimole and 5-FU. ",
+              "(Moertel 1991)")
+
+
+
+@
+
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Average value (Measure of location)}
+An average value should be representative of the entire data set.
 
 \begin{itemize}
-\item  \textbf{The mode:} is the single most common value of a data point. \\
-(Mostly meaningful for categorical data.)
-
-\rymd
-\item  \textbf{The median:} is the midpoint of the ordered numerical sample.
-
-\rymd
-\item  \textbf{The mean:} is the "center of gravity" of a data set. \\
-Note: unlike the median, the mean value is sensitive to "extreme" values.
+\item  \textbf{The median:} is the midpoint of the ordered numerical sample
+  when one iteratively cancelles the smallest and largest points.
+\item  \textbf{The mean:} is the center of gravity of a data set. \\
+Note: unlike the median, it is sensitive to extreme values.
+%% \item  \textbf{The mode:} is the single most common value of a data point. \\
+%% (Mostly meaningful for categorical data.)
 \end{itemize}
+<<"company-viz", include = TRUE, fig.height = 4>>=
+x <- c(19,21,22,24,27,55)
+z <- c(19,21,22,24,27)
+par(mar=c(2,1,1,1))
+plot(c(z,x), rep(2:1,c(5,6)),
+     bty = 'n', yaxt = 'n',
+     ylab = '', xlab = 'Income',
+     pch = 15, col = rep(c("black", "red"), c(10,1)),
+     ylim = c(0.5,2.5))
+a <- 0.7
+b <- 0.97
+d <- 0.05
+l <- 0.975
+v = 15
+lines(x = c(0,100), y = c(l,l), col = "gray")
+arrows(x0 = mean(x), y0 = a, y1 = b, angle = v)
+text(x = mean(x), y = a-d, labels = "Mean")
+arrows(x0 = median(x), y0 = 2-a, y1 = 2-b, angle = v)
+text(x = median(x), y = 2-a+d, labels = "Median")
+text(x = 40, y = 2-a+2*d, cex = 1.2,
+     labels = "Same data set plus an extreme value:")
+arrows(x0 = 45, x1 = max(x)-1, y0 = 2-a, y1 = 2-b, angle = v)
+lines(x = c(0,100), y = c(1+l,1+l), col = "gray")
+arrows(x0 = mean(z), y0 = 1+a, y1 = 1+b, angle = v)
+text(x = mean(z), y = 1+a-d, labels = "Mean")
+arrows(x0 = median(z), y0 = 3-a, y1 = 3-b, angle = v)
+text(x = median(z), y = 3-a+d, labels = "Median")
+text(x = 40, y = 3-a+2*d, cex = 1.2,
+     labels = "A data set without extreme values:")
+par(.par_reset)
+@
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Mean or median?}
 Ex: A small company has 5 employees, who earns 19, 21, 22, 24, 27 (K SEK)
-and a boss who earns 55.
+and a boss who earns 55. (The numbers from the previous plot.)
 \begin{center}
-\begin{tabular}{|c|cc|} \hline
-Salaries       & Employees & Entire company \\ \hline
-Median & 22   & 23 \\
-Mean   & 22.6 & 28 \\ \hline
+\begin{tabular}{|l|cc|} \hline
+Salaries & Excluding boss    & Including boss \\ \hline
+Median   & $22\phantom{.0}$  & 23 \\
+Mean     & 22.6              & 28 \\ \hline
 \end{tabular}
 \end{center}
 
-\vspace{0.5cm}
-Some points:
-\begin{itemize}
-   \item Small data sets might not  need summary measures.
-   \item Symmetric data has mean $\approx$ median.
-   \item (Easy enough to calculate both.)
-\end{itemize}
+Ex: The number of hospitalization days per individual in Uppsala is likely to be
+very skewed. The median might be of most interest on an individual level, wheras
+the mean (which is essentially the sum) is of more interest to whoever is in
+charge of the hospital budget (as well as other things).
+
+\rymd
+In fact: the median is probably 0! One could e.g.\ describe this distribution by
+the median among those with non-zero hospitalization days.
+
+%% \vspace{0.5cm}
+%% Some points:
+%% \begin{itemize}
+%%    \item Small data sets might not  need summary measures.
+%%    \item Symmetric data has mean $\approx$ median.
+%%    \item (Easy enough to calculate both.)
+%% \end{itemize}
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Measuring the spread of a data set}
+\frametitle{Measuring of spread}
 
 \begin{itemize}
    \item  \textbf{Range} The difference between the maximum and the minimum value.
@@ -419,9 +530,12 @@ Some points:
    \[ s = \sqrt{\frac{1}{n-1}\sum_{i=1}^n (x_i-\bar x)^2}. \]
    %It is a measure of spread with expressed in the same unit as the data.
    Where $x_1, x_2, \ldots, x_n$ is the sample  and
-   \[ \bar x=\frac 1n\sum_{i=1}^n x_i \] is the (sample) mean.
+   $ \bar x=\frac 1n\sum_{i=1}^n x_i$ is the (sample) mean.
 
-   \rymd It is (approximately) the mean distance to the mean value.
+   It is (\emph{approximately only}) the mean distance to the mean value.
+
+   \rymd \textbf{Note}: the sd in the previous salary example is 3.0 and 13.5 if
+   the boss is excluded or included, respectively.
 \end{itemize}
 }
 \frame{ % -------------------------------------------------------------------->
@@ -431,7 +545,8 @@ The boxplot usually show min, Q1, med, Q3 and max (the "5-point summary")\ldots
 load("data/F10B_subarach.Rdata")
 par(mar=c(4,1,0,0))
 dotplot(dd$s100b, new=TRUE, col="grey60", xlab="microgram / litre", cex.lab=1.2)
-boxplot(dd$s100b, horizontal=TRUE, boxwex=2, range=0, add=TRUE)
+boxplot(dd$s100b, horizontal=TRUE, boxwex=2, range=0, add=TRUE, col = rgb(0,0,0,alpha=0))
+par(.par_reset)
 @
 }
 \frame{ % -------------------------------------------------------------------->
@@ -441,7 +556,7 @@ boxplot(dd$s100b, horizontal=TRUE, boxwex=2, range=0, add=TRUE)
 <<sub_box_2, fig.align='center', fig.height=5, fig.width=11>>=
 load("data/F10B_subarach.Rdata")
 par(mar=c(4,1,0,0))
-boxplot(dd$s100b, horizontal=TRUE, boxwex=1,
+boxplot(dd$s100b, horizontal=TRUE, boxwex=1, col = rgb(0,0,0,alpha=0),
         xlab="microgram / litre", cex.lab=1.2)
 #axis(2, at=seq(0,2,0.1))
 qs <- quantile(dd$s100b)
@@ -453,10 +568,11 @@ arrows(x0=qs[4], x1=p0, y0=.8, y1=.8,code=3)
 abline(v=p0, lty=2, col="grey60")
 text(x=(qs[4]+p0)/2, y=0.8, pos=1, "1.5*IQR", cex=t_s)
 text(x=(p0+max(dd$s100b))/2, y=0.75,pos=1, "'Outliers'", cex=t_s)
+par(.par_reset)
 @
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Connection between boxplot and ecdf}
+\frametitle{Connection between boxplot and cumulative frequency}
 The boxplot contains less information.
 <<sub_box_ecdf, fig.align='center', fig.height=5, fig.width=11>>=
 load("data/F10B_subarach.Rdata")
@@ -465,7 +581,8 @@ plot.ecdf(ecdf(dd$s100b),  verticals=TRUE, do.points=FALSE, ylab="",
           xlab="microgram / litre", main="", yaxt='n', cex.lab=1.2)
 axis(2, at=seq(0,1,0.25))
 abline(h=c(0.75,0.25), lty=2, col="grey60")
-boxplot(dd$s100b, add=TRUE, horizontal=TRUE, at=0.5, boxwex=1, lwd=2)
+boxplot(dd$s100b, add=TRUE, horizontal=TRUE, at=0.5, boxwex=1, lwd=2, col = rgb(0,0,0,alpha=0))
+par(.par_reset)
 @
 }
 \frame{ % -------------------------------------------------------------------->
@@ -483,84 +600,113 @@ par(mar=c(1,5,0,0))
 boxplot(y ~x, horizontal = TRUE, ylim = c(3, 20), xaxt = 'n', ylab = "Groups")
 te <- tapply(y, x, ecdf)
 par(mar=c(2,5,0,0))
-plot(te[[1]], main = "", verticals = TRUE, do.points = FALSE, xlim = c(3, 20), xlab = "", ylab = "Ecdf:s")
+plot(te[[1]], main = "", verticals = TRUE, do.points = FALSE, xlim = c(3, 20), xlab = "", ylab = "CF:s")
 for(k in 2:m) plot(te[[k]], verticals = TRUE, do.points = FALSE, add = TRUE, lty = k)
 layout(matrix(1, nrow = 1))
+par(.par_reset)
 @
 }
+%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{Advanced graphics\ldots}
+%% Anyone seriously interested in graphics might want to look at Wilkinson's \emph{The Grammar of Graphics}, which provides a framework for thinking about data visualization. These ideas are implemented in the R package \textbf{ggplot2} - which provides tools for mapping variables to aestic properties, adding layers of statistical computations, faceting, etc.
+
+%% <<ggplot2-promotion, include = TRUE>>=
+%% mtcars$am <- as.logical(mtcars$am)
+%% mtcars$vs <- factor(mtcars$vs, labels = c("V engine", "Straight engine"))
+%% ggplot(mtcars, aes(disp, mpg)) +
+%%    geom_point(aes(shape =  factor(am), color = factor(gear), size = qsec)) +
+%%    geom_smooth(method = "lm", color = "black") +
+%%    facet_wrap(~vs, nrow = 2, scales = "free_y") +
+%%    scale_color_manual(values = wes_palette("Cavalcanti1", 5)[c(1,2,5)], name = "Gears") +
+%%    scale_size(range = c(3,12), name = "Mile time") +
+%%    scale_shape_discrete(name = "Manual") +
+%%    labs(x = "Miles per Gallon", y = "Displacement") +
+%%    theme_bw()
+%% @
+%% }
+%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{Some rules of thumb for graphs (for publication)}
+%% \begin{itemize}
+%%    \item Graph and caption should be self-contained.
+%% %%   \item Every graph should be referred to in the text.
+%%    \item 'Economy' Do not make a graph which is more easily expressed in text or a small table. \\ E.g. graph with a single boxplot.
+%%    \item Pattern or detail? \\ E.g.
+%%       \begin{itemize}
+%%          \item a cumulative frequency gives a lot of detail of a data set. \\
+%%          \item graph with multiple boxplots can reveal patterns among subgroups.
+%%       \end{itemize}
+%%    \item Avoid 2D graphs shown in 3D.
+%% \end{itemize}
+%% }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Advanced graphics\ldots}
-Anyone seriously interested in graphics might want to look at Wilkinson's \emph{The Grammar of Graphics}, which provides a framework for thinking about data visualization. These ideas are implemented in the R package \textbf{ggplot2} - which provides tools for mapping variables to aestic properties, adding layers of statistical computations, faceting, etc.
-
-<<ggplot2-promotion, include = TRUE>>=
-mtcars$am <- as.logical(mtcars$am)
-mtcars$vs <- factor(mtcars$vs, labels = c("V engine", "Straight engine"))
-ggplot(mtcars, aes(disp, mpg)) +
-   geom_point(aes(shape =  factor(am), color = factor(gear), size = qsec)) +
-   geom_smooth(method = "lm", color = "black") +
-   facet_wrap(~vs, nrow = 2, scales = "free_y") +
-   scale_color_manual(values = wes_palette("Cavalcanti", 5)[c(1,2,5)], name = "Gears") +
-   scale_size(range = c(3,12), name = "Mile time") +
-   scale_shape_discrete(name = "Manual") +
-   labs(x = "Miles per Gallon", y = "Displacement") +
-   theme_bw()
-@
-
-
-}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Some points on graphs (for publication)}
+\frametitle{Some rules of thumb for tables and graphs}
+Both:
 \begin{itemize}
-   \item Graph and caption should be self-contained.
-   \item Every graph should be referred to in the text.
-   \item 'Economy' Do not make a graph which is more easily expressed in text or a small table. \\ E.g. graph with a single boxplot.
-   \item Pattern or detail? \\ E.g.
-      \begin{itemize}
-         \item a ecdf gives a lot of detail of a data set. \\
-         \item graph with multiple boxplots can reveal pattern among subgroups.
-      \end{itemize}
-   \item Avoid 2D graphs shown in 3D.
-   \item Avoid pie charts? It depends\ldots
+\item Table/graph + caption should be self-contained.
 \end{itemize}
-}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{In defense of pie charts?}
-<<pie, include=FALSE, fig.height=5, fig.width=5, fig.keep = TRUE>>=
-set.seed(20180927)
-x <- sample(LETTERS[1:5], size = 250, replace = T, prob = c(5,2,1,4,3))
-a_table <- table(x); save(a_table, file="data/a_table.rdata")
-barchart(a_table, col = wes_palette("Cavalcanti1", 5))
-pie(a_table, col = wes_palette("Cavalcanti1", 5))
-@
-Is it of interest to be able to compare summation of levels?
-
-(Is A + B + C smaller than D + E?)
-
-<<show_pie, results='asis', cache = FALSE>>=
-plot_code <- sprintf("\\includegraphics[scale=0.47]{figure/%s}\n", paste0("pie-",1:2))
-cat(plot_code, sep="")
-@
-}
+Tables:
+\begin{itemize}
+\item Captions \emph{above} the table.
+\item Avoid excessive precision and use adequate measures of location and spread.
+\end{itemize}
+Graphs:
+\begin{itemize}
+\item Captions \emph{below} the graph
+\item 'Economy' Do not make a graph which is more easily expressed in text or a
+  small table, e.g. graph with a single boxplot.
+\item Avoid 2D graphs shown in 3D.
+\item Colors are tricky (colorblindness, black/white-printing, etc.) - a website
+  like \href{https://colorbrewer2.org}{Colorbrewer (https://colorbrewer2.org)}
+  might guide color choice.
+\end{itemize}
+}%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{In defense of pie charts?}
+%% <<pie, include=FALSE, fig.height=5, fig.width=5, fig.keep = TRUE>>=
+%% set.seed(20180927)
+%% x <- sample(LETTERS[1:5], size = 250, replace = T, prob = c(5,2,1,4,3))
+%% a_table <- table(x); save(a_table, file="data/a_table.rdata")
+%% barchart(a_table, col = wes_palette("Cavalcanti1", 5))
+%% pie(a_table, col = wes_palette("Cavalcanti1", 5))
+%% @
+%% Is it of interest to be able to compare summation of levels?
+%% (Is A + B + C smaller than D + E?)
+%% <<show_pie, results='asis', cache = FALSE>>=
+%% plot_code <- sprintf("\\includegraphics[scale=0.47]{figure/%s}\n", paste0("pie-",1:2))
+%% cat(plot_code, sep="")
+%% @
+%% }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section[Models]{Probability theory and models} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \frame{ % -------------------------------------------------------------------->
-\textbf{Probability} theory studies models of random data. A \textbf{model} is a way of specifying the range of possible values and the probability with which these occur.
+\frametitle{Probability theory and models}
+Note: this is not a theoretical course in any mathematical sense.
+
+\rymd Most lectures will be guided by applications.
+
+\rymd However, a view towards theory and some fundamental (mathematical) results can
+give a better understanding of some of the methods employed in this course.
+
+\rymd So here goes\ldots
+}
+\frame{ % -------------------------------------------------------------------->
+Probability theory studies models of random data. A \textbf{model} is a way of specifying the range of possible values and the probability with which these occur.
 \begin{itemize}
    \item \textbf{Probability functions} describe discrete numeric/categorical data
    \item \textbf{Density functions} describe continuous (numeric) data
 \end{itemize}
 
-\rymd The \textbf{cumulative distribution function} is a universal way of describing all random (numeric) data. (Will not be discussed.)
+%% \rymd The \textbf{cumulative distribution function} is a universal way of describing all random (numeric) data. (Will not be discussed.)
 
-\begin{itemize}
-   \item \textbf{Probability theory:} given model (model parameters, or other aspects) - describe how data behave. E.g.\
+\rymd
+\textbf{Probability theory:} given model (model parameters, or other aspects) - describe how data behave. E.g.\
    \begin{itemize}
       \item specific results: how likely are specific deviations
       \item general results: Law of Large Numbers, Central Limit Theorem, etc.
    \end{itemize}
-   \item \textbf{Inference theory:}  given data what is a likely model/parameters or other aspects of the underlying distribution (without specifying model = non-parametric statistics).
-\end{itemize}
+
+\rymd
+\textbf{Inference theory:}  given data, what is a likely model/parameters or other aspects of the underlying distribution (without specifying model = non-parametric statistics).
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Probability models for categorical or integer-valued data}
@@ -599,7 +745,7 @@ foo_bar <- function(n, l = FALSE){
    g <- rep(sprintf("%d",1:m), each = n)
 #    barplot(pf, width = m, border = "black", col = "black",
 #            density = 9, ylim = c(0,0.7), lwd = 2, angle = +45, main = paste0("Sample size ", n))
-   barplot(prop.table(table(g, s),1), col = wesanderson::wes_palette("Cavalcanti", 5),
+   barplot(prop.table(table(g, s),1), col = wesanderson::wes_palette("Cavalcanti1", 5),
            beside = TRUE, legend = l,  ylim = c(0,0.7), main = paste0("Sample size ", n),
            args.legend = list(x="topright", title = "Sample", horiz = TRUE))
    barplot(pf, width = m, border = "black", col = "black",
@@ -614,13 +760,13 @@ foo_bar(25)
 foo_bar(100)
 foo_bar(1000, l = TRUE)
 layout(matrix(1, nrow = 1))
+par(.par_reset)
 @
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{FEV data set}
 430 children (9-17 years of age) had their age, forced expiratory volume
-in 1 second (FEV) and smoking status (!) recorded. (To be seen again
-in lecture 9.)
+in 1 second (FEV) and smoking status recorded.
 
 \rymd A barchart is a way to visualize a variable with a small number
 of unique values (often categorical). They are visual analogous
@@ -644,6 +790,7 @@ latex(
 load("data/F8_smoking.Rdata")
 par(mar=c(4,4,0,0))
 barplot(tabsmok, beside=TRUE, legend=TRUE, ylab="Frequency", col=brewer.pal(9, "YlGn"))
+par(.par_reset)
 @
 }
 \frame{ % -------------------------------------------------------------------->
@@ -660,42 +807,82 @@ latex(
    digits=2,
    file="",
    title="Age",
-   cgroup="Smoking (\\%)"
+   cgroup="Smoking (proportion)"
 )
 @
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Visualizing 'age' versus 'smoking' as percentages within smoking groups}
+\frametitle{Percentages within smoking groups}
+The distributions are now easier to compare.
 <<plot_smoker2>>=
 load("data/F8_smoking.Rdata")
 with(dd, tabsmok3 <<- 100*prop.table(table( age=age, smoker=smoker), 2))
 par(mar=c(4,4,1,0))
 barplot(tabsmok3, beside=TRUE, legend=TRUE, ylab="Percent", col=brewer.pal(9, "YlGn"))
+par(.par_reset)
 @
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Visualizing 'smoking' versus 'age' as percentages within age groups, stacked}
+\frametitle{Flipping the axis}
+The "right" visualization might not be obvious. A binary categorical variable
+can be suitable to \emph{stack} in a bar chart:
+
 <<plot_smoker3>>=
 load("data/F8_smoking.Rdata")
 dd$age <- factor(dd$age)
 ggplot(dd, aes(age, fill=smoker)) +
    geom_bar(position="fill") +
-   labs(x="Age", y="Percentage within year") +
-   scale_fill_manual(values=c(.blue, .yellow), name="Smoker") +
+   labs(x="Age", y="Percentage within year of age") +
+   scale_fill_manual(values=c(.blue, .red), name="Smoker") +
    theme_classic()  +
    scale_y_continuous(breaks = seq(0, 1, by = 0.25), labels = sprintf("%s%%",seq(0,100,by=25)))
 @
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Probability model for continuous data}
-Recall that a RV is a yet undetermined value among several possible numbers.
+%%Recall that a RV is a yet undetermined value among several possible numbers.
 
-A continuous RV is described by its \emph{density function}.
+A continuous random variable is described by its \emph{density function}.
 
 \includegraphics[scale=0.31]{pics/density_function.png}
 
 If $X$ has density function $f$ as above, then we compute probabilities as
 \[ \pr( a\leq X \leq b)=\;\mbox{Area(a,b)}. \]
+}
+\frame{ % -------------------------------------------------------------------->
+  \frametitle{Example: The Uniform distribution}
+A computer generated random number typically tries to mimic the \emph{uniform
+  distribution} (on the $[0,1]$ interval).
+<<"uniform", include = TRUE>>=
+par(mar = c(2,4,1,1))
+curve(dunif(x, 0, 1), from = 0, to = 1, xlim = c(-0.2, 1.2), ylim = c(0,1),
+      ylab = "Density", xlab = "", bty = "l")
+zero <- function(x) rep(0, length(x))
+curve(zero(x), from = -1, to = 0, add = TRUE)
+curve(zero(x), from = 1, to = 2, add = TRUE)
+par(.par_reset)
+@
+Any number (or interval) within $[0,1]$ is as likely as any other (of the same length).
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Making a histogram}
+  A histogram is a categorization of the x-axis into "bins", typically as
+  intervals of the same range, and a statistic associated with each.
+
+  \rymd
+  The FEV dataset has 430 (numercial) FEV-measurements between 1 and 6.
+
+  \rymd Data underlying a histogram:
+  \begin{center}
+  \begin{tabular}{|c|r|r|r|} \hline
+    Interval & Count & Proportion & Density  \\ \hline
+  $(1.0, 1.5]$ &  1 & $\frac{1}{430} \approx 0.0023$ & $\frac{1/430}{1.5-1.0}\approx 0.0047$ \\
+  $(1.5, 2.0]$ & 27 & $0.063\phantom{0}$ & $0.13\phantom{00}$ \\
+  $(2.0, 2.5]$ & 89 & $0.21\phantom{00}$ & $0.41\phantom{00}$ \\
+  $\vdots$ & $\vdots$ & $\vdots\phantom{0000}$ & $\vdots\phantom{0000}$ \\
+  $(5.5, 6.0]$ & 3 & 0.0070 & $0.014\phantom{0}$ \\ \hline
+  \end{tabular}
+  \end{center}
 }
 \frame{ % -------------------------------------------------------------------->
 The shape of a histogram estimates the shape of the density function.
@@ -708,7 +895,8 @@ u <- z
 layout(matrix(1:3, nrow = 1))
 hist(dd$fev, main = "", xlab = "FEV (L)", ylab = "Count", col=.blue, cex.axis = z, cex.lab = u)
 hist(dd$fev, freq = FALSE, main = "", xlab = "FEV (L)", yaxt = 'n', ylab = "Percent", col=.blue, cex.axis = z, cex.lab = u)
-vid <- seq(0,0.5,0.1); axis(2, at = vid, labels = sprintf("%d%%", .5*100*vid), cex.axis = z)
+vid <- seq(0,0.5,0.1)
+axis(2, at = vid, labels = sprintf("%s", .5*100*vid), cex.axis = z)
 hist(dd$fev, freq = FALSE, main = "", xlab = "FEV (L)", col=.blue, cex.axis = z, cex.lab = u)
 # b <- c(1,2,2.5,3,3.5,4,6)
 # h2 <- hist(dd$fev, plot = FALSE, breaks = b)
@@ -717,6 +905,7 @@ hist(dd$fev, freq = FALSE, main = "", xlab = "FEV (L)", col=.blue, cex.axis = z,
 # plot(h2_mod, main = "", xlab = "FEV (L)", col=.blue, ylab = "Percent")
 # hist(dd$fev, breaks = b, main = "", xlab = "FEV (L)", col=.blue)
 layout(matrix(1,nrow = 1))
+par(.par_reset)
 @
 "Density" is more abstract but
 \begin{itemize}
@@ -725,42 +914,43 @@ layout(matrix(1,nrow = 1))
    \item allows for comparison between very different sample sizes
 \end{itemize}
 }
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Histogram (with density) of FEV}
-The histogram (with density on the y-axis) estimates the density function.
-<<fev2>>=
-load("data/F8_smoking.Rdata")
-h0 <- hist(dd$fev, plot=FALSE)
-par(mar=c(4,4,0,0))
-h <- hist(dd$fev, freq=FALSE, ylim=c(0,1.05*max(h0$density)),
-          xlab="FEV (L)", main="", col=.blue) # col="grey80")
-text(h$mids, h$density,labels=paste0(round(100 * h$counts/sum(h$counts),1), "%"),pos=3)
-@
-}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Histogram of FEV}
-The interval width is arbitrary\ldots
-<<fev3>>=
-load("data/F8_smoking.Rdata") # dd
-h <- hist(dd$fev, plot=FALSE)
-par(mar=c(4,4,0,0))
-h1 <- hist(dd$fev, freq=FALSE, breaks=seq(1,6,1), ylim=c(0,1.05*max(h$density)),
-           xlab="FEV (L)", main="", col=.blue) #col="grey80")
-text(h1$mids, h1$density,paste0(round(100 * h1$counts/sum(h1$counts),1), "%"),pos=3)
-@
-}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Histogram of FEV}
-\ldots and could be varying.
-<<fev4>>=
-load("data/F8_smoking.Rdata") # dd
-#h <- hist(dd$fev, plot=FALSE)
-par(mar=c(4,4,0,0))
-h2 <- hist(dd$fev, freq=FALSE, breaks=c(1,2,2.5,2.75,3,3.5,4,6),
-           ylim=c(0,1.05*max(h$density)), xlab="FEV (L)", main="", col=.blue) #col="grey80")
-text(h2$mids, h2$density,paste0(round(100 * h2$counts/sum(h2$counts),1), "%"),pos=3)
-@
-}
+%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{Histogram (with density) of FEV}
+%% The histogram (with density on the y-axis) estimates the density function.
+%% <<fev2>>=
+%% load("data/F8_smoking.Rdata")
+%% h0 <- hist(dd$fev, plot=FALSE)
+%% par(mar=c(4,4,0,0))
+%% h <- hist(dd$fev, freq=FALSE, ylim=c(0,1.05*max(h0$density)),
+%%           xlab="FEV (L)", main="", col=.blue) # col="grey80")
+%% text(h$mids, h$density,labels=paste0(round(100 * h$counts/sum(h$counts),1), "%"),pos=3)
+%% par(.par_reset)
+%% @
+%% }
+%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{Histogram of FEV}
+%% The interval width is arbitrary\ldots
+%% <<fev3>>=
+%% load("data/F8_smoking.Rdata") # dd
+%% h <- hist(dd$fev, plot=FALSE)
+%% par(mar=c(4,4,0,0))
+%% h1 <- hist(dd$fev, freq=FALSE, breaks=seq(1,6,1), ylim=c(0,1.05*max(h$density)),
+%%            xlab="FEV (L)", main="", col=.blue) #col="grey80")
+%% text(h1$mids, h1$density,paste0(round(100 * h1$counts/sum(h1$counts),1), "%"),pos=3)
+%% @
+%% }
+%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{Histogram of FEV}
+%% \ldots and could be varying.
+%% <<fev4>>=
+%% load("data/F8_smoking.Rdata") # dd
+%% #h <- hist(dd$fev, plot=FALSE)
+%% par(mar=c(4,4,0,0))
+%% h2 <- hist(dd$fev, freq=FALSE, breaks=c(1,2,2.5,2.75,3,3.5,4,6),
+%%            ylim=c(0,1.05*max(h$density)), xlab="FEV (L)", main="", col=.blue) #col="grey80")
+%% text(h2$mids, h2$density,paste0(round(100 * h2$counts/sum(h2$counts),1), "%"),pos=3)
+%% @
+%% }
 %' \frame{ % -------------------------------------------------------------------->
 %' \frametitle{Histograms with counts}
 %' The scale of histograms with counts depends on chosen interval width and sample size. Below is the FEV data set with different widths.
@@ -782,9 +972,9 @@ text(h2$mids, h2$density,paste0(round(100 * h2$counts/sum(h2$counts),1), "%"),po
 \begin{center}
 \begin{tabular}{|c|c|p{5cm}|} \hline
 Graph & Summary Measure & Theory \\ \hline \hline
-Ecdf & percentiles & (Cdf) \\ \hline
+CF & percentiles & (Cdf) \\ \hline
 Boxplot & min, Quartiles, max & \\ \hline
-Bar charts & & Probability functions (discrete RV) \\ \hline
+Bar charts & & Probability functions (discrete/categorical RV) \\ \hline
 Histograms & & Density functions (continuous RV)\\ \hline
 & median, IQR & any distribution\\ \hline
 & mean, s.d. & symmetrical distribution ($\approx$ Normal distribution) \\ \hline
@@ -794,6 +984,7 @@ Histograms & & Density functions (continuous RV)\\ \hline
 \frame{ % -------------------------------------------------------------------->
 \frametitle{The Normal Distribution}
 Sometimes we assume that the population follows a Normal density curve.
+
 <<fev6>>=
 load("data/F8_smoking.Rdata") # dd
 n <- 11
@@ -811,14 +1002,34 @@ hist(
    add = TRUE
 )
 curve(dnorm(x,mean(dd$fev), sd(dd$fev)), from=1, to=6, lwd=2, add =TRUE, lty = 2)
+par(.par_reset)
 @
 }
 \frame{ % --------------------------------------------------------------------->
-\frametitle{Properties of the standard Normal distribution \\ (and why you need to know the number 1.96)}
-The standard Normal distribution has a standard deviation of 1. \\
-68\% of the 'probability mass' lies within $\pm 1$. \\
-95\% of the 'probability mass' lies within $\pm 1.96$.
-<<normal_stuff, fig.width=5, fig.height=5, include=FALSE>>=
+\frametitle{The Normal Distribution}
+The Normal, Gauss, or Bell, curve is centered at (the mean) $\mu$ with a standard
+devation of $\sigma$, according to the equation:
+\[ f(x) = \frac{1}{\sigma\sqrt{2\pi}}e^{\frac{-(x-\mu)^2}{2\sigma}}. \]
+The special case of $\mu=0$ and $\sigma=1$ is called a \emph{standard normal
+  distribution}.
+
+\rymd
+\textbf{Digression:} Any sample can be "standardized" by
+subtracting the mean and dividing by the standard deviation.
+
+If $x_1, x_2, \ldots, x_n$ is a sample (of size $n$) with mean
+$\bar x = \frac1n\sum_1^n x_i$ and
+$sd = \sqrt{\frac1{n-1}\sum_1^n(x_i-\bar x)^2}$, then the transformation
+\[ \frac{x_1-\bar x}{sd}, \frac{x_2-\bar x}{sd}, \ldots, \frac{x_n-\bar x}{sd}, \]
+is \emph{standardized} (it has mean 0 and sd 1).
+}
+\frame{ % --------------------------------------------------------------------->
+\frametitle{Properties of the standard Normal distribution}
+The standard Normal distribution is centered at 0 and has a standard deviation of 1.
+
+\rymd
+{\centering\fbox{95\% of the 'probability mass' lies within $\pm 1.96$.}\par}
+<<normal_stuff, fig.width=9, fig.height=5, include=FALSE>>=
 x <- seq(-3.5,3.5,length.out=100)
 y <- dnorm(x, 0, 1)
 plot( c(-3.2,3.2),c(0,0.4), col="white",
@@ -832,18 +1043,18 @@ points( c(v,v), c(0,0.28), type='l', lty=2)
 text( v, 0.3, label=paste("+",signif(v,3),sep=""), cex=1.5 )
 points( x,y, type='l', lwd=2)
 text( 0,0.15, "95%",cex=2)
-x <- seq(-3.5,3.5,length.out=100)
-plot( c(-3.2,3.2),c(0,0.4), col="white",
-      main="",ylab="Density",xlab="")
-v <- 1; #1-2*(1-pnorm(1))
-xx <- seq(-v,v,length.out=100); yy <- dnorm(xx,0,1); xx <- c(xx[1],xx,xx[100]); yy <- c(0,yy,0)
-polygon( xx,yy, col=.blue, lty=2) # col="lightblue"
-points( c(-v,-v), c(0,0.33), type='l', lty=2)
-text( -v, 0.34, labels=paste("-",signif(v,3),sep=""), cex=1.5 )
-points( c(v,v), c(0,0.33), type='l', lty=2)
-text( v, 0.34, labels=paste("+",signif(v,3),sep=""), cex=1.5 )
-points( x,y, type='l', lwd=2)
-text( 0,0.15, "68%",cex=2)
+## x <- seq(-3.5,3.5,length.out=100)
+## plot( c(-3.2,3.2),c(0,0.4), col="white",
+##       main="",ylab="Density",xlab="")
+## v <- 1; #1-2*(1-pnorm(1))
+## xx <- seq(-v,v,length.out=100); yy <- dnorm(xx,0,1); xx <- c(xx[1],xx,xx[100]); yy <- c(0,yy,0)
+## polygon( xx,yy, col=.blue, lty=2) # col="lightblue"
+## points( c(-v,-v), c(0,0.33), type='l', lty=2)
+## text( -v, 0.34, labels=paste("-",signif(v,3),sep=""), cex=1.5 )
+## points( c(v,v), c(0,0.33), type='l', lty=2)
+## text( v, 0.34, labels=paste("+",signif(v,3),sep=""), cex=1.5 )
+## points( x,y, type='l', lwd=2)
+## text( 0,0.15, "68%",cex=2)
 @
 
 <<plot_code_normal_stuff, results='asis', cache = FALSE>>=
@@ -853,32 +1064,38 @@ cat(plot_code, sep="")
 }
 \frame{ % --------------------------------------------------------------------->
 \frametitle{The Normal distribution N$(\mu,\sigma)$}
-is determined by its mean ($\mu$) and standard deviation ($\sigma$). \\
-If $X$ is N(0,1) then $\mu+\sigma X$ is N$(\mu,\sigma)$.
+is determined by its mean ($\mu$) and standard deviation ($\sigma$).
+
+\rymd
+{\centering\fbox{If $X$ is N(0,1) then $\mu+\sigma X$ is N$(\mu,\sigma)$.}\par}
 <<normals>>=
 n <- 100
 x <- seq(-3,8,length.out=n)
 y0 <- dnorm(x, 0, 1)
-y1 <- dnorm(x, 4.5, 1)
-y2 <- dnorm(x, 3, 3)
-y3 <- dnorm(x, 1, 2)
+y1 <- dnorm(x, 4, 1)
+## y2 <- dnorm(x, 3, 3)
+y2 <- dnorm(x, 0, .5)
+y3 <- dnorm(x, 4, 2)
 m <- max(c(y1,y2,y3))
 plot( 0, 0, col="white",ylim=c(0,m),xlim=c(-2,7),xlab="",ylab="Density")
-points(x, y0, lty = 2, type = "l")
+points(x, y0, lty = 1, col = "lightgrey", type = "l", lwd = 3)
 myCol <-  c(.blue, .green, .yellow) #brewer.pal(3,"Set2")
 for(k in 1:3){
    points( x, get( paste("y",k,sep="") ), type='l', col=myCol[k], lwd=3)
 }
-text( -1, 0.35, "N(0,1)", cex = 1, col = "lightgrey")
-text( 2.4, 0.35, "N(4.5,1)", col=myCol[1], cex=2)
-text( 1, 0.05, "N(3,3)", col=myCol[2], cex=2)
-text( -1, 0.2, "N(1,2)", col=myCol[3], cex=2)
+text( -1.5, 0.30, "N(0,1)", cex = 2, col = "lightgrey")
+text( 5.4, 0.35, "N(4,1)", col=myCol[1], cex=2)
+text( 1.2, 0.55, "N(0,0.5)", col=myCol[2], cex=2)
+text( 4, 0.25, "N(4,2)", col=myCol[3], cex=2)
 @
 }
 \frame{ % --------------------------------------------------------------------->
 \frametitle{Properties of the Normal distribution}
 If $X$ is N$(\mu,\sigma)$, then 95\% of observations will
-be between $\mu-1.96\sigma$ and $\mu+1.96\sigma$.
+be between
+
+\rymd
+{\centering $\mu-1.96\sigma$ and $\mu+1.96\sigma$.\par}
 <<plot_N_properties>>=
 Mu <- 6
 Sd <- 2.5
@@ -940,188 +1157,280 @@ set_params <- function(){
       rgb(151, 45,  21,  alpha = alfa, maxColorValue = 255)
    )
 }
+par(.par_reset)
 @
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Attempt to visualize sampling from a given model}
+  \frametitle{Understanding sampling using the Seeing Theory website}
+The Seeing Theory website
 
-\rymd Assume that height of individuals in some population
+{\centering \href{https://seeing-theory.brown.edu/probability-distributions}
+    {https://seeing-theory.brown.edu/probability-distributions}\par}
+
+provides a way to visualize sampling (Section 'Central Limit Theorem').
+
+\rymd
+A population distribution is given (with parameters $\alpha$ and $\beta$).
+
+\rymd
+You simulate calculating a \emph{sample mean} from a sample of size $\leq 15$
+up to 50 iterations at the time.
+
+\rymd
+\textbf{Note:} at sample size 1, this means just recording the value sampled.
+
 \begin{itemize}
-   \item is Normally distributed,
-   \item has mean ($\mu$) 179 (cm), and,
-   \item has s.d. ($\sigma$) 6.35 (cm).
+\item At sample size 1, with many iterations the sample distribution should
+  resemble the population.
+\item What happens to the distribution of the sample mean as the sample mean
+  increases?
 \end{itemize}
 
-\rymd The following three slides show histogram of samples of sizes 10, 50 and 500, respectively.
+Note: in a real study we only get the one sample, so we never observe the
+sampling distribution directly.
+
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{$n=10$}
-<<samp1>>=
-set_params()
-curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,
-      xlab="Outcome", ylab="Density", ylim=c(-0.005,yMax))
-points(x=x1,y=rep(-0.005, length(x1)), pch = 16, col = rgb(0,0,0,alpha = 0.3))
-hist(x1, add=TRUE, prob=TRUE, breaks=B, col=.blue)
-curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,lty=2, add=TRUE)
-@
-}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{$n=50$}
-<<samp2>>=
-set_params()
-curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,
-      xlab="Outcome", ylab="Density", ylim=c(-0.005,yMax))
-points(x=x2,y=rep(-0.005, length(x2)), pch = 16, col = rgb(0,0,0,alpha = 0.3))
-hist(x2, add=TRUE, prob=TRUE, breaks=B, col=.blue)
-curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,lty=2, add=TRUE)
-@
-}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{$n=500$}
-<<samp3>>=
-set_params()
-B <- seq(from=145,to=215,by=2.5)
-curve(dnorm(x, mean=Mu, sd=Sd), from=Min, to=Max,
-      xlab="Outcome", ylab="Density", ylim=c(-0.005,yMax))
-points(x=x3,y=rep(-0.005, length(x3)), pch = 16, col = rgb(0,0,0,alpha = 0.3))
-hist(x3, add=TRUE, prob=TRUE, breaks=B, col=.blue)
-curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,lty=2, add=TRUE)
-@
-}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Properties of samples and sample means}
-Suppose we have a sample of size 10 from the population.
+\frametitle{Important features of sampling}
 
-\rymd We want to know the \emph{population mean} ($\mu$).
+A population has a mean $\mu$ and sd $\sigma$.
 
-\rymd We can estimate with the \emph{sample mean}($\mu^*$).
+\rymd
+A random (unbiased) sample will resemble the population (approximately same mean
+and sd).
 
-\rymd But how good a guess is $\mu^*$?
-
-Well\ldots if the sample is drawn at random\footnote{All possible samples are equiprobable} then $\mu^*$ is \emph{unbiased} (on average correct).
-
-\rymd  \emph{If we knew} that the sd of $\mu^* = 180$ was, say 3.0, then there is an
-(approximate!) interpretation.
-\begin{quotation}
-The estimated value 180 (cm) is on average off by 3.0  (cm).
-\end{quotation}
-
-But what \emph{is} the standard deviation of a sample mean?
-
-\rymd Consider several iterations of the procedure of drawing a sample of size 10.
-}
-\frame{ % -------------------------------------------------------------------->
-%\frametitle{Properties of samples and sample means}
-<<sd>>=
-set_params()
-use.sd.here <- FALSE
-MAT <- matrix( rnorm(n*m, mean=Mu, sd=Sd), ncol=n, nrow=m )
-save(MAT, file="data/MAT.rdata")
-if(use.sd.here) par(mar=c(5, 7, 4, 2)) else par(mar=c(5,4,4,2) + 0.1) # default c(5,4,4,2) + 0.1
-plot( x=c(min(MAT), max(MAT)), y=c(0,m), type='n',
-      xlab="Outcome", ylab="", yaxt='n', bty='o', xaxt = 'n',
-      main=paste(m, "samples of size", n, "with population mean =", Mu, "and sd. = ", Sd)
-)
-axis(1, at = c(170,179,190))
-abline(v=179, lty=2, col="darkgray", lwd=2)
-if(use.sd.here) text(x=min(MAT)-DD, y=m+0.5, labels="Sample s.d.", xpd=TRUE, pos=2, offset=1)
-for(k in 1:m){
-   tmp <- MAT[k,]
-   #col <- if(m<=5) wes_palette("Cavalcanti", 5)[k]
-   col <- if(m<=5) wes_rgb[k]
-   mtm <- mean(tmp)
-   sdt <- sd(tmp)
-   if(use.sd.here) text(x=min(MAT)-DD, y=m+1-k, labels=round(sdt,1), xpd=TRUE, pos=2, offset=1)
-   points(x=tmp, y=rep(m+1-k,n), pch=20+k, bg=col, cex = 1.5)
-}
-@
-}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Properties of sample means}
-We can see that samples and their means and
-standard deviations vary (of course).
-
-\rymd \textbf{Standard Error of the Mean (SEM)}\\
-The standard deviation of the sample mean is referred to
-as SEM and a measure
-of (approx.) the average distance the population mean.
-Thus a measure of 'how good' the sample mean is as
-an estimator of the population mean.
-
-\rymd In a Normal model the SEM is the population s.d. dived
-by $\sqrt n$.
-
-\rymd The next slide tries to visualize this.
-}
-\frame{ % -------------------------------------------------------------------->
-%\frametitle{Properties of samples and sample means}
-<<sem>>=
-load(file="data/MAT.rdata")
-set_params()
-par(mar=c(5, 7, 4, 2) )# default c(5,4,4,2) + 0.1
-plot( x=c(min(MAT), max(MAT)), y=c(0,m), type='n',
-      xlab="Outcome", ylab="", yaxt='n', bty='o', xaxt = 'n',
-      main=paste(m, "samples of size", n, "with population mean =", Mu, "and sd. = ", Sd)
-)
-axis(1, at = c(170,179,190))
-abline(v=179, lty=2, col="darkgray", lwd=2)
-text(x=min(MAT)-DD, y=m+0.5, labels="Sample s.d.", xpd=TRUE, pos=2, offset=1)
-for(k in 1:m){
-   tmp <- MAT[k,]
-   #col <- if(m<=5) wes_palette("Cavalcanti", 5)[k]
-   col <- if(m<=5) wes_rgb[k]
-   mtm <- mean(tmp)
-   sdt <- sd(tmp)
-   text(x=min(MAT)-DD, y=m+1-k, labels=round(sdt,1), xpd=TRUE, pos=2, offset=1)
-   points(x=tmp, y=rep(m+1-k,n), pch=20+k, bg=col, cex = 1.5)
-   points(x=mtm, y=m+1-k, cex=3, bg=col, pch=20+k, lwd=2)
-   points(x=mtm, y=0, cex=3, bg=col, pch=20+k, lwd=2)
-   segments(x0 = mtm, y0 = 0.3, x1 = mtm, y1 = m+0.7-k, col = col, lty = 2)
-}
-tmp <- rowMeans(MAT)
-mtm <- mean(tmp)
-text(x=min(MAT)-DD, y=0, labels=paste("SEM ~",round(sd(tmp),1)), xpd=TRUE, pos=2, offset=1, col=COL, cex=1.2)
-@
-}
-\frame{ % -------------------------------------------------------------------->
-<<pop_and_mean>>=
-set_params()
-curve(dnorm(x,Mu,Sd), from=min(MAT),to=max(MAT), ylim=c(0,0.20), ylab="Density",
-      xlab="", lty=1, lwd=2, xaxt = 'n')
-axis(1, at = c(170, 179, 190))
-curve(dnorm(x,Mu,Sd/sqrt(10)), from=165,to=195, add=TRUE, lty=2, lwd=2)
-legend("topleft",
-       legend=c(expression(N(mu, sigma) - population),
-                expression(N(mu,sigma/sqrt(10)) - `sample mean`),
-                expression(mu==`179.0`,sigma==6.35)),
-       title="Distribution of:", lty=c(1:2,0,0), lwd=c(2,2,0,0), bty='n', cex=1.5)
-@
-}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Normal population $\Rightarrow$ Normal mean}
-On the previous slide you saw
+\rymd
+But the distribution \emph{of the sample mean} is more centered
+around this value $\mu$, in particular
 \begin{itemize}
-   \item a Normal population curve, and
-   \item the Normal curve for the sample mean (for sample size 10).
+\item it tends to be more symmetric, and
+\item has a smaller standard devation.
 \end{itemize}
 
-\rymd
-In this case this is the true (derived from theory) density
-curve for the sample mean.
-
-\rymd
-Properties of the Normal distribution will aid further analysis
-using the mean of the sample.
-
-\rymd
-What happens if the population follows some non-Normal
-curve?
+But again: the sample mean distribution is unobserved, so we must rely on theory
+to determine its standard devation, a.k.a.\ the \textbf{standard error (of the
+  mean)}.
 }
+%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{Attempt to visualize sampling from a given model}
+
+%% \rymd Assume that height of individuals in some population
+%% \begin{itemize}
+%%    \item is Normally distributed,
+%%    \item has mean ($\mu$) 179 (cm), and,
+%%    \item has s.d. ($\sigma$) 6.35 (cm).
+%% \end{itemize}
+
+%% \rymd The following three slides show histogram of samples of sizes 10, 50 and 500, respectively.
+%% }
+%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{$n=10$}
+%% <<samp1>>=
+%% set_params()
+%% curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,
+%%       xlab="Outcome", ylab="Density", ylim=c(-0.005,yMax))
+%% points(x=x1,y=rep(-0.005, length(x1)), pch = 16, col = rgb(0,0,0,alpha = 0.3))
+%% hist(x1, add=TRUE, prob=TRUE, breaks=B, col=.blue)
+%% curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,lty=2, add=TRUE)
+%% @
+%% }
+%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{$n=50$}
+%% <<samp2>>=
+%% set_params()
+%% curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,
+%%       xlab="Outcome", ylab="Density", ylim=c(-0.005,yMax))
+%% points(x=x2,y=rep(-0.005, length(x2)), pch = 16, col = rgb(0,0,0,alpha = 0.3))
+%% hist(x2, add=TRUE, prob=TRUE, breaks=B, col=.blue)
+%% curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,lty=2, add=TRUE)
+%% @
+%% }
+%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{$n=500$}
+%% <<samp3>>=
+%% set_params()
+%% B <- seq(from=145,to=215,by=2.5)
+%% curve(dnorm(x, mean=Mu, sd=Sd), from=Min, to=Max,
+%%       xlab="Outcome", ylab="Density", ylim=c(-0.005,yMax))
+%% points(x=x3,y=rep(-0.005, length(x3)), pch = 16, col = rgb(0,0,0,alpha = 0.3))
+%% hist(x3, add=TRUE, prob=TRUE, breaks=B, col=.blue)
+%% curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,lty=2, add=TRUE)
+%% @
+%% }
+%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{Properties of samples and sample means}
+%% Suppose we have a sample of size 10 from the population.
+
+%% \rymd We want to know the \emph{population mean} $\mu$.
+
+%% \rymd We can estimate $\mu$ with the \emph{sample mean} $\mu^*$.
+
+%% \rymd If the sample is drawn \emph{at random} then $\mu^*$ is \emph{unbiased}
+%% (on average correct)
+
+%% \rymd But we also want to know its \emph{precision} - often by calculating its
+%% standard deviation.
+
+%% %% \rymd  \emph{If we knew} that the standard deviation of $\mu^* = 180$ was, say
+%% %% 3.0, then there is an (approximate!) interpretation:
+%% %% \begin{quotation}
+%% %% The estimated value 180 (cm) is on average off by 3.0 (cm).
+%% %% \end{quotation}
+
+%% %% But what does it mean for a sample mean to have a standard deviation?
+
+%% \rymd Consider several iterations of the procedure of drawing a sample of size 10.
+%% }
+%% \frame{ % -------------------------------------------------------------------->
+%% %\frametitle{Properties of samples and sample means}
+%% It is clear that there is variation within a sample and thus a standard deviation
+%% can be calculated (directly from the sample itself) \ldots
+%% <<sd>>=
+%% set_params()
+%% use.sd.here <- FALSE
+%% MAT <- matrix( rnorm(n*m, mean=Mu, sd=Sd), ncol=n, nrow=m )
+%% save(MAT, file="data/MAT.rdata")
+%% if(use.sd.here) par(mar=c(5, 7, 4, 2)) else par(mar=c(5,4,4,2) + 0.1) # default c(5,4,4,2) + 0.1
+%% plot( x=c(min(MAT), max(MAT)), y=c(0,m), type='n',
+%%       xlab="Outcome", ylab="", yaxt='n', bty='o', xaxt = 'n',
+%%       main=paste(m, "samples of size", n, "from a Normal population mean =", Mu, "and sd. = ", Sd)
+%% )
+%% axis(1, at = c(170,179,190))
+%% abline(v=179, lty=2, col="darkgray", lwd=2)
+%% if(use.sd.here) text(x=min(MAT)-DD, y=m+0.5, labels="Sample s.d.", xpd=TRUE, pos=2, offset=1)
+%% for(k in 1:m){
+%%    tmp <- MAT[k,]
+%%    #col <- if(m<=5) wes_palette("Cavalcanti1", 5)[k]
+%%    col <- if(m<=5) wes_rgb[k]
+%%    mtm <- mean(tmp)
+%%    sdt <- sd(tmp)
+%%    if(use.sd.here) text(x=min(MAT)-DD, y=m+1-k, labels=round(sdt,1), xpd=TRUE, pos=2, offset=1)
+%%    points(x=tmp, y=rep(m+1-k,n), pch=20+k, bg=col, cex = 1.5)
+%% }
+%% par(.par_reset)
+%% @
+%% }
+%% \frame{ % -------------------------------------------------------------------->
+%% %\frametitle{Properties of samples and sample means}
+%% \ldots \emph{but} there is also a variation associated with a sample mean (but we
+%% do not tend to see it). \emph{Anything} calculated from a (random) sample
+%% (e.g.\ a mean value or a regression coefficient) is a random number and thus has
+%% a standard deviation (but we typically need theory to calculate this!)
+
+%% <<sem0>>=
+%% load(file="data/MAT.rdata")
+%% set_params()
+%% plot( x=c(min(MAT), max(MAT)), y=c(0,m), type='n',
+%%       xlab="Outcome", ylab="", yaxt='n', bty='o', xaxt = 'n',
+%%       main=paste(m, "samples of size", n, "from a Normal population mean =", Mu, "and sd. = ", Sd)
+%% )
+%% axis(1, at = c(170,179,190))
+%% abline(v=179, lty=2, col="darkgray", lwd=2)
+%% for(k in 1:m){
+%%    tmp <- MAT[k,]
+%%    #col <- if(m<=5) wes_palette("Cavalcanti1", 5)[k]
+%%    col <- if(m<=5) wes_rgb[k]
+%%    mtm <- mean(tmp)
+%%    sdt <- sd(tmp)
+%%    points(x=tmp, y=rep(m+1-k,n), pch=20+k, bg=col, cex = 1.5)
+%%    points(x=mtm, y=m+1-k, cex=3, bg=col, pch=20+k, lwd=2)
+%%    points(x=mtm, y=0, cex=3, bg=col, pch=20+k, lwd=2)
+%%    segments(x0 = mtm, y0 = 0.3, x1 = mtm, y1 = m+0.7-k, col = col, lty = 2)
+%% }
+%% @
+%% }
+
+
+%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{Properties of sample means}
+
+%% \textbf{Standard Error of the Mean (SEM)}\\
+%% The standard deviation of the sample mean is referred to
+%% as SEM and a measure
+%% of (approx.) the average distance the population mean.
+%% Thus a measure of the precision the sample mean is as
+%% an estimator of the population mean.
+
+%% \rymd In a Normal model the SEM is the population s.d. dived
+%% by $\sqrt n$.
+
+%% \rymd \textbf{Standard Errors (SE)}\\
+%% More generally, the standard deviation of something calculated from a sample is
+%% called its standard error.
+
+%% \rymd Later we will use these to create \emph{confidence intervalls}.
+
+%% }
+%% \frame{ % -------------------------------------------------------------------->
+%% %\frametitle{Properties of samples and sample means}
+%% <<sem>>=
+%% load(file="data/MAT.rdata")
+%% set_params()
+%% par(mar=c(5, 7, 4, 2) )# default c(5,4,4,2) + 0.1
+%% plot( x=c(min(MAT), max(MAT)), y=c(0,m), type='n',
+%%       xlab="Outcome", ylab="", yaxt='n', bty='o', xaxt = 'n',
+%%       main=paste(m, "samples of size", n, "with population mean =", Mu, "and sd. = ", Sd)
+%% )
+%% axis(1, at = c(170,179,190))
+%% abline(v=179, lty=2, col="darkgray", lwd=2)
+%% text(x=min(MAT)-DD, y=m+0.5, labels="Sample s.d.", xpd=TRUE, pos=2, offset=1)
+%% for(k in 1:m){
+%%    tmp <- MAT[k,]
+%%    #col <- if(m<=5) wes_palette("Cavalcanti1", 5)[k]
+%%    col <- if(m<=5) wes_rgb[k]
+%%    mtm <- mean(tmp)
+%%    sdt <- sd(tmp)
+%%    text(x=min(MAT)-DD, y=m+1-k, labels=round(sdt,1), xpd=TRUE, pos=2, offset=1)
+%%    points(x=tmp, y=rep(m+1-k,n), pch=20+k, bg=col, cex = 1.5)
+%%    points(x=mtm, y=m+1-k, cex=3, bg=col, pch=20+k, lwd=2)
+%%    points(x=mtm, y=0, cex=3, bg=col, pch=20+k, lwd=2)
+%%    segments(x0 = mtm, y0 = 0.3, x1 = mtm, y1 = m+0.7-k, col = col, lty = 2)
+%% }
+%% tmp <- rowMeans(MAT)
+%% mtm <- mean(tmp)
+%% text(x=min(MAT)-DD, y=0, labels=paste("SEM ~",round(sd(tmp),1)), xpd=TRUE, pos=2, offset=1, col=COL, cex=1.2)
+%% @
+%% }
+%% \frame{ % -------------------------------------------------------------------->
+%% In this example we can exactly specify the distribution of the sample mean.
+%% <<pop_and_mean>>=
+%% set_params()
+%% curve(dnorm(x,Mu,Sd), from=min(MAT),to=max(MAT), ylim=c(0,0.20), ylab="Density",
+%%       xlab="", lty=1, lwd=2, xaxt = 'n')
+%% axis(1, at = c(170, 179, 190))
+%% curve(dnorm(x,Mu,Sd/sqrt(10)), from=165,to=195, add=TRUE, lty=2, lwd=2)
+%% legend("topleft",
+%%        legend=c(expression(N(mu, sigma) - population),
+%%                 expression(N(mu,sigma/sqrt(10)) - `sample mean`),
+%%                 expression(mu==`179.0`,sigma==6.35)),
+%%        title="Distribution of:", lty=c(1:2,0,0), lwd=c(2,2,0,0), bty='n', cex=1.5)
+%% @
+%% }
+%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{Normal population $\Rightarrow$ Normal mean}
+%% On the previous slide you saw
+%% \begin{itemize}
+%%    \item a Normal population curve, and
+%%    \item the Normal curve for the sample mean (for sample size 10).
+%% \end{itemize}
+
+%% \rymd
+%% In this case this is the true (derived from theory) density
+%% curve for the sample mean.
+
+%% \rymd
+%% Properties of the Normal distribution will aid further analysis
+%% using the mean of the sample.
+
+%% \rymd
+%% What happens if the population follows some non-Normal
+%% curve?
+%% }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{The Central Limit Theorem (CLT)}
 
-\textbf{CLT:} Regardless of the true population
-density curve, the sample mean density can be made (with arbitrarily
-good approximation) Normal by choosing $n$ large enough.
+\textbf{CLT:} Regardless of the population density curve, the sample mean
+density can be made (with arbitrarily good approximation) Normal by choosing $n$
+large enough.
 
 \begin{itemize}
    \item How large does $n$ have to be? \\Depends on how skew the population density is. \\
@@ -1131,11 +1440,18 @@ good approximation) Normal by choosing $n$ large enough.
       \end{itemize}
    \item CLT applies to many 'statistics' (= functions of samples).
 \end{itemize}
+
+\rymd
+The next 2 slides shows theoretical distributions for a population and sample
+means thereof, for varying sample sizes.
+
 }
 
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Visualization of sample mean from normal population}
-The distribution of sample means from a \emph{normal} distribution.
+The distribution of sample means from a \emph{normal} distribution. In this case
+the sample mean \emph{is normally distributed} (but with a smaller sd).
+
 <<norm_mean>>=
 COL <- wes_palette("Cavalcanti1", 5) #brewer.pal(5, "Set2")
 par(mar=c(4,4,1,1))
@@ -1147,11 +1463,13 @@ for(k in 1:5){
 }
 abline(v=1, col="grey", lwd=1, lty=1)
 legend("topright", legend=c("1 (Population)", ns[-1]), col=COL, lwd=2, lty=1:4, title="Sample size", bty='n', cex=1.5)
+par(.par_reset)
 @
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Attempt to visualize CLT for the sample mean}
-The distribution of sample means from a skewed distribution.
+The distribution of sample means from a skewed distribution. The sample mean is
+\emph{not} normally distributed, but increasingly so.
 <<exp_mean>>=
 COL <- wes_palette("Cavalcanti1", 5) #brewer.pal(5, "Set2")
 par(mar=c(4,4,1,1))
@@ -1163,14 +1481,78 @@ for(k in 1:5){
 }
 abline(v=1, col="grey", lwd=1, lty=1)
 legend("topright", legend=c("1 (Population)", ns[-1]), col=COL, lwd=2, lty=1:4, title="Sample size", bty='n', cex=1.5)
+par(.par_reset)
 @
 }
+\frame{ % -------------------------------------------------------------------->
+\frametitle{The $t$-distribution}
+
+Calculating standard test statistics from a normal distribution requires
+estimating the standard deviation. For \textbf{small samples} the change in
+distribution motivates making exact calculations. The $t$-distribution is
+"increasingly normal" as its parameter (degrees of freedom) increases.
+
+<<"t-dist", include = TRUE>>=
+par(mar = c(5.1, 4.1, 4.1, 2.1))
+x0 <- 4
+curve(dnorm(x, 0, 1), -x0, x0, col = "grey", cex = 2, ylab = "Density", xlab = "")
+## text(0, dnorm(0), expression(infinity), adj = c(0.5,-.3))
+curve(dt(x, df = 1), -x0, x0, add = T, col = "black")
+## text(0, dt(0, df=1), "1", adj = c(0.5,-.3))
+curve(dt(x, df = 3), -x0, x0, add = T, col = "red")
+## text(0, dt(0, df=3), "3", adj = c(0.5,-.3))
+curve(dt(x, df = 7), -x0, x0, add = T, col = "blue")
+## text(0, dt(0,df=7), "7", adj = c(0.5,-.3))
+legend(x = -4, y = .4, legend = c(1, 3, 7, expression(infinity == "N(0,1)")), lty = 1,
+       col = c("black", "red", "blue", "grey"), title = "Degrees of freedom")
+par(.par_reset)
+@
+
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{The $\chi^2$-distribution}
+
+If you add $k$ standard normal random numbers, each squared, then the resulting
+distribution is $\chi^2(k)$. As we will see this is useful in the context of
+categorical variables.
+
+<<"chi2-dist", include = TRUE>>=
+x0 <- 8
+curve(dnorm(x, 0, 1), -3, x0, col = "grey", xlim = c(-2,7))
+curve(dchisq(x, df = 1), 0, x0, add = T, col = "black")
+## text(0.5, dchisq(0.5, df=1), "1", adj = c(0.5,-.3))
+curve(dchisq(x, df = 3), 0, x0, add = T, col = "red")
+## text(1.1, dchisq(1.1, df=2), "2", adj = c(0.5,-.3))
+curve(dchisq(x, df = 7), 0, x0, add = T, col = "blue")
+## text(3.5, dchisq(3.5,df=3), "3", adj = c(0.5,-.3))
+legend(x = 3, y = .4,
+       legend = c(expression("N(0,1)"),
+                  expression(chi~"(1)"),
+                  expression(chi~"(3)"),
+                  expression(chi~"(7)")),
+       lty = 1,
+       col = c("grey", "black", "red", "blue"), title = "Distribution")
+@
+
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section[Visual tests]{Visual tests (of normality)} %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Quantiles?}
+\frametitle{Visual tests of normality}
+Perhaps surprisingly, quite often we rely on \emph{visual} rather than
+\emph{formal} tests of model assumptions.
+
+\rymd
+A common formal test of normality is the Shapiro-Wilks test.
+
+\rymd Many plots can provide a visual test of normality, but a common one is the
+Q-Q plot. 'Q' is for \emph{quantile}.
+
+\rymd
+\textbf{Quantile?}
 Quantiles divides your data into (roughly) equal piles.
 \begin{itemize}
 \item the median is the 2-quantile
@@ -1181,13 +1563,13 @@ the $66\frac 23$ percentile)
 \end{itemize}
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Cross-over data (from lecture 4)}
+\frametitle{Cross-over data}
 13 patients had their peak expiratory flow (PEF, l/min) recorded
 once after inhaling each of two different asthma drugs
 (the order of which were random).
 
 \rymda In \emph{paired} data one usually look at the 13 differences as a measurement
-of differences in individual effect size.
+of effect size.
 
 \rymda Data:
 \[ \mbox{\Sexpr{load("data/F4_crossover.Rdata"); paste(y-x, collapse=",\\,\\,")}} \]
@@ -1202,11 +1584,12 @@ par(mar=c(4,4,0,0))
 curve( dnorm(t, mean(y-x), sd(y-x)), from=-60, to=160, ylim=c(0,.016), lty=1, xname="t", xlab="Differences (formoterol-sabutamol) L/min", main="", ylab = "Density", xlim = c(-50, 150))
 hist(y-x, freq=FALSE, breaks=seq(-50,150,len=10),  xlim=c(-60,160), ylim=c(0,.018),  col=.blue, add = TRUE)
 curve( dnorm(t, mean(y-x), sd(y-x)), from=-50, to=150, lty=2, add=TRUE, xname="t")
+par(.par_reset)
 @
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{PEV}
-A empirical cdf with best normal density cdf.
+A cumulative frequency with best normal density fit.
 <<pev_ecdf>>=
 load("data/F4_crossover.Rdata")
 par(mar=c(4,3,0,0))
@@ -1214,14 +1597,16 @@ plot(ecdf(y-x), verticals=TRUE, do.points=FALSE,
      xlab="Differences (formoterol-sabutamol) L/min", ylab="",
      xlim=c(-100,200), main="")
 curve( pnorm(t, mean(y-x), sd(y-x)), from=-250, to=200, lty=2, add=TRUE, xname="t")
+par(.par_reset)
 @
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{The Quantile-Quantile plot}
-If the differences in effect size is sampled from a Normally distributed population
-its QQ-plot should be a straight line (approximately).
 
-A QQ-plot plots the sample of size $n$ against the (slightly shifted)
+If the effect size is Normally distributed its QQ-plot should be a straight line
+(approximately).
+
+A QQ-plot plots the sample (of size $n$) against the %(slightly shifted)
 $n$-quantiles of the (standard) Normal distribution.
 
 <<pev_qq, cache=FALSE>>=
@@ -1229,20 +1614,16 @@ load("data/F4_crossover.Rdata") # x (salbutamol), y (formoterol)
 par(mar=c(4,4,4,4))
 qqnorm(y-x)
 qqline(y-x, col="grey70")
+par(.par_reset)
 @
 }
 \frame{ % -------------------------------------------------------------------->
-These visual test require some training.
-
-There are also formal tests of normality (e.g. Shapiro-Wilks)
-
-The S100$\beta$ measurements from the subarachnoidal bleeding example
-is certainly not normally distributed.
+The S100$\beta$ measurements is certainly not normally distributed.
 <<sub_norm>>=
 load("data/F10B_subarach.Rdata")
 t <- dd$s100b
 layout(matrix(1:2, ncol=2))
-plot(ecdf(t), do.points=FALSE, verticals=TRUE, xlab="micrgrams / litre", ylab="", main="ECDF")
+plot(ecdf(t), do.points=FALSE, verticals=TRUE, xlab="micrgrams / litre", ylab="", main="CF")
 curve(pnorm(x, mean(t), sd(t)), from=-1, to=2, add=TRUE, lty=2, col="grey60")
 qqnorm(t, ylim=c(-0.2, 1.2))
 qqline(t)
@@ -1253,10 +1634,10 @@ qqline(t)
 \begin{center}
 \fbox{\textbf{It is very rarely the actual data that is tested for normality!}}
 \end{center}
-Most of the time the models that assume normality does so for the ''error''
-terms, i.e.\ there is a model, depending on the covariates $x$, for the outcome
+Most of the time the models that assume normality does so for the \emph{error terms},
+i.e.\ there is a model, depending on the covariates $x$, for the outcome
 $Y$ such that
-\[ Y = \mbox{some deterministic function of x} + \mbox{noise}. \]
+\[ Y = \mbox{some deterministic function of x} + \mbox{random error}. \]
 
 E.g.\ a 2-sample $t$-test assumes that an outcome is normally distributed around a
 group-specific mean. Data for such a test might look like this
@@ -1280,12 +1661,13 @@ df <- data.frame(
     Y = rnorm(2*n, rep(c(a_mean,b_mean), each = n), 1)
 )
 df$resid = df$Y - ifelse(df$x=="A", a_mean, b_mean)
-ggplot(df, aes(Y, group = x)) +
-    geom_histogram(aes(y = ..density..), binwidth = 0.75) +
+ggplot(df, aes(Y, fill = x)) +
+    geom_histogram(aes(y = ..density..), binwidth = 0.75, alpha = 1/2) +
     stat_function(fun = dnorm, size = 1, lty = 2,
                   args = list(mean = a_mean)) +
     stat_function(fun = dnorm, size = 1, lty = 2,
                   args = list(mean = b_mean)) +
+    scale_fill_manual(values = c(.green, .red)) +
     labs(x = "Outcome (Y)", y = "Density") +
     theme_bw()
 @
@@ -1296,15 +1678,16 @@ Subtract the (estimated) group effect from each datapoint to get:
 
 <<fig.height = 2.7>>=
 ggplot(df, aes(resid)) +
-    geom_histogram(aes(y=..density..), binwidth = 0.5) +
+    geom_histogram(aes(y=..density../2, fill = x), binwidth = 0.5, alpha = 1/2) +
     labs(x = "Residual", y = "Density") +
+    scale_fill_manual(values = c(.green, .red)) +
     stat_function(fun = dnorm, size = 1, lty = 2) +
     theme_bw()
 @
 
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{ } %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{$\phantom{.}$} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \frame{ % -------------------------------------------------------------------->
@@ -1313,7 +1696,7 @@ ggplot(df, aes(resid)) +
 1.96 multiples of the (population) s.d.  from the (population)
 mean.
 
-\rymd Means and in particular s.d. must be distinguished on three levels
+\rymd Means and, in particular sd's, must be distinguished on three levels
 \begin{itemize}
 \item population,
 \item sample, and
@@ -1321,9 +1704,9 @@ mean.
 \end{itemize}
 
 \rymd The s.d. of the latter is called the Standard Error\\
-(Standard Error of the Mean if the mean is used as estimate.)
+%% (Standard Error of the Mean if the mean is used as estimate.)
 
-\rymd (The sample s.d. is an estimate of the population s.d.)
+%% \rymd (The sample s.d. is an estimate of the population s.d.)
 
 \rymd The CLT explains why many estimates ('statistics') are
 (approx.) Normally distributed even though the population
@@ -1345,4 +1728,59 @@ publications}, Environmental Modelling \& Software \textbf{26} (2011) 822-827.
 %\item H. Wickham, \emph{ggplot2}, 2$^{\mbox{nd}}$ ed. TO APPEAR
 \end{itemize}
 }
+\newcommand{\lada}{\fbox{$\phantom{x}$}}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{First poll}
+\textbf{Q1:} Tick the boxes you think are always true.
+\begin{itemize}
+\item[\lada] An ordinal variable with values A, B, C, (etc) is such that the "increases" (although not numerical) B-A, C-B, (etc) can be considered to be of the same magnitude.
+\item[\lada] Anything measured numerically must be analysed as such.
+\item[\lada] Anything recorded as a categorization must be analysed as such.
+\end{itemize}
+
+\textbf{Q2:} A group of 24 individuals have been randomly assigned to 6 different exercise groups, and their blood pressure is measured after training. The researchers do a boxplot for the measurements for each group. Is this a good approach?
+\begin{itemize}
+\item[\lada] Yes, a good way to visualize the overall pattern.
+\item[\lada] No, the overall sample size is too small.
+\item[\lada] No, the group sizes are too small.
+\end{itemize}
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Second poll}
+\textbf{Question ?:}
+\begin{itemize}
+\item[\lada] text
+\item[\lada] text
+\item[\lada] text
+\end{itemize}
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Third poll}
+\textbf{Question ?} The Law of Large numbers state that the relative frequency
+of an event must tend to its true probability.
+\begin{itemize}
+\item[\lada] text
+\item[\lada] text
+\item[\lada] text
+\end{itemize}
+\textbf{Question ?} Something to do with the central limit theorem.
+\begin{itemize}
+\item[\lada] text
+\item[\lada] text
+\item[\lada] text
+\end{itemize}
+}
+
 \end{document} % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+%% \frame{ % -------------------------------------------------------------------->
+%%   \frametitle{poll}
+%%   \newcommand{\lada}{\fbox{$\phantom{x}$}}
+%% \textbf{Question ?:}
+%% \begin{itemize}
+%% \item[\lada] text
+%% \item[\lada] text
+%% \item[\lada] text
+%% \end{itemize}
+%% }
