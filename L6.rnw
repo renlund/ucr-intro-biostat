@@ -894,35 +894,39 @@ One way to deal with this is logistic regression (more on that in a later lectur
 \end{itemize}
 }
 \frame{ % -------------------------------------------------------------------->
-  \frametitle{First poll}
+  \frametitle{Poll: Odds and probabilities}
   \newcommand{\lada}{\fbox{$\phantom{x}$}}
-\textbf{Question 1:} You are at 3\% risk of a disease. Would you rather
+\textbf{Q1:} You are at 3\% risk of a disease X. Medication A gives you a 1
+percentage point risk reduction. Medication B halves your odds of the
+disease. Which do you prefer? (Single choice)
 \begin{itemize}
-\item[\lada] Have a 1\%-point risk reduction?
-\item[\lada] Halve your odds?
+\item[\lada] A
+\item[\lada] B
 \item[\lada] Doesn't matter
 \end{itemize}
-\textbf{Question 2:} You are facing a 50\% risk of a disease. Would you rather
+\textbf{Q2:} Oh no! A previously unknown risk factor now sets your risk at
+50\%. However, treatment C will halve your risk. There is an alternative
+treatment D that will halve your odds. Which do you prefer? (Single choice)
 \begin{itemize}
-\item[\lada] Halve your risk
-\item[\lada] Halve your odds
+\item[\lada] C
+\item[\lada] D
 \item[\lada] Doesn't matter
 \end{itemize}
 }
 \frame{ % -------------------------------------------------------------------->
-  \frametitle{Second poll}
+  \frametitle{Poll: Odds ratios}
   \newcommand{\lada}{\fbox{$\phantom{x}$}}
-\textbf{Question 1:} The OR for success between procedure A and B is 2. Check
-those that are necessarily true:
+\textbf{Q1:} The odds ratio (OR) for success between procedure A and B is 2
+(i.e. odds or success with A / odds for success with B). What is true? (Multiple choice)
 \begin{itemize}
-\item[\lada] the A procedure has >50\% chance of success
-\item[\lada] A has a higher success rate than B
-\item[\lada] A has double the success rate of B
+\item[\lada] Since the OR $>$ 1, procedure A has a better than 50\% chance of success.
+\item[\lada] Since the OR $>$ 1, procedure A has a better chance of success than B.
+\item[\lada] The probability of a successful A-procedure is (approx.) twice that of B-procedure.
 \end{itemize}
 \textbf{Question 2:} Drug X has a side effect Y, experienced by 5\% of the
 users, a risk researches are trying to halve. A study on a modification of X
-found that the OR for Y is 0.2 (.07, .44) concerning side effects. Did the
-researchers succeed?
+found that the OR for Y compared to X is 0.2 (.07, .44) concerning side effects. Did the
+researchers succeed? (Single choice)
 \begin{itemize}
 \item[\lada] Yes
 \item[\lada] No
