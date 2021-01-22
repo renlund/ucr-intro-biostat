@@ -149,47 +149,6 @@ Common problems:
 \end{itemize}
 
 }
-\frame{ %-------------------------------------------------------------------->
-\frametitle{What about missing data?}
-
-\textbf{'Good' scenario:} Suppose in an experiment a batch of samples are
-destroyed throught some random accident. Typically this only leads to a smaller
-sample size, but there is no problem running the analysis as planned.
-
-\rymd \textbf{'Bad' scenario:} Suppose we study severity of myocardial
-infarctions with a model that includes sex, age, BMI (some missing) and
-smoking status (some missing). Worry: the reason for missing depends on the
-value.
-
-\rymd The statistical software default is to include only those individuals with
-complete case data on all variables in the analysis.
-
-\rymd This \textbf{complete case analysis} will only give an unbiased
-result if the reason that a variable is missing has nothing to do with the
-actual value (and/or the outcome).
-}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Solutions\ldots ish}
-There is no trick that guarantees a non-biased analysis.
-
-\rymd \textbf{Single imputation} e.g.\ replace missing value with a "typical"
-value for that variable (e.g. mean or median). This method underestimates the
-variance in the variable and will give overly optimistic results.
-
-\rymd \textbf{Multiple imputation} create multiple imputed data sets where the
-missing values are replaced differently in each iteration (perhaps even
-"predicted" from other covariates).
-
-\rymd
-\begin{quote}
-"It is not that multiple imputation is so good; it is really that other methods
-  for adressing missing data are so bad."
-\begin{flushright}
-(Donald Rubin)
-\end{flushright}
-\end{quote}
-\textbf{N.B.} we typically do not impute our outcome data.
-}
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Visualization of (continuous) data}
 A sufficiently small data set might not need visualization.
@@ -752,7 +711,7 @@ par(.par_reset)
 @
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Flipping the axis}
+\frametitle{Flipping the axes}
 The "right" visualization might not be obvious. A binary categorical variable
 can be suitable to \emph{stack} in a bar chart:
 
@@ -785,10 +744,10 @@ A computer generated random number typically tries to mimic the \emph{uniform
 <<"uniform", include = TRUE>>=
 par(mar = c(2,4,1,1))
 curve(dunif(x, 0, 1), from = 0, to = 1, xlim = c(-0.2, 1.2), ylim = c(0,1),
-      ylab = "Density", xlab = "", bty = "l")
+      ylab = "Density", xlab = "", bty = "l", lwd = 3)
 zero <- function(x) rep(0, length(x))
-curve(zero(x), from = -1, to = 0, add = TRUE)
-curve(zero(x), from = 1, to = 2, add = TRUE)
+curve(zero(x), from = -1, to = 0, add = TRUE, lwd = 3)
+curve(zero(x), from = 1, to = 2, add = TRUE, lwd = 3)
 par(.par_reset)
 @
 Any number (or interval) within $[0,1]$ is as likely as any other (of the same length).
@@ -932,7 +891,8 @@ is determined by its mean ($\mu$) and standard deviation ($\sigma$).
 
 \rymd
 {\centering\fbox{If $X$ is N(0,1) then $\mu+\sigma X$ is N$(\mu,\sigma)$.}\par}
-<<normals>>=
+<<normals, fig.height = 3.5>>=
+par(mar = c(2,4,0,0))
 n <- 100
 x <- seq(-3,8,length.out=n)
 y0 <- dnorm(x, 0, 1)
@@ -951,7 +911,11 @@ text( -1.5, 0.30, "N(0,1)", cex = 2, col = "lightgrey")
 text( 5.4, 0.35, "N(4,1)", col=myCol[1], cex=2)
 text( 1.2, 0.55, "N(0,0.5)", col=myCol[2], cex=2)
 text( 4, 0.25, "N(4,2)", col=myCol[3], cex=2)
+par(.par_reset)
 @
+
+In fact, if $X_1$ and $X_2$ are Normal (and \emph{independent}), then so is
+\[ a + bX_1 + cX_2. \]
 }
 \frame{ % --------------------------------------------------------------------->
 \frametitle{Properties of the Normal distribution}
@@ -985,7 +949,7 @@ text(Mu, 0.23, paste("N(",Mu,",",Sd,")",sep=""), cex=2.2 )
 @
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section[Sampling]{Sampling, SE(M) and CLT.} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[Sampling]{Sampling} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 <<samp_setup, cache=FALSE, include=FALSE>>=
@@ -1045,7 +1009,7 @@ up to 50 iterations at the time.
 \begin{itemize}
 \item At sample size 1, with many iterations the sample distribution should
   resemble the population.
-\item What happens to the distribution of the sample mean as the sample mean
+\item What happens to the distribution of the sample mean as the sample size
   increases?
 \end{itemize}
 
@@ -1066,13 +1030,13 @@ and sd).
 But the distribution \emph{of the sample mean} is more centered
 around this value $\mu$, in particular
 \begin{itemize}
-\item it tends to be more symmetric, and
-\item has a smaller standard devation.
+\item it has a smaller standard devation, and
+\item it tends to be more symmetric.
 \end{itemize}
 
-But again: the sample mean distribution is unobserved, so we must rely on theory
-to determine its standard devation, a.k.a.\ the \textbf{standard error (of the
-  mean)}.
+\rymd
+But again: the sample mean distribution is unobserved, in general we must rely
+on theory to determine its properties.
 }
 %% \frame{ % -------------------------------------------------------------------->
 %% \frametitle{Attempt to visualize sampling from a given model}
@@ -1289,6 +1253,21 @@ to determine its standard devation, a.k.a.\ the \textbf{standard error (of the
 %% curve?
 %% }
 \frame{ % -------------------------------------------------------------------->
+  \frametitle{Sampling from a normally distributed population?}
+
+{\centering \fbox{"Normal population" $\Rightarrow$ "Normal sample mean"}\par}
+
+\rymd
+
+\rymd
+A random sample of size $n$ from $N(\mu, \sigma)$ has the property that its mean
+is also normally around $\mu$ but with
+\[ \sigma_{\mbox{\footnotesize sample mean}} = \frac{\sigma}{\sqrt{n}}. \]
+
+\rymd
+But, not everything is normally distributed to begin with!
+}
+\frame{ % -------------------------------------------------------------------->
 \frametitle{The Central Limit Theorem (CLT)}
 
 \textbf{CLT:} Regardless of the population density curve, the sample mean
@@ -1347,12 +1326,34 @@ par(.par_reset)
 @
 }
 \frame{ % -------------------------------------------------------------------->
+\frametitle{Standard errors}
+
+The (estimated) standard deviation of an estimator is called its
+\textbf{standard error}.
+
+\rymd
+The CLT allows us in many situations to ignore the actual distribution of the
+population and the estimator, but we typically need the standard error.
+
+\rymd
+Exmple: suppose we want to estimate the height of individuals in a population.
+A sample of 50 people gave a mean 175 cm with a sample standard deviation of
+6.5. Then $se = 6.5 / \sqrt{50} \approx 0.92.$
+
+\rymd
+As will be shown later the standard error help us to
+\begin{itemize}
+\item create confidence interval, and
+\item create \emph{test statistics} for hypothesis testing.
+\end{itemize}
+}
+\frame{ % -------------------------------------------------------------------->
 \frametitle{The $t$-distribution}
 
 Calculating standard test statistics from a normal distribution requires
 estimating the standard deviation. For \textbf{small samples} the change in
 distribution motivates making exact calculations. The $t$-distribution is
-"increasingly normal" as its parameter (degrees of freedom) increases.
+"increasingly standard normal" as its parameter (degrees of freedom) increases.
 
 <<"t-dist", include = TRUE>>=
 par(mar = c(5.1, 4.1, 4.1, 2.1))
@@ -1398,7 +1399,7 @@ legend(x = 3, y = .4,
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section[Visual tests]{Visual tests (of normality)} %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[Misc.]{Miscellaneous: visual tests, missing data} %%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \frame{ % -------------------------------------------------------------------->
@@ -1426,7 +1427,7 @@ the $66\frac 23$ percentile)
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Cross-over data}
 13 patients had their peak expiratory flow (PEF, l/min) recorded
-once after inhaling each of two different asthma drugs
+after inhaling each of two different asthma drugs
 (the order of which were random).
 
 \rymda In \emph{paired} data one usually look at the 13 differences as a measurement
@@ -1438,29 +1439,43 @@ Is the normal distribution a good model for these 13 numbers?
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{PEV}
-A histogram with best normal density fit.
+One could ascertain the plausibility of an underlying normal distribution via
+e.g.\ a histogram or a CF.
+% A histogram with best normal density fit.
 <<pev_h, cache=FALSE>>=
 load("data/F4_crossover.Rdata")
 par(mar=c(4,4,0,0))
-curve( dnorm(t, mean(y-x), sd(y-x)), from=-60, to=160, ylim=c(0,.016), lty=1, xname="t", xlab="Differences (formoterol-sabutamol) L/min", main="", ylab = "Density", xlim = c(-50, 150))
-hist(y-x, freq=FALSE, breaks=seq(-50,150,len=10),  xlim=c(-60,160), ylim=c(0,.018),  col=.blue, add = TRUE)
-curve( dnorm(t, mean(y-x), sd(y-x)), from=-50, to=150, lty=2, add=TRUE, xname="t")
-par(.par_reset)
-@
-}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{PEV}
-A cumulative frequency with best normal density fit.
-<<pev_ecdf>>=
-load("data/F4_crossover.Rdata")
-par(mar=c(4,3,0,0))
+layout(matrix(1:2, ncol=2))
+
+curve( dnorm(t, mean(y-x), sd(y-x)), from=-60, to=160, ylim=c(0,.016),
+      lty=1, xname="t", xlab="Differences (formoterol-sabutamol) L/min",
+      main="", ylab = "Density", xlim = c(-50, 150))
+hist(y-x, freq=FALSE, breaks=seq(-50,150,len=10),
+     xlim=c(-60,160), ylim=c(0,.018),
+     col=.blue, add = TRUE)
+curve(dnorm(t, mean(y-x), sd(y-x)), from=-50, to=150, lty=2,
+      add=TRUE, xname="t")
+
 plot(ecdf(y-x), verticals=TRUE, do.points=FALSE,
      xlab="Differences (formoterol-sabutamol) L/min", ylab="",
      xlim=c(-100,200), main="")
-curve( pnorm(t, mean(y-x), sd(y-x)), from=-250, to=200, lty=2, add=TRUE, xname="t")
-par(.par_reset)
+curve( pnorm(t, mean(y-x), sd(y-x)), from=-250, to=200,
+      lty=2, add=TRUE, xname="t")
 @
 }
+%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{PEV}
+%% A cumulative frequency with best normal density fit.
+%% <<pev_ecdf>>=
+%% load("data/F4_crossover.Rdata")
+%% par(mar=c(4,3,0,0))
+%% plot(ecdf(y-x), verticals=TRUE, do.points=FALSE,
+%%      xlab="Differences (formoterol-sabutamol) L/min", ylab="",
+%%      xlim=c(-100,200), main="")
+%% curve( pnorm(t, mean(y-x), sd(y-x)), from=-250, to=200, lty=2, add=TRUE, xname="t")
+%% par(.par_reset)
+%% @
+%% }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{The Quantile-Quantile plot}
 
@@ -1488,10 +1503,11 @@ plot(ecdf(t), do.points=FALSE, verticals=TRUE, xlab="micrgrams / litre", ylab=""
 curve(pnorm(x, mean(t), sd(t)), from=-1, to=2, add=TRUE, lty=2, col="grey60")
 qqnorm(t, ylim=c(-0.2, 1.2))
 qqline(t)
+par(.par_reset)
 @
 }
 \frame{ %  ------------------------------------------------------------------->
-\frametitle{A reminder ahead of time}
+\frametitle{Caution}
 \begin{center}
 \fbox{\textbf{It is very rarely the actual data that is tested for normality!}}
 \end{center}
@@ -1547,29 +1563,73 @@ ggplot(df, aes(resid)) +
 @
 
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{$\phantom{.}$} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame{ %-------------------------------------------------------------------->
+\frametitle{What about missing data?}
 
+\textbf{'Good' scenario:} Suppose in an experiment a batch of samples are
+destroyed throught some random accident. Typically this only leads to a smaller
+sample size, but there is no problem running the analysis as planned.
+
+\rymd \textbf{'Bad' scenario:} Suppose we study severity of myocardial
+infarctions with a model that includes sex, age, BMI (some missing) and
+smoking status (some missing). Worry: the reason for missing depends on the
+value.
+
+\rymd The statistical software default is to include only those individuals with
+complete case data on all variables in the analysis.
+
+\rymd This \textbf{complete case analysis} will only give an unbiased
+result if the reason that a variable is missing has nothing to do with the
+actual value (and/or the outcome).
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Solutions\ldots ish}
+There is no trick that guarantees a non-biased analysis.
+
+\rymd \textbf{Single imputation} e.g.\ replace missing value with a "typical"
+value for that variable (e.g. mean or median). This method underestimates the
+variance in the variable and will give overly optimistic results.
+
+\rymd \textbf{Multiple imputation} create multiple imputed data sets where the
+missing values are replaced differently in each iteration (perhaps even
+"predicted" from other covariates).
+
+\rymd
+\begin{quote}
+"It is not that multiple imputation is so good; it is really that other methods
+  for adressing missing data are so bad."
+\begin{flushright}
+(Donald Rubin)
+\end{flushright}
+\end{quote}
+\textbf{N.B.} we typically do not impute our outcome data.
+}
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \section{$\phantom{.}$} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% \frame{ % -------------------------------------------------------------------->
 %% \frametitle{Second Summary}
 %% 95\% of observations from a Normal population lies within
 %% 1.96 multiples of the (population) s.d.  from the (population)
 %% mean.
-
+%%
 %% \rymd Means and, in particular sd's, must be distinguished on three levels
 %% \begin{itemize}
 %% \item population,
 %% \item sample, and
 %% \item estimate.
 %% \end{itemize}
-
+%%
 %% \rymd The s.d. of the latter is called the Standard Error\\
-
+%%
 %% \rymd The CLT explains why many estimates ('statistics') are
 %% (approx.) Normally distributed even though the population
 %% may not be.
 %% }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[Ref]{References} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \frame{ % -------------------------------------------------------------------->
 \frametitle{References}
 \begin{itemize}
@@ -1586,48 +1646,83 @@ publications}, Environmental Modelling \& Software \textbf{26} (2011) 822-827.
 %\item H. Wickham, \emph{ggplot2}, 2$^{\mbox{nd}}$ ed. TO APPEAR
 \end{itemize}
 }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Polls} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\lada}{\fbox{$\phantom{x}$}}
 \frame{ % -------------------------------------------------------------------->
-\frametitle{First poll}
-\textbf{Q1:} Tick the boxes you think are always true.
+\frametitle{Poll: Variables and driving}
+\textbf{Q1:} Tick the boxes you think are always true. (Multiple choice)
 \begin{itemize}
 \item[\lada] An ordinal variable with values A, B, C, (etc) is such that the "increases" (although not numerical) B-A, C-B, (etc) can be considered to be of the same magnitude.
 \item[\lada] Anything measured numerically must be analysed as such.
 \item[\lada] Anything recorded as a categorization must be analysed as such.
+\item[\lada] None of the above.
 \end{itemize}
 
-\textbf{Q2:} A group of 24 individuals have been randomly assigned to 6 different exercise groups, and their blood pressure is measured after training. The researchers do a boxplot for the measurements for each group. Is this a good approach?
+\textbf{Q2:} A poll showed that 80\% of drivers thought their driving skills
+were above average. As a group, do these drivers overestimate their driving
+skills? (Single choice)
+\begin{itemize}
+\item[\lada] No
+\item[\lada] Yes
+\item[\lada] Probably
+\item[\lada] We can't say
+\end{itemize}
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Poll: Boxplots and means}
+\textbf{Q1:} A group of 24 individuals have been randomly assigned to 6
+different exercise groups, and their blood pressure is measured after
+training. The researchers do a boxplot for the measurements for each group. Is
+this a good approach? (Single choice)
 \begin{itemize}
 \item[\lada] Yes, a good way to visualize the overall pattern.
 \item[\lada] No, the overall sample size is too small.
 \item[\lada] No, the group sizes are too small.
 \end{itemize}
-}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Second poll}
-\textbf{Question ?:}
+\textbf{Q1:} Suppose the mean athletic skill is somewhat better in group
+A as compared to group B (of equal size). If a sport team is fairly admitting members by
+assessing athletic skill, we should expect more people from A being atmitted. (Single choice)
 \begin{itemize}
-\item[\lada] text
-\item[\lada] text
-\item[\lada] text
+\item[\lada] True
+\item[\lada] False
+\item[\lada] We can't say
 \end{itemize}
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Third poll}
-\textbf{Question ?} The Law of Large numbers state that the relative frequency
-of an event must tend to its true probability.
+\frametitle{Poll: LLN and CLT}
+\textbf{Q1:} Suppose you have flipped a (fair) coin 3 times, every time showing H
+('Heads'). The Law of Large Numbers tells us that the relative frequency of H
+will tend to 50\% in the long run. Does this imply that we now have an increased
+probability of T ('Tails')? (Single choice)
 \begin{itemize}
-\item[\lada] text
-\item[\lada] text
-\item[\lada] text
+\item[\lada] Yes
+\item[\lada] No
 \end{itemize}
-\textbf{Question ?} Something to do with the central limit theorem.
+\textbf{Q2:} The Central Limit Theorem says that, althought the distribution of
+any numerical characteristic of individuals (income, blood pressure, etc) might
+be skewed in small populations, it will be (approx.) normally distributed in
+"large enough" populations. (Single choice)
 \begin{itemize}
-\item[\lada] text
-\item[\lada] text
-\item[\lada] text
+\item[\lada] True
+\item[\lada] False
 \end{itemize}
 }
+%% \frame{ % -------------------------------------------------------------------->
+%% <<"test-no-eval", eval = FALSE>>=
+%% m1 <- 10; m2 <- 10.5
+%% foo <- function(x, a = m1, b = m2){
+%%     p1 <- 1 - pnorm(x, a, 1)
+%%     p2 <- 1 - pnorm(x, b, 1)
+%%     p2 / p1
+%% }
+%% curve(foo(x), 8, 12, ylim = c(0, 7))
+%% curve(dnorm(x, m1, 1), 8, 12, add = TRUE, lty = 2)
+%% curve(dnorm(x, m2, 1), 8, 12, add = TRUE)
+%% @
+%% }
+
 
 \end{document} % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
