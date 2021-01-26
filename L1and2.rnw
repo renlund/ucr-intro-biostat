@@ -989,7 +989,7 @@ par(.par_reset)
 \frame{ % -------------------------------------------------------------------->
 \frametitle{The problem}
 
-\textbf{Fact:} to calculation e.g.\ a confidence interval for $X$, we need to
+\textbf{Fact:} to calculate e.g.\ a confidence interval for $X$, we need to
 know the distribution (at least approximately).
 
 \rymd
@@ -1029,12 +1029,31 @@ d2 <- data.frame(
     p = c(tmp, rev(tmp)[2:6]),
     w = "Mean of 2 throws"
 )
+
+## set.seed(20210126)
+## x <- sample(1:6, size = 100, replace = TRUE)
+## table(x)
+## x1 <- sample(1:6, size = 100, replace = TRUE)
+## x2 <- sample(1:6, size = 100, replace = TRUE)
+## mx <- (x1 + x2) / 2
+## d1b <- data.frame(
+##     x = 1:6,
+##     p = as.numeric(table(x)),
+##     w = "100 samples"
+## )
+## d2b <- data.frame(
+##     x = 2:12 / 2,
+##     p = as.numeric(table(mx)),
+##     w = "100 mean values (2 throws)"
+## )
+
 d <- rbind(d1, d2)
 ggplot(d, aes(x, p)) +
     geom_bar(stat = "identity") +
     labs(y = "Probability", x = "Outcome") +
     scale_x_continuous(breaks = 1:6) +
     facet_wrap(~w, ncol = 1, as.table = FALSE)
+
 
 
 @
