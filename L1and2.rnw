@@ -299,7 +299,7 @@ Choice of descriptive measures may be context dependent.
    \rymd \item \emph{The Quartiles:} Q1 is the 25th percentile, Q2 is the 50th percentile and Q3 is the 75th percentile.
 
    \rymd \item We can describe all percentiles with the \emph{cumulative
-     frequency graph} (CF) also called the \emph{emprical cumulative
+     frequency graph} (CF) also called the \emph{empirical cumulative
      distribution function} (ECDF)
 \end{itemize}
 }
@@ -365,7 +365,7 @@ s$Treatment <- ifelse(s$strata == "rx=Obs", "Observation",
 ggplot(s, aes(time, estimate, color = Treatment)) +
     geom_line() +
     scale_y_continuous(limits = c(0,1)) +
-    scale_x_continuous(limits = c(0, 3000), expand = c(0,0)) +
+    scale_x_continuous(limits = c(0, 2600), expand = c(0,0)) +
     theme(legend.position = "bottom") +
     labs(x="Days until death or censoring", y = "Survival")
 cap <- paste0("Survival curves for 3 different treatments of colon cancer; ",
@@ -765,11 +765,11 @@ Any number (or interval) within $[0,1]$ is as likely as any other (of the same l
   \begin{center}
   \begin{tabular}{|c|r|r|r|} \hline
     Interval & Count & Proportion & Density  \\ \hline
-  $(1.0, 1.5]$ &  1 & $\frac{1}{430} \approx 0.0023$ & $\frac{1/430}{1.5-1.0}\approx 0.0047$ \\
-  $(1.5, 2.0]$ & 27 & $0.063\phantom{0}$ & $0.13\phantom{00}$ \\
-  $(2.0, 2.5]$ & 89 & $0.21\phantom{00}$ & $0.41\phantom{00}$ \\
+  $1.0 - 1.5$ &  1 & $\frac{1}{430} \approx 0.0023$ & $\frac{1/430}{1.5-1.0}\approx 0.0047$ \\
+  $1.5 - 2.0$ & 27 & $0.063\phantom{0}$ & $0.13\phantom{00}$ \\
+  $2.0 - 2.5$ & 89 & $0.21\phantom{00}$ & $0.41\phantom{00}$ \\
   $\vdots$ & $\vdots$ & $\vdots\phantom{0000}$ & $\vdots\phantom{0000}$ \\
-  $(5.5, 6.0]$ & 3 & 0.0070 & $0.014\phantom{0}$ \\ \hline
+  $5.5 - 6.0$ & 3 & 0.0070 & $0.014\phantom{0}$ \\ \hline
   \end{tabular}
   \end{center}
 }
@@ -865,7 +865,8 @@ The standard Normal distribution is centered at 0 and has a standard deviation o
 
 \rymd
 {\centering\fbox{95\% of the 'probability mass' lies within $\pm 1.96$.}\par}
-<<normal_stuff, fig.width=9, fig.height=5, include=FALSE>>=
+<<normal_stuff, fig.width=9, fig.height=3.5, include=TRUE>>=
+par(mar = c(2, 4, 0,0))
 x <- seq(-3.5,3.5,length.out=100)
 y <- dnorm(x, 0, 1)
 plot( c(-3.2,3.2),c(0,0.4), col="white",
@@ -879,12 +880,9 @@ points( c(v,v), c(0,0.28), type='l', lty=2)
 text( v, 0.3, label=paste("+",signif(v,3),sep=""), cex=1.5 )
 points( x,y, type='l', lwd=2)
 text( 0,0.15, "95%",cex=2)
+par(.par_reset)
 @
-
-<<plot_code_normal_stuff, results='asis', cache = FALSE>>=
-plot_code <- sprintf("\\includegraphics[scale=0.47]{figure/%s}\n", paste0("normal_stuff-",1:2))
-cat(plot_code, sep="")
-@
+This will be useful when creating \emph{confidence intervals}.
 }
 \frame{ % --------------------------------------------------------------------->
 \frametitle{The Normal distribution N$(\mu,\sigma)$}
@@ -988,6 +986,59 @@ set_params <- function(){
 }
 par(.par_reset)
 @
+\frame{ % -------------------------------------------------------------------->
+\frametitle{The problem}
+
+\textbf{Fact:} to calculation e.g.\ a confidence interval for $X$, we need to
+know the distribution (at least approximately).
+
+\rymd
+We want to estimate a characteristic of a population, we will use \textbf{the
+  mean} as an example.
+
+\rymd
+We may have no prior information about the population, but we get some
+information from a random sample. (Assume sample size $> 1$.)
+
+\rymd
+We estimate the population mean by the sample mean.
+
+\rymd
+What is the distribution of the sample mean (considered as a random number)?
+
+\rymd
+Hard to know - we only ever get 1 such number!
+
+\rymd
+("Bootstrap" might be a work around.)
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Mean value distribution $\neq$ population/sample distribution}
+
+Consider the simple case of the mean of 2 dice.
+
+<<"twice-dice", include = TRUE, fig.height = 6>>=
+d1 <- data.frame(
+    x = 1:6,
+    p = rep(1/6, 6),
+    w = "Single throw ('Population')"
+)
+tmp <- cumsum(rep(1/36, 6))
+d2 <- data.frame(
+    x = c(2:12) / 2,
+    p = c(tmp, rev(tmp)[2:6]),
+    w = "Mean of 2 throws"
+)
+d <- rbind(d1, d2)
+ggplot(d, aes(x, p)) +
+    geom_bar(stat = "identity") +
+    labs(y = "Probability", x = "Outcome") +
+    scale_x_continuous(breaks = 1:6) +
+    facet_wrap(~w, ncol = 1, as.table = FALSE)
+
+
+@
+}
 \frame{ % -------------------------------------------------------------------->
   \frametitle{Understanding sampling using the Seeing Theory website}
 The Seeing Theory website
