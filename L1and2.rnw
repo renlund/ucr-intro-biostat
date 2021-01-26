@@ -82,10 +82,10 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
 \includegraphics[scale=0.2]{pics/ucrlogo.pdf}
 \end{center}
 }
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Contents of Lecture 1-2}
-\tableofcontents
-}
+%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{Contents of Lecture 1-2}
+%% \tableofcontents
+%% }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{What shall we learn today?}
 \begin{itemize}
@@ -439,7 +439,7 @@ In fact: the median is probably 0! One could e.g.\ describe this distribution by
 the median among those with non-zero hospitalization days.
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Measuring of spread}
+\frametitle{Measures of spread}
 
 \begin{itemize}
    \item  \textbf{Range} The difference between the maximum and the minimum value.

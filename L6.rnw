@@ -129,7 +129,7 @@ We talk about this data in terms of the probability of one of the events (often 
 
   \rymd \textbf{Many samples:}
 
-  \rymd \emph{Numeric:} All means the same? Answered by ANOVA (parametric) or Kruskal-Wallis (non-parametric)
+  \rymd \emph{Numeric:} Are all means the same? Answered by ANOVA (parametric) or Kruskal-Wallis (non-parametric)
 
   \rymd \emph{Categorical:} Are all probability functions the same? Answered by $\chi^2$-test.
 }
@@ -650,7 +650,7 @@ Data ($O$)  & 315 & 108 & 101 & 32 & 558 \\ \hline
 $H_0$ model ($p$) \ &  9/16 & 3/16 & 3/16 & 1/16 & 1 \\ \hline
 Expected ($E=558\times p$)  & 313.9 & 104.6 & 104.6 & 34.9 & 558 \\ \hline
 $Q$, i.e. $\,(O-E)^2/E$  & 0.004 & 0.111 & 0.124 & 0.241 & 0.479  \\  \hline
-Residuals $\,(O-E)/\sqrt E$ & 0.127 &  0.367 & -0.318 & -0.467 & \\ \hline
+%%Residuals $\,(O-E)/\sqrt E$ & 0.127 &  0.367 & -0.318 & -0.467 & \\ \hline
 \end{tabular}\end{center}
 
 
@@ -682,7 +682,7 @@ text(x=9, y=0.15, pos=3, label="5%", cex=1.5)
 ## points(x=obs, y=0, pch=4, cex=2, lwd=2, col=.red)
 ## text(x=obs+0.5, y=0, "observed", pos=3, cex=1.5)
 points(x=obs, y=obs.y, pch=4, cex=2, lwd=2, col=.red)
-text(x=obs+0.9, y=obs.y-.02, "observed", pos=3, cex=1.5)
+text(x=obs+0.7, y=obs.y-.03, "observed", pos=3, cex=1.5)
 @
 }
 \frame{ % -------------------------------------------------------------------->
@@ -773,18 +773,18 @@ proportion total    & 0.29 &     0.63 &  0.08 \\ \hline
 Whether these differences are significant in any other sense
 is for the researcher to discuss.
 }
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Which categories deviate?}
-One can also look at the 'residuals'.
-<<chiq_res>>=
-## 1
-load("data/chd.rdata")
-res <- chisq.test(chd)$resid
-rownames(res) <- c("non", "moderate", "heavy")
-barplot(res, beside=TRUE, legend=TRUE, main="Residuals",
-   col=.seq3,args.legend=c(x="topright"))
-@
-}
+%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{Which categories deviate?}
+%% One can also look at the 'residuals'.
+%% <<chiq_res>>=
+%% ## 1
+%% load("data/chd.rdata")
+%% res <- chisq.test(chd)$resid
+%% rownames(res) <- c("non", "moderate", "heavy")
+%% barplot(res, beside=TRUE, legend=TRUE, main="Residuals",
+%%    col=.seq3,args.legend=c(x="topright"))
+%% @
+%% }
 \begin{frame}[fragile] % ----------------------------------------------------->
 \frametitle{$\chi^2$ on the dabigatran data}
 The $\chi^2$ test can also be applied to our dabigatran data.
@@ -812,8 +812,8 @@ rm(bord)
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section[More]{Additional analysis} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \section[More]{Additional analysis} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \frame{ % -------------------------------------------------------------------->
 % \frametitle{$\chi^2$-test for trend}
 % In the example with Dabigatran more data was available:
@@ -833,6 +833,10 @@ rm(bord)
 % The $\chi^2$ test for trend yields a statistically significant result.\\
 % (Details omitted.)
 % }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[Confounding]{Confounders} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Adjusting for a confounder}
 Comparison of open surgery (OS) and percutaneous nephrolithotomy (PN)
@@ -883,8 +887,8 @@ One way to deal with this is logistic regression (more on that in a later lectur
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%\section{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[Ref]{References} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \frame{ % -------------------------------------------------------------------->
 \frametitle{References}
@@ -894,6 +898,11 @@ One way to deal with this is logistic regression (more on that in a later lectur
 \item Grant, R.\ L.: Converting an odds ratio to a range of plausible relative risks for better communication of research findings, \emph{BMJ} \textbf{348} (2014) 7 pages.
 \end{itemize}
 }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[Poll]{Polls} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \frame{ % -------------------------------------------------------------------->
   \frametitle{Poll: Odds and probabilities}
   \newcommand{\lada}{\fbox{$\phantom{x}$}}
