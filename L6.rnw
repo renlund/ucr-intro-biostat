@@ -435,7 +435,7 @@ Probabilities are small, so risk of dabigatran is (approx.) between
 % }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Absolute risk}
-What can we say about the \emph{absolut} risk of bleeding with dabigatran?
+What can we say about the \emph{absolute} risk of bleeding with dabigatran?
 
 \rymd This was covered by Lars in Lecture 3! (Genotype example.)
 
