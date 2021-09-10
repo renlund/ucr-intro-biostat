@@ -1,0 +1,326 @@
+\documentclass{article}
+
+\title{Poll questions}
+\author{Henrik Renlund}
+
+<<"setup", cache = FALSE, include = FALSE>>=
+
+library(knitr)
+library(dplyr)
+library(tidyr)
+library(ggplot2); theme_set(theme_bw())
+if(FALSE){
+    knit2pdf(input = "Poll-answers.rnw")
+    shell.exec("Poll-answers.pdf")
+}
+
+@
+
+\begin{document}
+
+\maketitle
+
+\section{Variables and driving}
+
+\subsection{Question 1}
+Multiple choice: Tick the boxes you think are \emph{always} true.
+
+\textbf{Claim 1:} An ordinal variable with values A, B, C, (etc) is such that
+the "increases" (although not numerical) B-A, C-B, (etc) can be considered to be
+of the same magnitude.
+
+$\Rightarrow$ This is not true. Consider e.g.\ an outcome measure with
+values $A=$"Healthy", $B=$"Hospitalized" and $C=$"Dead". Most people would agree
+on the ordinality of this measure, i.e.\ that $A<B<C$ (in some sense of $<$
+meaning LHS is better than RHS), but the "worseness" of $B$ compared to $A$ is
+not the same as that of $C$ compared to $B$.
+
+\textbf{Claim 2:} Anything measured numerically must be analysed as such.
+
+\textbf{Claim 3:} Anything measured categorically must be analysed as such.
+
+$\Rightarrow$ Although it is generally a good idea to analyse the data in the
+way it has been collected, it is not a hard rule. Numeric variables may be
+categorized, e.g.\ age-groups (categorical) might be derived from age
+(numerical). (Note that this is a loss of information.) Categories may be deemed
+translatable to a numeric scale (perhaps for ease of analysis).
+
+\textbf{Claim 4:} None of the above.
+
+$\Rightarrow$ \textbf{1} is not true, \textbf{2} and \textbf{3} are often true
+(but not \emph{always}), so I think \textbf{4} is correct.
+
+
+\subsection{Question 2}
+Single choice: A poll showed that 80\% of drivers thought their driving skills
+were above average. As a group, do these drivers overestimate their driving
+skills?
+\begin{itemize}
+  \item Yes
+  \item No
+  \item Probably
+  \item Can't say
+\end{itemize}
+
+$\Rightarrow$ This question hinges on the word "average" which is not well
+defined. It typically means "mean" or "median". By definition 80\% cannot lie
+(strictly) above the median. What about the mean? Well, it certainly is
+possible. Suppose drivers are evaluted on a 0/1 (fail/pass) score, where 80\%
+got score 1 (passed). The mean score is 0.8, and thus these 80\% are indeed
+above the average (the mean, in this case).
+
+%% Indeed, any time 80\% achieve the maximum score (and lower scores are possible),
+%% they will all be above the mean.
+
+If fact, even a slight deviation from a symmetric distribution can
+suffice. Suppose e.g.\ that we have scores 1, 2, 3 and the very rare 0. An
+otherwise perfect symmetrical distribution among 100 people, of say 10 1:s, 80
+2:s and 10 3:s - can be broken with the addition of a single 0 to yield the same
+effect. The average with the single 0 included is
+\[ \frac{0*1 + 1*10 + 2*80 + 3*10}{101} \approx 1.98 < 2, \]
+so that 80+10 (the people with score 2 and 3) are above the mean.
+
+
+<<"test-mean", eval = FALSE, echo = FALSE>>=
+d <- data.frame(
+    score = seq(0, 100, len = 21),
+    count = rep(c(1, 80, 1, 1), c(18, 1, 1, 1))
+)
+weighted.mean(x = d$score, w = d$count)
+
+d <- data.frame(
+    score = c(1,2,3,4),
+    count = c(1, 1, 97, 1)
+)
+weighted.mean(x = d$score, w = d$count)
+
+d <- data.frame(
+    score = c(1,2,3,4),
+    count = c(1, 10, 80, 10)
+)
+weighted.mean(x = d$score, w = d$count)
+@
+
+\section{Boxplots and means}
+\subsection{Question 1}
+Single choice: A group of 24 individuals have been randomly assigned to 6 different
+exercise groups, and their blood pressure is measured after training. The
+researchers do a boxplot for the measurements for each group. Is this a
+good approach?
+\begin{itemize}
+\item Yes, a good way to visualize the overall pattern.
+\item No, the overall sample size is too small.
+\item No, the group sizes are too small
+\end{itemize}
+
+$\Rightarrow$ Boxplot is a 5-point summary. Group sizes are 4. It is somewhat
+silly to summarise data points with 5 data points.
+
+\subsection{Question 2}
+Single choice: Suppose the mean athletic skill is somewhat better in group A as
+compared to group B (of equal size). If a sport team is fairly admitting
+members by assessing athletic skill, we should expect more people from A
+being atmitted.
+
+\begin{itemize}
+\item True
+\item False
+\item We can't say
+\end{itemize}
+
+$\Rightarrow$ If the groups have equal variance (and the top people from each
+group apply to the team) than yes. If the variances are not equal it is a
+different story. An extreme case would be if everyone in A is equally good (no
+variance), but there is large variation in B, then maybe all the best players
+are in fact in B.
+
+<<"two-dist", include = FALSE, echo = FALSE>>=
+muA <- 0
+diff <- .2
+sd = 1
+muB <- muA + diff
+xx <- seq(-1, 4, len = 200)
+d <- tibble(
+    x = xx,
+    dist.A = dnorm(xx, mean = muA, sd = sd),
+    dist.B = dnorm(xx, mean = muB, sd = sd),
+    prob.A = 1 - pnorm(xx, mean = muA, sd = sd),
+    prob.B = 1 - pnorm(xx, mean = muB, sd = sd),
+    odds.BvsA = (prob.B / (1-prob.B)) / (prob.A / (1-prob.A))
+) %>%
+    gather(key = "key", value = "value", -x) %>%
+    separate(col = key, into = c("what", "group"))
+
+ggplot(d, aes(x, value, color = group)) +
+    geom_vline(xintercept = c(0:4), lty = 2) +
+    geom_line() +
+    facet_wrap(~what, scales = "free_y", ncol = 1) +
+    coord_cartesian(xlim = c(-1,4), expand = FALSE)
+@
+
+\section{LLN and Clt}
+\subsection{Question 1}
+Single choice:  Suppose you have flipped a (fair) coin 3 times, every time showing H
+(’Heads’). The Law of Large Numbers tells us that the relative frequency of
+H will tend to 50\% in the long run. Does this imply that we now have an
+increased probability of T (’Tails’)?
+\begin{itemize}
+\item Yes
+\item No
+\end{itemize}
+
+$\Rightarrow$ No. Denote a coin flip $F_i$ (with an index to indicate which
+flip) and consider a large number $n$ of flips. The average can be written
+
+\[ \frac{\sum_i^n F_i}n = \frac{F_1+F_2+F_3}{n} + \frac{\sum_4^n F_i}n, \]
+
+indicating that the influence of the first 3 (or indeed any finite initial
+sequence) will vanish "in the long run".
+
+\subsection{Question 2}
+Single choice: The Central Limit Theorem says that, althought the distribution
+of any numerical characteristic of individuals (income, blood pressure, etc)
+might be skewed in small populations, it will be (approx.) normally distributed
+in "large enough" populations.
+\begin{itemize}
+\item True
+\item False
+\end{itemize}
+
+$\Rightarrow$ False. The Central Limit Theorem specifies the behaviour of mean
+values (and related functions of samples). It does not say anything about
+population characteristics whatsoever.
+
+\section{Odds and probabilities}
+\subsection{Question 1}
+Single choice: You are at 3\% risk of a disease X. Medication A gives you a 1
+percentage point risk reduction. Medication B halves your odds of the
+disease. Which do you prefer?
+\begin{itemize}
+\item A
+\item B
+\item Doesn't matter
+\end{itemize}
+
+$\Rightarrow$ For small probabilities, odds are close to probabilities. So it
+should be the case that a halving of the odds is very close to a having of the
+probability, i.e. that A results in a 2\% risk, whereas B results in an
+approximately 1.5\% risk. (More exactly: B results in a 1.52\% risk.)
+
+<<include = FALSE>>=
+o <- function(p) p / (1 - p)
+p <- function(o) o / (1 + o)
+
+o(0.03) ## ~ 0.0309
+p(o(0.03) / 2) ## ~ 0.0152
+0.03 - 0.01 ## 0.02
+@
+
+
+\subsection{Question 2}
+Single choice: Oh no! A previously unknown risk factor now sets your risk at
+50\%.  However, treatment C will halve your risk. There is an alternative
+treatment D that will halve your odds. Which do you prefer?
+\begin{itemize}
+\item C
+\item D
+\item Doesn't matter
+\end{itemize}
+
+$\Rightarrow$ The odds is \emph{aways strictly larger} (except at $p = 0$ where
+they are equal), so if you want a smaller risk you will end up with a smaller
+number by halving the already smaller number (i.e.\ the risk).
+
+If you crunch the numbers you can see that halving the odds - which is 1 - to 0.5 corresponds
+to a probability of $1/3 \approx 0.33$, which is indeed larger than half the
+probability, which is 0.25.
+
+<<include = FALSE>>=
+o <- function(p) p / (1 - p)
+p <- function(o) o / (1 + o)
+
+p(o(.5)/2) ## ~ 0.33
+0.5 / 2 ## 0.25
+
+curve(p(o(x)/2), from = 0, to = .7)
+curve(x/2, from = 0, to = .7, add = T, lty = 2)
+
+@
+
+\section{Odds ratios}
+
+\subsection{Question 1}
+Multiple choice: The odds ratio (OR) for success between procedure A and B is 2 (i.e.
+odds or success with A / odds for success with B). What is true?
+
+\textbf{Claim 1:} Since the OR $>$ 1, procedure A has a better than 50\% chance of
+success
+
+$\Rightarrow$ No. Odds ratios only relate odds/probabilites to each other, not
+to some absolute value. E.g.\ probabilities 0.02 and 0.01 has OR $\approx$ 2,
+which is also true for probabilities 0.8 and 0.89.
+
+\textbf{Claim 2:} Since the OR $>$ 1, procedure A has a better chance of success than B
+
+$\Rightarrow$ Yes. OR =1  mean that the odds (and probabilities) are the
+same. OR > 1 means that A has a higher probability.
+
+\textbf{Claim 3:} The probability of a successful A-procedure is (approx.) twice that of
+B-procedure
+
+$\Rightarrow$ No. Any probability ($<1$) has some probability that has an OR of 2
+in relation to it, in particular probabilities > 0.5 (and thus the other
+probabilty cannot be twice as large). E.g. 0.89 has OR 2 as compared to 0.8.
+
+
+\subsection{Question 2}
+Single choice: Drug X has a side effect Y, experienced by 5\% of the users, a
+risk researches are trying to halve. A study on a modification of X found that
+the OR for Y compared to X is 0.2 (.07, .44) concerning side effects.  Did the
+researchers succeed?
+\begin{itemize}
+\item Yes
+\item No
+\item Inconclusive
+\end{itemize}
+
+$\Rightarrow$ In the world of small probabilitie odds are close to probabilities
+and thus odds ratios are close to risk ratios. So we would think that (risk of Y
+with modified X) / (risk of Y with X) is (close to) 0.2 - i.e. that the risk has
+in fact been brought down to 20\% of its original value (0.05 $\rightarrow$
+0.01), but at least down to 44\% of its original value (0.05 $\rightarrow$
+0.022).
+
+A more thourough calculation shows that the upper bound of the confidence
+interval corresponds to the modified X having a risk of Y equal to 22.6\% (well
+below 25\%, which was the target).
+
+<<include = FALSE>>=
+
+p2 = function(p1, or){
+    or*p1 / (1 + p1*(or - 1))
+}
+p2(0.05, .2) ## 0.0104
+p2(0.05, .44) ## 0.0226
+
+p2(0.01, 2)
+p2(0.80, 2)
+
+
+@
+
+%% \subsection{Question 1}
+%% \begin{itemize}
+%% \item
+%% \item
+%% \item
+%% \end{itemize}
+%% \subsection{Question 2}
+%% \begin{itemize}
+%% \item
+%% \item
+%% \item
+%% \end{itemize}
+
+
+\end{document}
