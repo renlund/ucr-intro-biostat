@@ -1,4 +1,4 @@
-<<<PRES_OR_HANDOUTS, cache=FALSE, echo=FALSE, include=TRUE, results='asis'>>=
+<<PRES_OR_HANDOUTS, cache=FALSE, echo=FALSE, include=TRUE, results='asis'>>=
 if(!exists("HANDOUT")) HANDOUT <- FALSE
 if(HANDOUT){
    cat("
@@ -212,7 +212,7 @@ it really is.
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Subarachnoidal bleeding}
-A biomarker - the protein S100$\beta$ - was measured for 113 individuals with
+A biomarker - the protein S100B - was measured for 113 individuals with
 aneurysmal subarachnoid hemorrhage.
 
 \rymd
@@ -320,7 +320,7 @@ step-wise function with jumps according to:
   \end{tabular}\end{center}
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Cumulative frequency for S100$\beta$}
+\frametitle{Cumulative frequency for S100B}
 $\phantom X$
 <<subarach_ecdf, fig.align='center', fig.height=5, fig.width=11>>=
 load("data/F10B_subarach.Rdata")
@@ -452,14 +452,14 @@ the median among those with non-zero hospitalization days.
    Where $x_1, x_2, \ldots, x_n$ is the sample  and
    $ \bar x=\frac 1n\sum_{i=1}^n x_i$ is the (sample) mean.
 
-   It is (\emph{approximately only}) the mean distance to the mean value.
+   It is the typical distance between a value and the mean value.
 
    \rymd \textbf{Note}: the sd in the previous salary example is 3.0 and 13.5 if
    the boss is excluded or included, respectively.
 \end{itemize}
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Boxplot of S100$\beta$}
+\frametitle{Boxplot of S100B}
 The boxplot usually show min, Q1, med, Q3 and max (the "5-point summary")\ldots
 <<sub_box_1, fig.align='center', fig.height=5, fig.width=11>>=
 load("data/F10B_subarach.Rdata")
@@ -569,21 +569,26 @@ Graphs:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section[Models]{Probability theory and models} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{Probability theory and models}
+%% Note: this is not a theoretical course in any mathematical sense.
+
+%% \rymd Most lectures will be guided by applications.
+
+%% \rymd However, a view towards theory and some fundamental (mathematical) results can
+%% give a better understanding of some of the methods employed in this course.
+
+%% \rymd So here goes\ldots
+%% }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Probability theory and models}
-Note: this is not a theoretical course in any mathematical sense.
 
-\rymd Most lectures will be guided by applications.
-
-\rymd However, a view towards theory and some fundamental (mathematical) results can
-give a better understanding of some of the methods employed in this course.
-
-\rymd So here goes\ldots
-}
-\frame{ % -------------------------------------------------------------------->
-Probability theory studies models of random data. A \textbf{model} is a way of specifying the range of possible values and the probability with which these occur.
+Probability theory studies models of random data. A \textbf{model} is a way of
+specifying the range of possible values and the probability with which these
+occur.
 \begin{itemize}
-   \item \textbf{Probability functions} describe discrete numeric/categorical data
+   \item \textbf{Probability functions} describe discrete numeric/categorical
+     data
    \item \textbf{Density functions} describe continuous (numeric) data
 \end{itemize}
 
@@ -1565,7 +1570,7 @@ par(.par_reset)
 @
 }
 \frame{ % -------------------------------------------------------------------->
-The S100$\beta$ measurements is certainly not normally distributed.
+The S100B measurements is certainly not normally distributed.
 <<sub_norm>>=
 load("data/F10B_subarach.Rdata")
 t <- dd$s100b
@@ -1754,7 +1759,7 @@ this a good approach? (Single choice)
 \end{itemize}
 \textbf{Q1:} Suppose the mean athletic skill is somewhat better in group
 A as compared to group B (of equal size). If a sport team is fairly admitting members by
-assessing athletic skill, we should expect more people from A being atmitted. (Single choice)
+assessing athletic skill, we should expect more people from A being admitted. (Single choice)
 \begin{itemize}
 \item[\lada] True
 \item[\lada] False

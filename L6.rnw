@@ -637,7 +637,7 @@ $Q$ is compared to a $\chi^2$ distribution with
 a parameter (degrees of freedom) that depends on
 the situation.
 \begin{center}
-\fbox{\textbf{This is not an exact test. Rule of thumb: cell count $\geq 5$}.}
+\fbox{\textbf{This is not an exact test. Rule of thumb: expected cell count $\geq 5$}.}
 \end{center}
 }
 \frame{ % -------------------------------------------------------------------->
@@ -934,7 +934,7 @@ treatment D that will halve your odds. Which do you prefer? (Single choice)
 \item[\lada] The probability of a successful A-procedure is (approx.) twice that of B-procedure.
 \end{itemize}
 \textbf{Question 2:} Drug X has a side effect Y, experienced by 5\% of the
-users, a risk researches are trying to halve. A study on a modification of X
+users, a risk researchers are trying to halve. A study on a modification of X
 found that the OR for Y compared to X is 0.2 (.07, .44) concerning side effects. Did the
 researchers succeed? (Single choice)
 \begin{itemize}
