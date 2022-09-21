@@ -271,51 +271,8 @@ For small values of $p_2$ and 'moderate' values of OR
 \[ p_1 \approx \text{OR}\cdot p_2, \]
 i.e.
 \[ \text{OR} \approx \frac{p1}{p2} = \text{RR}. \]
-
-% Deviation (\%) between approximation and exact formula:
-<<tab_odds, results='asis', eval = FALSE>>=
-## THE <- c(0.1, 0.5, 1, 2, 10)
-## #xs <- c(0.75, 0.55, 0.47, 0.4, 0.23)
-## ps <- c(0.01, 0.05, 0.1, 0.5)
-## M <- matrix(NA, nrow=length(ps), ncol=length(THE))
-## L <- matrix(NA, nrow=length(ps), ncol=length(THE))
-## rownames(M) <- sprintf("%d %%", 100*ps)
-## colnames(M) <- THE
-## for(i in 1:length(ps)){
-##    for(j in 1:length(THE)){
-##       M[i,j] <- THE[j]*ps[i]/(1+(THE[j]-1)*ps[i])
-##       L[i,j] <- THE[j]*ps[i]
-##    }
-## }
-## latex(
-##    signif(100*(L-M)/M,2),
-##    file="",
-##    title="'denominator' ($p_2$)",
-##    caption.loc="bottom",
-##    cgroup="Odds Ratio (OR)"#,
-##    #rowlabel="'denominator'"
-##   )
-@
 }
-% \frame{ % -------------------------------------------------------------------->
-% \frametitle{OR and probabilities}
-% The blue dotted lines are the approximations.
-<<OR, fig.width=7, fig.height=7, include=FALSE, eval = FALSE>>=
-## par(mar=c(4,4.2,1,1))
-## THE <- c(0.1, 0.5, 1, 2, 10)
-## xs <- c(0.75, 0.55, 0.47, 0.4, 0.23)
-## plot(1,1,type='n', xlim=0:1, ylim=0:1,
-##          xlab="Probability of 'denominator event'",
-##       ylab="Probability of 'numerator' event",
-##    cex.lab=1.5, las=1)
-## for(k in seq_along(THE)){
-##    curve(THE[k]*x/(1+(THE[k]-1)*x), from=0, to=1,add=TRUE, lwd=2)
-##    text(x=xs[k], y=THE[k]*xs[k]/(1+(THE[k]-1)*xs[k]), label=paste("OR =", THE[k]), srt=45, cex=1.2, pos=3)
-##    abline(a=0, b=THE[k], col="blue", lty=2)
-## }
-@
-% \begin{center} \includegraphics[scale=0.4]{figure/OR-1} \end{center}
-% }
+
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Fishers exact test}
 \begin{center}
@@ -327,7 +284,7 @@ placebo & (35-X) & (683-347+X) & 371 \\ \hline \hline
 Sum & 35 & (683) & 718 \\
 \end{tabular}
 \end{center}
-Suppose that whether a person bleeds or not is complete
+Suppose that whether a person bleeds or not is
 independent of intervention. ($H_0$: "odds ratio = 1".)
 
 \rymd Then the 35 individuals who bled should be a random sample
@@ -411,28 +368,7 @@ So odds ratio is between 1.7 and 9.9. (Allows for hypothesis testing.)\\
 Probabilities are small, so risk of dabigatran is (approx.) between
 1.7 and 9.9 times larger than placebo risk.
 \end{frame}
-% \frame{ % -------------------------------------------------------------------->
-% \frametitle{Risk Ratio?}
-% So
-% \begin{quote}
-% The odds ratio of bleeding with dabigatran \\ versus placebo is 3.8 (1.7--9.9).
-% \end{quote}
 
-% The placebo risk is $p_2=8/371\approx 2.2\%$ so we can use an earlier formula to get $p_1=$ (risk with dabigatran) and thus the RR:
-
-% \begin{center}\begin{tabular}{|c|lll|} \hline
-% OR & 1.7 & 3.8 & 9.9 \\ \hline
-% %$p_1\approx$  & 3.6\% & 8.2\% & 21\% \\ \hline
-% $p_1 =$ & 3.5\% & 7.8\% & 18\% \\ \hline
-% RR $=$ & 1.6 & 3.6 & 8.3 \\ \hline
-% \end{tabular}\end{center}
-% So
-% \begin{quote}
-% The risk ratio of bleeding with dabigatran \\ versus placebo is 3.6 (1.6--8.3).
-% \end{quote}
-% (\textbf{N.B} The implied confidence interval (above) for $p_1$ is "too wide"
-% since it takes to much uncertainty into account.)
-% }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Absolute risk}
 What can we say about the \emph{absolute} risk of bleeding with dabigatran?
@@ -469,21 +405,7 @@ We get a 95\% confidence interval for the difference with
    \[ (0.056\pm 1.96\cdot 0.0162) = (0.024, 0.088). \]
 (This allows for hypothesis testing.)
 }
-%% \frame{ % -------------------------------------------------------------------->
-%% \frametitle{A digression and a toy example}
-%% A study on treatment X for A-individuals found an effect size of 16 with SE
-%% 2.1. An independent study on X for B-individuals found an effect size of 9
-%% with SE 1.7.
-%% <<>>=
-%% plot(x = c(9-2*1.7,16+2*2.1), y = c(0,1), type = 'n',
-%%      xlab = "", yaxt  = 'n', ylab = "")
-%% points(x = c(9,16), y = c(0,1))
-%% lines(x = c(9-1.96*1.7, 9+1.96*1.7), y = c(0,0))
-%% lines(x = c(16-1.96*2.1, 16+1.96*2.1), y =c(1,1))
-%% @
-%% Is the effect for A and B individuals statistically significant different?
-%% We don't know!
-%% }
+
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Have we exhausted the Dabigatran example yet?}
 
@@ -773,18 +695,7 @@ proportion total    & 0.29 &     0.63 &  0.08 \\ \hline
 Whether these differences are significant in any other sense
 is for the researcher to discuss.
 }
-%% \frame{ % -------------------------------------------------------------------->
-%% \frametitle{Which categories deviate?}
-%% One can also look at the 'residuals'.
-%% <<chiq_res>>=
-%% ## 1
-%% load("data/chd.rdata")
-%% res <- chisq.test(chd)$resid
-%% rownames(res) <- c("non", "moderate", "heavy")
-%% barplot(res, beside=TRUE, legend=TRUE, main="Residuals",
-%%    col=.seq3,args.legend=c(x="topright"))
-%% @
-%% }
+
 \begin{frame}[fragile] % ----------------------------------------------------->
 \frametitle{$\chi^2$ on the dabigatran data}
 The $\chi^2$ test can also be applied to our dabigatran data.
@@ -811,28 +722,7 @@ rm(bord)
 (Recall that Fisher's exact test gave $p=0.0004458$.)
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% \section[More]{Additional analysis} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \frame{ % -------------------------------------------------------------------->
-% \frametitle{$\chi^2$-test for trend}
-% In the example with Dabigatran more data was available:
-% \begin{multicols}{2}
-% $\phantom{.}$
-% \vspace{0.5cm}
-% \begin{tabular}{|c|cc|} \hline
-% & \multicolumn{2}{c|}{Bleeding} \\ \hline
-% Dose     &  Yes & No \\ \hline
-% 150 mg&  27 &320\\
-% 100 mg&  32 &374\\
-% 75 mg &  16 &352\\
-% 50 mg &  13 &356\\ \hline
-% \end{tabular}
-% \includegraphics[scale=0.3]{R/trend.pdf}
-% \end{multicols}
-% The $\chi^2$ test for trend yields a statistically significant result.\\
-% (Details omitted.)
-% }
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section[Confounding]{Confounders} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -899,61 +789,4 @@ One way to deal with this is logistic regression (more on that in a later lectur
 \end{itemize}
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section[Poll]{Polls} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\frame{ % -------------------------------------------------------------------->
-  \frametitle{Poll: Odds and probabilities}
-  \newcommand{\lada}{\fbox{$\phantom{x}$}}
-\textbf{Q1:} You are at 3\% risk of a disease X. Medication A gives you a 1
-percentage point risk reduction. Medication B halves your odds of the
-disease. Which do you prefer? (Single choice)
-\begin{itemize}
-\item[\lada] A
-\item[\lada] B
-\item[\lada] Doesn't matter
-\end{itemize}
-\textbf{Q2:} Oh no! A previously unknown risk factor now sets your risk at
-50\%. However, treatment C will halve your risk. There is an alternative
-treatment D that will halve your odds. Which do you prefer? (Single choice)
-\begin{itemize}
-\item[\lada] C
-\item[\lada] D
-\item[\lada] Doesn't matter
-\end{itemize}
-}
-\frame{ % -------------------------------------------------------------------->
-  \frametitle{Poll: Odds ratios}
-  \newcommand{\lada}{\fbox{$\phantom{x}$}}
-\textbf{Q1:} The odds ratio (OR) for success between procedure A and B is 2
-(i.e. odds or success with A / odds for success with B). What is true? (Multiple choice)
-\begin{itemize}
-\item[\lada] Since the OR $>$ 1, procedure A has a better than 50\% chance of success.
-\item[\lada] Since the OR $>$ 1, procedure A has a better chance of success than B.
-\item[\lada] The probability of a successful A-procedure is (approx.) twice that of B-procedure.
-\end{itemize}
-\textbf{Question 2:} Drug X has a side effect Y, experienced by 5\% of the
-users, a risk researchers are trying to halve. A study on a modification of X
-found that the OR for Y compared to X is 0.2 (.07, .44) concerning side effects. Did the
-researchers succeed? (Single choice)
-\begin{itemize}
-\item[\lada] Yes
-\item[\lada] No
-\item[\lada] Inconclusive.
-\end{itemize}
-}
-
 \end{document} # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-%% \frame{ % -------------------------------------------------------------------->
-%%   \frametitle{poll}
-%%   \newcommand{\lada}{\fbox{$\phantom{x}$}}
-%% \textbf{Question ?:}
-%% \begin{itemize}
-%% \item[\lada] text
-%% \item[\lada] text
-%% \item[\lada] text
-%% \end{itemize}
-%% }
