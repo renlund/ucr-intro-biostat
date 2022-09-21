@@ -526,24 +526,7 @@ layout(matrix(1, nrow = 1))
 par(.par_reset)
 @
 }
-%% \frame{ % -------------------------------------------------------------------->
-%% \frametitle{Advanced graphics\ldots}
-%% Anyone seriously interested in graphics might want to look at Wilkinson's \emph{The Grammar of Graphics}, which provides a framework for thinking about data visualization. These ideas are implemented in the R package \textbf{ggplot2} - which provides tools for mapping variables to aestic properties, adding layers of statistical computations, faceting, etc.
 
-%% <<ggplot2-promotion, include = TRUE>>=
-%% mtcars$am <- as.logical(mtcars$am)
-%% mtcars$vs <- factor(mtcars$vs, labels = c("V engine", "Straight engine"))
-%% ggplot(mtcars, aes(disp, mpg)) +
-%%    geom_point(aes(shape =  factor(am), color = factor(gear), size = qsec)) +
-%%    geom_smooth(method = "lm", color = "black") +
-%%    facet_wrap(~vs, nrow = 2, scales = "free_y") +
-%%    scale_color_manual(values = wes_palette("Cavalcanti1", 5)[c(1,2,5)], name = "Gears") +
-%%    scale_size(range = c(3,12), name = "Mile time") +
-%%    scale_shape_discrete(name = "Manual") +
-%%    labs(x = "Miles per Gallon", y = "Displacement") +
-%%    theme_bw()
-%% @
-%% }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Some rules of thumb for tables and graphs}
 Both:
@@ -569,17 +552,7 @@ Graphs:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section[Models]{Probability theory and models} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% \frame{ % -------------------------------------------------------------------->
-%% \frametitle{Probability theory and models}
-%% Note: this is not a theoretical course in any mathematical sense.
 
-%% \rymd Most lectures will be guided by applications.
-
-%% \rymd However, a view towards theory and some fundamental (mathematical) results can
-%% give a better understanding of some of the methods employed in this course.
-
-%% \rymd So here goes\ldots
-%% }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Probability theory and models}
 
@@ -808,20 +781,7 @@ par(.par_reset)
    \item allows for comparison between very different sample sizes
 \end{itemize}
 }
-%% \frame{ % -------------------------------------------------------------------->
-%% \frametitle{Summary}
-%% \begin{center}
-%% \begin{tabular}{|c|c|p{5cm}|} \hline
-%% Graph & Summary Measure & Theory \\ \hline \hline
-%% CF & percentiles & (Cdf) \\ \hline
-%% Boxplot & min, Quartiles, max & \\ \hline
-%% Bar charts & & Probability functions (discrete/categorical RV) \\ \hline
-%% Histograms & & Density functions (continuous RV)\\ \hline
-%% & median, IQR & any distribution\\ \hline
-%% & mean, s.d. & symmetrical distribution ($\approx$ Normal distribution) \\ \hline
-%% \end{tabular}
-%% \end{center}
-%% }
+
 \frame{ % -------------------------------------------------------------------->
 \frametitle{The Normal Distribution}
 Sometimes we assume that the population follows a Normal density curve.
@@ -992,79 +952,141 @@ set_params <- function(){
 par(.par_reset)
 @
 \frame{ % -------------------------------------------------------------------->
-\frametitle{The problem}
-
-\textbf{Fact:} to calculate e.g.\ a confidence interval for $X$, we need to
-know the distribution (at least approximately).
-
-\rymd
-We want to estimate a characteristic of a population, we will use \textbf{the
-  mean} as an example.
+\frametitle{Estimators}
+  Suppose you're trying to estimate $\mu$ the average height of a population and you
+have a random sample of the heights of 10 individuals available;
+$x_1, x_2, \ldots, x_{10}$.
 
 \rymd
-We may have no prior information about the population, but we get some
-information from a random sample. (Assume sample size $> 1$.)
+Consider the following strategies for estimating $\mu$:
+
+\begin{itemize}
+\item A: By the largest value; $\max x_i$
+\item B: By the first value; $x_1$
+\item C: By the mean value; $\bar x = \frac{1}{10}\sum x_i$
+\end{itemize}
 
 \rymd
-We estimate the population mean by the sample mean.
+Two leading questions:
+\begin{itemize}
+\item What's bad about A?
+\item Why is C better than B?
+\end{itemize}
 
-\rymd
-What is the distribution of the sample mean (considered as a random number)?
-
-\rymd
-Hard to know - we only ever get 1 such number!
-
-\rymd
-("Bootstrap" might be a work around.)
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Mean value distribution $\neq$ population/sample distribution}
 
-Consider the simple case of the mean of 2 dice.
+\frametitle{Unbiased estimators}
+An estimator is unbiased if it is right on average (as a strategy / as a random
+variable), i.e. there is no systematic error. Strategy A is biased.
 
-<<"twice-dice", include = TRUE, fig.height = 6>>=
-d1 <- data.frame(
-    x = 1:6,
-    p = rep(1/6, 6),
-    w = "Single throw ('Population')"
-)
-tmp <- cumsum(rep(1/36, 6))
-d2 <- data.frame(
-    x = c(2:12) / 2,
-    p = c(tmp, rev(tmp)[2:6]),
-    w = "Mean of 2 throws"
-)
+\rymd
+Strategies B and C are both unbiased, but C has a smaller standard deviation (varies
+less). Why? Intuitively, some of the $x_i$'s are going to be "large" and some
+are going to be "small", and the average value will cancel some of these.
 
-## set.seed(20210126)
-## x <- sample(1:6, size = 100, replace = TRUE)
-## table(x)
-## x1 <- sample(1:6, size = 100, replace = TRUE)
-## x2 <- sample(1:6, size = 100, replace = TRUE)
-## mx <- (x1 + x2) / 2
-## d1b <- data.frame(
-##     x = 1:6,
-##     p = as.numeric(table(x)),
-##     w = "100 samples"
-## )
-## d2b <- data.frame(
-##     x = 2:12 / 2,
-##     p = as.numeric(table(mx)),
-##     w = "100 mean values (2 throws)"
-## )
+\rymd
+For an unbiased estimator, the standard deviation (called the \emph{standard
+  error}) is the "typical" error, i.e. a measure of \emph{precision}.
 
-d <- rbind(d1, d2)
-ggplot(d, aes(x, p)) +
-    geom_bar(stat = "identity") +
-    labs(y = "Probability", x = "Outcome") +
-    scale_x_continuous(breaks = 1:6) +
-    facet_wrap(~w, ncol = 1, as.table = FALSE)
+\rymd
+If we also knew the distribution of the estimator, we could calculate things
+like confidence intervals.
+
+\rymd
+How does the distribution of the mean value depend on the distribution of the
+population?
+
+}
+
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Estimator distribution: 2 special cases}
+
+Sometimes our model assumptions gives us the answer.
+
+\rymd
+1. If the population is normally distributed $N(\mu, \sigma)$
+
+The mean value is a linear combination and so \emph{by theory} the mean value
+has a distribution (details skipped)
+
+$$N(\mu, \sigma/\sqrt n),$$
+
+where $n$ is the sample size. I.e. the SE for the mean is
+$\sigma/\sqrt{10}\approx\sigma^*/\sqrt{10}$.
+
+\rymd
+2. If the population has a gamma-distribution (skewed).
+
+Details are unimportant, the point is that the mean value distribution
+\emph{can} be calculated (look 2 slides ahead).
+
+}
 
 
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Sample mean distribution (normal population)}
+The distribution of sample means from a \emph{normal} distribution. In this case
+the sample mean \emph{is normally distributed} (but with a smaller sd).
 
+<<norm_mean>>=
+COL <- wes_palette("Cavalcanti1", 5) #brewer.pal(5, "Set2")
+par(mar=c(4,4,1,1))
+plot(1,1,type='n', xlim=c(0,2.5), ylim=c(0,1.8), xlab="Outcome", ylab="Density")
+ns <- c(1,2,5,10,20)
+for(k in 1:5){
+   n <- ns[k]
+   curve(dnorm(x, mean=1, sd = 1/sqrt(n)), from=-.5, to=5, add=TRUE, lty=k, col=COL[k], lwd=2)
+}
+abline(v=1, col="grey", lwd=1, lty=1)
+legend("topright", legend=c("1 (Population)", ns[-1]), col=COL, lwd=2, lty=1:4, title="Sample size", bty='n', cex=1.5)
+par(.par_reset)
 @
 }
 \frame{ % -------------------------------------------------------------------->
+\frametitle{Sample mean distribution (gamma population)}
+The distribution of sample means from a skewed gamma distribution. The sample mean
+distribution becomes increasingly symmetric.
+<<exp_mean>>=
+COL <- wes_palette("Cavalcanti1", 5) #brewer.pal(5, "Set2")
+par(mar=c(4,4,1,1))
+plot(1,1,type='n', xlim=c(0,2.5), ylim=c(0,1.8), xlab="Outcome", ylab="Density")
+ns <- c(1,2,5,10,20)
+for(k in 1:5){
+   n <- ns[k]
+   curve(n*dgamma(x*n, shape=n), from=0, to=5, add=TRUE, lty=k, col=COL[k], lwd=2)
+}
+abline(v=1, col="grey", lwd=1, lty=1)
+legend("topright", legend=c("1 (Population)", ns[-1]), col=COL, lwd=2, lty=1:4, title="Sample size", bty='n', cex=1.5)
+par(.par_reset)
+@
+}
+
+\frame{ % -------------------------------------------------------------------->
+\frametitle{The Central Limit Theorem (CLT)}
+
+\textbf{CLT:} Regardless of the population density curve, the sample mean
+density can be made (with arbitrarily good approximation) Normal by choosing $n$
+large enough.
+
+\begin{itemize}
+   \item How large does $n$ have to be? \\Depends on how skew the population density is. \\
+      \begin{itemize}
+         \item In general $n=20$ will suffice.
+         \item If population is Normal then $n=1$ is enough.
+      \end{itemize}
+   \item CLT applies to many 'statistics' (= functions of samples).
+\end{itemize}
+
+This is great news! This means we (often) only need to calculate the standard
+error.
+
+}
+
+
+\frame{ % -------------------------------------------------------------------->
   \frametitle{Understanding sampling using the Seeing Theory website}
+
 The Seeing Theory website
 
 {\centering \href{https://seeing-theory.brown.edu/probability-distributions}
@@ -1093,336 +1115,8 @@ Note: in a real study we only get the one sample, so we never observe the
 sampling distribution directly.
 
 }
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Important features of sampling}
-
-A population has a mean $\mu$ and sd $\sigma$.
-
-\rymd
-A random (unbiased) sample will resemble the population (approximately same mean
-and sd).
-
-\rymd
-But the distribution \emph{of the sample mean} is more centered
-around this value $\mu$, in particular
-\begin{itemize}
-\item it has a smaller standard devation, and
-\item it tends to be more symmetric.
-\end{itemize}
-
-\rymd
-But again: the sample mean distribution is unobserved, in general we must rely
-on theory to determine its properties.
-}
-%% \frame{ % -------------------------------------------------------------------->
-%% \frametitle{Attempt to visualize sampling from a given model}
-%% \rymd Assume that height of individuals in some population
-%% \begin{itemize}
-%%    \item is Normally distributed,
-%%    \item has mean ($\mu$) 179 (cm), and,
-%%    \item has s.d. ($\sigma$) 6.35 (cm).
-%% \end{itemize}
-
-%% \rymd The following three slides show histogram of samples of sizes 10, 50 and 500, respectively.
-%% }
-%% \frame{ % -------------------------------------------------------------------->
-%% \frametitle{$n=10$}
-%% <<samp1>>=
-%% set_params()
-%% curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,
-%%       xlab="Outcome", ylab="Density", ylim=c(-0.005,yMax))
-%% points(x=x1,y=rep(-0.005, length(x1)), pch = 16, col = rgb(0,0,0,alpha = 0.3))
-%% hist(x1, add=TRUE, prob=TRUE, breaks=B, col=.blue)
-%% curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,lty=2, add=TRUE)
-%% @
-%% }
-%% \frame{ % -------------------------------------------------------------------->
-%% \frametitle{$n=50$}
-%% <<samp2>>=
-%% set_params()
-%% curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,
-%%       xlab="Outcome", ylab="Density", ylim=c(-0.005,yMax))
-%% points(x=x2,y=rep(-0.005, length(x2)), pch = 16, col = rgb(0,0,0,alpha = 0.3))
-%% hist(x2, add=TRUE, prob=TRUE, breaks=B, col=.blue)
-%% curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,lty=2, add=TRUE)
-%% @
-%% }
-%% \frame{ % -------------------------------------------------------------------->
-%% \frametitle{$n=500$}
-%% <<samp3>>=
-%% set_params()
-%% B <- seq(from=145,to=215,by=2.5)
-%% curve(dnorm(x, mean=Mu, sd=Sd), from=Min, to=Max,
-%%       xlab="Outcome", ylab="Density", ylim=c(-0.005,yMax))
-%% points(x=x3,y=rep(-0.005, length(x3)), pch = 16, col = rgb(0,0,0,alpha = 0.3))
-%% hist(x3, add=TRUE, prob=TRUE, breaks=B, col=.blue)
-%% curve(dnorm(x,mean=Mu, sd=Sd), from=Min, to=Max,lty=2, add=TRUE)
-%% @
-%% }
-%% \frame{ % -------------------------------------------------------------------->
-%% \frametitle{Properties of samples and sample means}
-%% Suppose we have a sample of size 10 from the population.
-
-%% \rymd We want to know the \emph{population mean} $\mu$.
-
-%% \rymd We can estimate $\mu$ with the \emph{sample mean} $\mu^*$.
-
-%% \rymd If the sample is drawn \emph{at random} then $\mu^*$ is \emph{unbiased}
-%% (on average correct)
-
-%% \rymd But we also want to know its \emph{precision} - often by calculating its
-%% standard deviation.
-
-%% %% \rymd  \emph{If we knew} that the standard deviation of $\mu^* = 180$ was, say
-%% %% 3.0, then there is an (approximate!) interpretation:
-%% %% \begin{quotation}
-%% %% The estimated value 180 (cm) is on average off by 3.0 (cm).
-%% %% \end{quotation}
-
-%% %% But what does it mean for a sample mean to have a standard deviation?
-
-%% \rymd Consider several iterations of the procedure of drawing a sample of size 10.
-%% }
-%% \frame{ % -------------------------------------------------------------------->
-%% %\frametitle{Properties of samples and sample means}
-%% It is clear that there is variation within a sample and thus a standard deviation
-%% can be calculated (directly from the sample itself) \ldots
-%% <<sd>>=
-%% set_params()
-%% use.sd.here <- FALSE
-%% MAT <- matrix( rnorm(n*m, mean=Mu, sd=Sd), ncol=n, nrow=m )
-%% save(MAT, file="data/MAT.rdata")
-%% if(use.sd.here) par(mar=c(5, 7, 4, 2)) else par(mar=c(5,4,4,2) + 0.1) # default c(5,4,4,2) + 0.1
-%% plot( x=c(min(MAT), max(MAT)), y=c(0,m), type='n',
-%%       xlab="Outcome", ylab="", yaxt='n', bty='o', xaxt = 'n',
-%%       main=paste(m, "samples of size", n, "from a Normal population mean =", Mu, "and sd. = ", Sd)
-%% )
-%% axis(1, at = c(170,179,190))
-%% abline(v=179, lty=2, col="darkgray", lwd=2)
-%% if(use.sd.here) text(x=min(MAT)-DD, y=m+0.5, labels="Sample s.d.", xpd=TRUE, pos=2, offset=1)
-%% for(k in 1:m){
-%%    tmp <- MAT[k,]
-%%    #col <- if(m<=5) wes_palette("Cavalcanti1", 5)[k]
-%%    col <- if(m<=5) wes_rgb[k]
-%%    mtm <- mean(tmp)
-%%    sdt <- sd(tmp)
-%%    if(use.sd.here) text(x=min(MAT)-DD, y=m+1-k, labels=round(sdt,1), xpd=TRUE, pos=2, offset=1)
-%%    points(x=tmp, y=rep(m+1-k,n), pch=20+k, bg=col, cex = 1.5)
-%% }
-%% par(.par_reset)
-%% @
-%% }
-%% \frame{ % -------------------------------------------------------------------->
-%% %\frametitle{Properties of samples and sample means}
-%% \ldots \emph{but} there is also a variation associated with a sample mean (but we
-%% do not tend to see it). \emph{Anything} calculated from a (random) sample
-%% (e.g.\ a mean value or a regression coefficient) is a random number and thus has
-%% a standard deviation (but we typically need theory to calculate this!)
-
-%% <<sem0>>=
-%% load(file="data/MAT.rdata")
-%% set_params()
-%% plot( x=c(min(MAT), max(MAT)), y=c(0,m), type='n',
-%%       xlab="Outcome", ylab="", yaxt='n', bty='o', xaxt = 'n',
-%%       main=paste(m, "samples of size", n, "from a Normal population mean =", Mu, "and sd. = ", Sd)
-%% )
-%% axis(1, at = c(170,179,190))
-%% abline(v=179, lty=2, col="darkgray", lwd=2)
-%% for(k in 1:m){
-%%    tmp <- MAT[k,]
-%%    #col <- if(m<=5) wes_palette("Cavalcanti1", 5)[k]
-%%    col <- if(m<=5) wes_rgb[k]
-%%    mtm <- mean(tmp)
-%%    sdt <- sd(tmp)
-%%    points(x=tmp, y=rep(m+1-k,n), pch=20+k, bg=col, cex = 1.5)
-%%    points(x=mtm, y=m+1-k, cex=3, bg=col, pch=20+k, lwd=2)
-%%    points(x=mtm, y=0, cex=3, bg=col, pch=20+k, lwd=2)
-%%    segments(x0 = mtm, y0 = 0.3, x1 = mtm, y1 = m+0.7-k, col = col, lty = 2)
-%% }
-%% @
-%% }
 
 
-%% \frame{ % -------------------------------------------------------------------->
-%% \frametitle{Properties of sample means}
-
-%% \textbf{Standard Error of the Mean (SEM)}\\
-%% The standard deviation of the sample mean is referred to
-%% as SEM and a measure
-%% of (approx.) the average distance the population mean.
-%% Thus a measure of the precision the sample mean is as
-%% an estimator of the population mean.
-
-%% \rymd In a Normal model the SEM is the population s.d. dived
-%% by $\sqrt n$.
-
-%% \rymd \textbf{Standard Errors (SE)}\\
-%% More generally, the standard deviation of something calculated from a sample is
-%% called its standard error.
-
-%% \rymd Later we will use these to create \emph{confidence intervalls}.
-
-%% }
-%% \frame{ % -------------------------------------------------------------------->
-%% %\frametitle{Properties of samples and sample means}
-%% <<sem>>=
-%% load(file="data/MAT.rdata")
-%% set_params()
-%% par(mar=c(5, 7, 4, 2) )# default c(5,4,4,2) + 0.1
-%% plot( x=c(min(MAT), max(MAT)), y=c(0,m), type='n',
-%%       xlab="Outcome", ylab="", yaxt='n', bty='o', xaxt = 'n',
-%%       main=paste(m, "samples of size", n, "with population mean =", Mu, "and sd. = ", Sd)
-%% )
-%% axis(1, at = c(170,179,190))
-%% abline(v=179, lty=2, col="darkgray", lwd=2)
-%% text(x=min(MAT)-DD, y=m+0.5, labels="Sample s.d.", xpd=TRUE, pos=2, offset=1)
-%% for(k in 1:m){
-%%    tmp <- MAT[k,]
-%%    #col <- if(m<=5) wes_palette("Cavalcanti1", 5)[k]
-%%    col <- if(m<=5) wes_rgb[k]
-%%    mtm <- mean(tmp)
-%%    sdt <- sd(tmp)
-%%    text(x=min(MAT)-DD, y=m+1-k, labels=round(sdt,1), xpd=TRUE, pos=2, offset=1)
-%%    points(x=tmp, y=rep(m+1-k,n), pch=20+k, bg=col, cex = 1.5)
-%%    points(x=mtm, y=m+1-k, cex=3, bg=col, pch=20+k, lwd=2)
-%%    points(x=mtm, y=0, cex=3, bg=col, pch=20+k, lwd=2)
-%%    segments(x0 = mtm, y0 = 0.3, x1 = mtm, y1 = m+0.7-k, col = col, lty = 2)
-%% }
-%% tmp <- rowMeans(MAT)
-%% mtm <- mean(tmp)
-%% text(x=min(MAT)-DD, y=0, labels=paste("SEM ~",round(sd(tmp),1)), xpd=TRUE, pos=2, offset=1, col=COL, cex=1.2)
-%% @
-%% }
-%% \frame{ % -------------------------------------------------------------------->
-%% In this example we can exactly specify the distribution of the sample mean.
-%% <<pop_and_mean>>=
-%% set_params()
-%% curve(dnorm(x,Mu,Sd), from=min(MAT),to=max(MAT), ylim=c(0,0.20), ylab="Density",
-%%       xlab="", lty=1, lwd=2, xaxt = 'n')
-%% axis(1, at = c(170, 179, 190))
-%% curve(dnorm(x,Mu,Sd/sqrt(10)), from=165,to=195, add=TRUE, lty=2, lwd=2)
-%% legend("topleft",
-%%        legend=c(expression(N(mu, sigma) - population),
-%%                 expression(N(mu,sigma/sqrt(10)) - `sample mean`),
-%%                 expression(mu==`179.0`,sigma==6.35)),
-%%        title="Distribution of:", lty=c(1:2,0,0), lwd=c(2,2,0,0), bty='n', cex=1.5)
-%% @
-%% }
-%% \frame{ % -------------------------------------------------------------------->
-%% \frametitle{Normal population $\Rightarrow$ Normal mean}
-%% On the previous slide you saw
-%% \begin{itemize}
-%%    \item a Normal population curve, and
-%%    \item the Normal curve for the sample mean (for sample size 10).
-%% \end{itemize}
-
-%% \rymd
-%% In this case this is the true (derived from theory) density
-%% curve for the sample mean.
-
-%% \rymd
-%% Properties of the Normal distribution will aid further analysis
-%% using the mean of the sample.
-
-%% \rymd
-%% What happens if the population follows some non-Normal
-%% curve?
-%% }
-\frame{ % -------------------------------------------------------------------->
-  \frametitle{Sampling from a normally distributed population?}
-
-{\centering \fbox{"Normal population" $\Rightarrow$ "Normal sample mean"}\par}
-
-\rymd
-
-\rymd
-A random sample of size $n$ from $N(\mu, \sigma)$ has the property that its mean
-is also normally around $\mu$ but with
-\[ \sigma_{\mbox{\footnotesize sample mean}} = \frac{\sigma}{\sqrt{n}}. \]
-
-\rymd
-But, not everything is normally distributed to begin with!
-}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{The Central Limit Theorem (CLT)}
-
-\textbf{CLT:} Regardless of the population density curve, the sample mean
-density can be made (with arbitrarily good approximation) Normal by choosing $n$
-large enough.
-
-\begin{itemize}
-   \item How large does $n$ have to be? \\Depends on how skew the population density is. \\
-      \begin{itemize}
-         \item In general $n=20$ will suffice.
-         \item If population is Normal then $n=1$ is enough.
-      \end{itemize}
-   \item CLT applies to many 'statistics' (= functions of samples).
-\end{itemize}
-
-\rymd
-The next 2 slides shows theoretical distributions for a population and sample
-means thereof, for varying sample sizes.
-}
-
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Visualization of sample mean from normal population}
-The distribution of sample means from a \emph{normal} distribution. In this case
-the sample mean \emph{is normally distributed} (but with a smaller sd).
-
-<<norm_mean>>=
-COL <- wes_palette("Cavalcanti1", 5) #brewer.pal(5, "Set2")
-par(mar=c(4,4,1,1))
-plot(1,1,type='n', xlim=c(0,2.5), ylim=c(0,1.8), xlab="Outcome", ylab="Density")
-ns <- c(1,2,5,10,20)
-for(k in 1:5){
-   n <- ns[k]
-   curve(dnorm(x, mean=1, sd = 1/sqrt(n)), from=-.5, to=5, add=TRUE, lty=k, col=COL[k], lwd=2)
-}
-abline(v=1, col="grey", lwd=1, lty=1)
-legend("topright", legend=c("1 (Population)", ns[-1]), col=COL, lwd=2, lty=1:4, title="Sample size", bty='n', cex=1.5)
-par(.par_reset)
-@
-}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Attempt to visualize CLT for the sample mean}
-The distribution of sample means from a skewed distribution. The sample mean is
-\emph{not} normally distributed, but increasingly so.
-<<exp_mean>>=
-COL <- wes_palette("Cavalcanti1", 5) #brewer.pal(5, "Set2")
-par(mar=c(4,4,1,1))
-plot(1,1,type='n', xlim=c(0,2.5), ylim=c(0,1.8), xlab="Outcome", ylab="Density")
-ns <- c(1,2,5,10,20)
-for(k in 1:5){
-   n <- ns[k]
-   curve(n*dgamma(x*n, shape=n), from=0, to=5, add=TRUE, lty=k, col=COL[k], lwd=2)
-}
-abline(v=1, col="grey", lwd=1, lty=1)
-legend("topright", legend=c("1 (Population)", ns[-1]), col=COL, lwd=2, lty=1:4, title="Sample size", bty='n', cex=1.5)
-par(.par_reset)
-@
-}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Standard errors}
-
-The (estimated) standard deviation of an estimator is called its
-\textbf{standard error}.
-
-\rymd
-The CLT allows us in many situations to ignore the actual distribution of the
-population and the estimator, but we typically need the standard error.
-
-\rymd
-Exmple: suppose we want to estimate the height of individuals in a population.
-A sample of 50 people gave a mean 175 cm with a sample standard deviation of
-6.5. Then $se = 6.5 / \sqrt{50} \approx 0.92.$
-
-\rymd
-As will be shown later the standard error help us to
-\begin{itemize}
-\item create confidence interval, and
-\item create \emph{test statistics} for hypothesis testing.
-\end{itemize}
-}
 \frame{ % -------------------------------------------------------------------->
 \frametitle{The $t$-distribution}
 
@@ -1539,19 +1233,7 @@ curve( pnorm(t, mean(y-x), sd(y-x)), from=-250, to=200,
       lty=2, add=TRUE, xname="t")
 @
 }
-%% \frame{ % -------------------------------------------------------------------->
-%% \frametitle{PEV}
-%% A cumulative frequency with best normal density fit.
-%% <<pev_ecdf>>=
-%% load("data/F4_crossover.Rdata")
-%% par(mar=c(4,3,0,0))
-%% plot(ecdf(y-x), verticals=TRUE, do.points=FALSE,
-%%      xlab="Differences (formoterol-sabutamol) L/min", ylab="",
-%%      xlim=c(-100,200), main="")
-%% curve( pnorm(t, mean(y-x), sd(y-x)), from=-250, to=200, lty=2, add=TRUE, xname="t")
-%% par(.par_reset)
-%% @
-%% }
+
 \frame{ % -------------------------------------------------------------------->
 \frametitle{The Quantile-Quantile plot}
 
@@ -1673,7 +1355,7 @@ missing values are replaced differently in each iteration (perhaps even
 \rymd
 \begin{quote}
 "It is not that multiple imputation is so good; it is really that other methods
-  for adressing missing data are so bad."
+  for addressing missing data are so bad."
 \begin{flushright}
 (Donald Rubin)
 \end{flushright}
@@ -1681,28 +1363,7 @@ missing values are replaced differently in each iteration (perhaps even
 \textbf{N.B.} we typically do not impute our outcome data.
 }
 
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% \section{$\phantom{.}$} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% \frame{ % -------------------------------------------------------------------->
-%% \frametitle{Second Summary}
-%% 95\% of observations from a Normal population lies within
-%% 1.96 multiples of the (population) s.d.  from the (population)
-%% mean.
-%%
-%% \rymd Means and, in particular sd's, must be distinguished on three levels
-%% \begin{itemize}
-%% \item population,
-%% \item sample, and
-%% \item estimate.
-%% \end{itemize}
-%%
-%% \rymd The s.d. of the latter is called the Standard Error\\
-%%
-%% \rymd The CLT explains why many estimates ('statistics') are
-%% (approx.) Normally distributed even though the population
-%% may not be.
-%% }
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section[Ref]{References} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1722,94 +1383,5 @@ publications}, Environmental Modelling \& Software \textbf{26} (2011) 822-827.
 %\item H. Wickham, \emph{ggplot2}, 2$^{\mbox{nd}}$ ed. TO APPEAR
 \end{itemize}
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Polls} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\lada}{\fbox{$\phantom{x}$}}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Poll: Variables and driving}
-\textbf{Q1:} Tick the boxes you think are always true. (Multiple choice)
-\begin{itemize}
-\item[\lada] An ordinal variable with values A, B, C, (etc) is such that the "increases" (although not numerical) B-A, C-B, (etc) can be considered to be of the same magnitude.
-\item[\lada] Anything measured numerically must be analysed as such.
-\item[\lada] Anything recorded as a categorization must be analysed as such.
-\item[\lada] None of the above.
-\end{itemize}
-
-\textbf{Q2:} A poll showed that 80\% of drivers thought their driving skills
-were above average. As a group, do these drivers overestimate their driving
-skills? (Single choice)
-\begin{itemize}
-\item[\lada] No
-\item[\lada] Yes
-\item[\lada] Probably
-\item[\lada] We can't say
-\end{itemize}
-}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Poll: Boxplots and means}
-\textbf{Q1:} A group of 24 individuals have been randomly assigned to 6
-different exercise groups, and their blood pressure is measured after
-training. The researchers do a boxplot for the measurements for each group. Is
-this a good approach? (Single choice)
-\begin{itemize}
-\item[\lada] Yes, a good way to visualize the overall pattern.
-\item[\lada] No, the overall sample size is too small.
-\item[\lada] No, the group sizes are too small.
-\end{itemize}
-\textbf{Q1:} Suppose the mean athletic skill is somewhat better in group
-A as compared to group B (of equal size). If a sport team is fairly admitting members by
-assessing athletic skill, we should expect more people from A being admitted. (Single choice)
-\begin{itemize}
-\item[\lada] True
-\item[\lada] False
-\item[\lada] We can't say
-\end{itemize}
-}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Poll: LLN and CLT}
-\textbf{Q1:} Suppose you have flipped a (fair) coin 3 times, every time showing H
-('Heads'). The Law of Large Numbers tells us that the relative frequency of H
-will tend to 50\% in the long run. Does this imply that we now have an increased
-probability of T ('Tails')? (Single choice)
-\begin{itemize}
-\item[\lada] Yes
-\item[\lada] No
-\end{itemize}
-\textbf{Q2:} The Central Limit Theorem says that, althought the distribution of
-any numerical characteristic of individuals (income, blood pressure, etc) might
-be skewed in small populations, it will be (approx.) normally distributed in
-"large enough" populations. (Single choice)
-\begin{itemize}
-\item[\lada] True
-\item[\lada] False
-\end{itemize}
-}
-%% \frame{ % -------------------------------------------------------------------->
-%% <<"test-no-eval", eval = FALSE>>=
-%% m1 <- 10; m2 <- 10.5
-%% foo <- function(x, a = m1, b = m2){
-%%     p1 <- 1 - pnorm(x, a, 1)
-%%     p2 <- 1 - pnorm(x, b, 1)
-%%     p2 / p1
-%% }
-%% curve(foo(x), 8, 12, ylim = c(0, 7))
-%% curve(dnorm(x, m1, 1), 8, 12, add = TRUE, lty = 2)
-%% curve(dnorm(x, m2, 1), 8, 12, add = TRUE)
-%% @
-%% }
-
 
 \end{document} % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-%% \frame{ % -------------------------------------------------------------------->
-%%   \frametitle{poll}
-%%   \newcommand{\lada}{\fbox{$\phantom{x}$}}
-%% \textbf{Question ?:}
-%% \begin{itemize}
-%% \item[\lada] text
-%% \item[\lada] text
-%% \item[\lada] text
-%% \end{itemize}
-%% }
