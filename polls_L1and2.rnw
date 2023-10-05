@@ -1,0 +1,63 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Polls} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\lada}{\fbox{$\phantom{x}$}}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Poll: Variables and driving}
+\textbf{Q1:} Tick the boxes you think are always true. (Multiple choice)
+\begin{itemize}
+\item[\lada] An ordinal variable with values A, B, C, (etc) is such that the "increases" (although not numerical) B-A, C-B, (etc) can be considered to be of the same magnitude.
+\item[\lada] Anything measured numerically must be analysed as such.
+\item[\lada] Anything recorded as a categorization must be analysed as such.
+\item[\lada] None of the above.
+\end{itemize}
+
+\textbf{Q2:} A poll showed that 80\% of drivers thought their driving skills
+were above average. As a group, do these drivers overestimate their driving
+skills? (Single choice)
+\begin{itemize}
+\item[\lada] No
+\item[\lada] Yes
+\item[\lada] Probably
+\item[\lada] We can't say
+\end{itemize}
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Poll: Boxplots and means}
+\textbf{Q1:} A group of 24 individuals have been randomly assigned to 6
+different exercise groups, and their blood pressure is measured after
+training. The researchers do a boxplot for the measurements for each group. Is
+this a good approach? (Single choice)
+\begin{itemize}
+\item[\lada] Yes, a good way to visualize the overall pattern.
+\item[\lada] No, the overall sample size is too small.
+\item[\lada] No, the group sizes are too small.
+\end{itemize}
+\textbf{Q1:} Suppose the mean athletic skill is somewhat better in group
+A as compared to group B (of equal size). If a sport team is fairly admitting members by
+assessing athletic skill, we should expect more people from A being admitted. (Single choice)
+\begin{itemize}
+\item[\lada] True
+\item[\lada] False
+\item[\lada] We can't say
+\end{itemize}
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Poll: LLN and CLT}
+\textbf{Q1:} Suppose you have flipped a (fair) coin 3 times, every time showing H
+('Heads'). The Law of Large Numbers tells us that the relative frequency of H
+will tend to 50\% in the long run. Does this imply that we now have an increased
+probability of T ('Tails')? (Single choice)
+\begin{itemize}
+\item[\lada] Yes
+\item[\lada] No
+\end{itemize}
+\textbf{Q2:} The Central Limit Theorem says that, althought the distribution of
+any numerical characteristic of individuals (income, blood pressure, etc) might
+be skewed in small populations, it will be (approx.) normally distributed in
+"large enough" populations. (Single choice)
+\begin{itemize}
+\item[\lada] True
+\item[\lada] False
+\end{itemize}
+}

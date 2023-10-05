@@ -1,5 +1,11 @@
 \documentclass{article}
 
+\addtolength{\hoffset}{-1.5cm}
+\addtolength{\textwidth}{3cm}
+\addtolength{\voffset}{-1.5cm}
+\addtolength{\textheight}{3cm}
+
+
 \title{Poll questions}
 \author{Henrik Renlund}
 
@@ -247,6 +253,7 @@ curve(x/2, from = 0, to = .7, add = T, lty = 2)
 
 @
 
+\clearpage
 \section{Odds ratios}
 
 \subsection{Question 1}

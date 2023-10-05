@@ -1,0 +1,94 @@
+\documentclass{beamer}
+\usepackage{beamerthemeclassic}
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{hyperref}
+\hypersetup{colorlinks = true, linkcolor = blue}
+
+<<"SETUP", echo = FALSE>>=
+
+opts_chunk$set(cache=TRUE,
+               echo=FALSE,
+               message=FALSE,
+               error=FALSE,
+               warning=FALSE,
+               fig.align='center',
+               fig.width=11,
+               fig.height=5)
+
+if(FALSE){
+    knit2pdf("Poll-presentation.Rnw")
+}
+
+@
+
+
+\title{Some Poll answers}
+\author{Henrik Renlund}
+%\date{Spring 2023}
+\date{}
+
+
+\begin{document} % >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+\frame{ % -------------------------------------------------------------------->
+
+  "Average" is not well-defined; typically means \emph{median} or \emph{mean}.
+
+  80\% cannot lie (strictly) above the median value.
+
+  Suppose the evaluation scale is 0 (fail) or 1 (pass). Suppose 80\% of drivers
+  pass (gets value 1). The mean on this scale is 0.8, so 80\% of drivers are
+  indeed above the mean.
+
+  But even say a scale of 0-4. Suppose these are the results of 101 people begin
+  evaulated:
+
+  \begin{tabular}{c|cccc} \hline
+    Value & 0 & 1  & 2  & 3  \\
+    Count & 1 & 10 & 80 & 10 \\ \hline
+  \end{tabular}
+
+  Although this distribution is almost symmetrical about 2, it is slightly
+  skewed to the left by that 1 individual who got 0, so the mean is 1.98. Thus
+  almost 90\% have a score above the mean.
+
+}
+
+\frame{ % -------------------------------------------------------------------->
+
+<<>>=
+
+xx <- seq(60, 120, len = 601)
+
+d <- data.frame(x = xx, y1 = dnorm(xx, 80, 20), y2 = dnorm(xx, 90, 10))
+
+ggplot(d, aes(xx)) +
+    geom_line(aes(y = y1)) +
+    geom_line(aes(y = y2)) +
+    coord_cartesian(expand = FALSE)
+
+@
+
+}
+
+\frame{ % -------------------------------------------------------------------->
+  Probabilities ($p$) and odds ($\theta$) are related via $\theta(p) = p/(1-p)$
+  (by definition) and $p(\theta) = \theta/(1+\theta)$.
+
+  Let $p_1$ be a probability and $\theta_1$ the corresponding odds.
+
+  $$p_{\frac{\theta_1}{2}} = p(\frac{\theta_1}{2}) =
+  \frac{\frac{\theta_1}{2}}{1+\frac{\theta_1}{2}} =
+  \frac{\theta_1}{2+\theta_1} =
+  \frac{p_1}{2(1-p_1) + p_1} =
+  \frac{p_1}{2-p_1} \geq p_1/2$$
+}
+
+
+
+
+\end{document} % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+%% \frame{ % -------------------------------------------------------------------->
+%% }

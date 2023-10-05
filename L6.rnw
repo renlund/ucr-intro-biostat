@@ -106,7 +106,7 @@ We talk about this data in terms of the probability of one of the events (often 
   function $ = p(k)$? Or, if binary, is $\pr$(event) = $p$?
   Answered by e.g.\ confidence interval for $p$ or $\chi^2-test$.
 
-  \rymd \textbf{(2-sample paired:)}
+  \rymd \textbf{2-sample paired:}
 
   \rymd \emph{Numeric:} taking differences reduces this to the 1-sample situation.
 
@@ -526,7 +526,7 @@ Twins being randomized to intervention or placebo:
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Mendel's pea experiment}
 
-One of Mendels pea-experiments was a (dihybrid)
+One of Mendel's pea-experiments was a (dihybrid)
 cross between the genes for round/wrinkled seeds and yellow/green seeds.
 
 \begin{center}\begin{tabular}{|c|cccc|c|}  \hline
@@ -776,17 +776,62 @@ versus 'DE Dose' is at risk of confounding.
 One way to deal with this is logistic regression (more on that in a later lecture).
 }
 
+\end{document} # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \section[Ref]{References} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{References}
+
+%% \begin{itemize}
+%% \item Chapters 23-25: Petrie \& Sabin. \emph{Medical Statistics at a Glance}, Wiley-Blackwell (2009).
+%% \item Grant, R.\ L.: Converting an odds ratio to a range of plausible relative risks for better communication of research findings, \emph{BMJ} \textbf{348} (2014) 7 pages.
+%% \end{itemize}
+%% }
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section[Ref]{References} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[Polls]{Polls} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \frame{ % -------------------------------------------------------------------->
-\frametitle{References}
-
+  \frametitle{Poll: Odds and probabilities}
+  \newcommand{\lada}{\fbox{$\phantom{x}$}}
+\textbf{Q1:} You are at 3\% risk of a disease X. Medication A gives you a 1
+percentage point risk reduction. Medication B halves your odds of the
+disease. Which do you prefer? (Single choice)
 \begin{itemize}
-\item Chapters 23-25: Petrie \& Sabin. \emph{Medical Statistics at a Glance}, Wiley-Blackwell (2009).
-\item Grant, R.\ L.: Converting an odds ratio to a range of plausible relative risks for better communication of research findings, \emph{BMJ} \textbf{348} (2014) 7 pages.
+\item[\lada] A
+\item[\lada] B
+\item[\lada] Doesn't matter
+\end{itemize}
+\textbf{Q2:} Oh no! A previously unknown risk factor now sets your risk at
+50\%. However, treatment C will halve your risk. There is an alternative
+treatment D that will halve your odds. Which do you prefer? (Single choice)
+\begin{itemize}
+\item[\lada] C
+\item[\lada] D
+\item[\lada] Doesn't matter
 \end{itemize}
 }
-
-\end{document} # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+\frame{ % -------------------------------------------------------------------->
+  \frametitle{Poll: Odds ratios}
+  \newcommand{\lada}{\fbox{$\phantom{x}$}}
+\textbf{Q1:} The odds ratio (OR) for success between procedure A and B is 2
+(i.e. odds or success with A / odds for success with B). What is true? (Multiple choice)
+\begin{itemize}
+\item[\lada] Since the OR $>$ 1, procedure A has a better than 50\% chance of success.
+\item[\lada] Since the OR $>$ 1, procedure A has a better chance of success than B.
+\item[\lada] The probability of a successful A-procedure is (approx.) twice that of B-procedure.
+\end{itemize}
+\textbf{Question 2:} Drug X has a side effect Y, experienced by 5\% of the
+users, a risk researchers are trying to halve. A study on a modification of X
+found that the OR for Y compared to X is 0.2 (.07, .44) concerning side effects. Did the
+researchers succeed? (Single choice)
+\begin{itemize}
+\item[\lada] Yes
+\item[\lada] No
+\item[\lada] Inconclusive.
+\end{itemize}
+}

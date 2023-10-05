@@ -106,10 +106,22 @@ dotplot <- function(x, skal=100, off=0.1, maxi=1, yfix=1, new=FALSE, ...){
 \section[Descriptions]{Data and descriptive statistics} %%%%%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% \frame{ % -------------------------------------------------------------------->
+%%   \frametitle{}
+
+%%   In an \emph{experiment} the researcher will have control on some of the
+%%   variables, typically through randomization. E.g.\ assigning individuals to
+%%   different treatment arms in a clinical trial.
+
+%%   \rymd
+%%   In an observational study the data no such control exists.
+
+%% }
+
 \frame{ % -------------------------------------------------------------------->
   \frametitle{Types of data}
 
-  A data set contains one or more \emph{variables} for each unit of study
+  A data set contains one or more \emph{variable} for each unit of study
 \begin{center}\begin{tabular}{ccccccc}
 \code{ID} & \code{Sex} & Age & \code{Children} & \code{Albumin} & \code{Diabetes} & \code{Happiness} \\
 1 & M & 67 & 0 & 3.92 & 0 & {\LARGE $\smile$ } \\
@@ -130,7 +142,7 @@ Data categories:
          \item continuous; i.e.\ any value in an interval, like \code{Albumin}.
       \end{itemize}
 \end{itemize}
-The category determines what analyses are available.
+The category of the \emph{outcome variable} determines what analyses are available.
 
 }
 \frame{ % -------------------------------------------------------------------->
@@ -146,10 +158,66 @@ Common problems:
 \begin{itemize}
    \item date- and categorical data stored as integers
    \item numerical values stored as text (due to ',' vs. '.')
-   \item how are missing values represented? "Unknown"?
+   \item how are missing values represented? "" (blank), ".", "-99"?
 \end{itemize}
 
 }
+
+\frame{ %-------------------------------------------------------------------->
+\frametitle{What about missing data?}
+
+\textbf{'Good' scenario:} Suppose in an experiment a batch of samples are
+destroyed throught some random accident. Typically this only leads to a smaller
+sample size, but there is no problem running the analysis as planned.
+
+\rymd \textbf{'Bad' scenario:} Suppose we study severity of myocardial
+infarctions with a model that includes sex, age, BMI (some missing) and smoking
+status (some missing). Worry: the reason for being missing depends on the value.
+
+\rymd The statistical software default is to include only those individuals with
+complete data on all variables in the analysis.
+
+\rymd This \textbf{complete case analysis} will only give an unbiased
+result if the reason that a variable is missing has nothing to do with the
+actual value (and/or the outcome).
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Imputation}
+Suppose you want to model some outcome against 10 covariates. If an individual
+has 1 value missing, they will be excluded from the complete case analysis
+\emph{event though they could contribute with 9 other covariate values}.
+
+\rymd \textbf{Imputation methods} tries to fill in the blanks; e.g. with
+typical values (e.g. mean or sampled values) or predicted values (from
+regression models, possibly using more covariates).
+
+\rymd It might even to this several times to create multiple data sets over which
+the analysis will be averaged.
+
+%% There is no trick that guarantees a non-biased analysis.
+
+%% \rymd \textbf{Single imputation} e.g.\ replace missing value with a "typical"
+%% value for that variable (e.g. mean or median). This method underestimates the
+%% variance in the variable and will give overly optimistic results.
+
+%% \rymd \textbf{Multiple imputation} create multiple imputed data sets where the
+%% missing values are replaced differently in each iteration (perhaps even
+%% "predicted" from other covariates).
+
+\rymd
+\begin{quote}
+"It is not that (multiple) imputation is so good; it is really that other methods
+  for addressing missing data are so bad."
+\begin{flushright}
+(Donald Rubin)
+\end{flushright}
+\end{quote}
+%%\textbf{N.B.} we typically do not impute our outcome data.
+
+%% This interesting and complicated topic is outside the scope of this course.
+
+}
+
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Visualization of (continuous) data}
 A sufficiently small data set might not need visualization.
@@ -311,7 +379,7 @@ at 0 for points smaller than the smallest point of the data set. Then it is a
 step-wise function with jumps according to:
 
   \begin{center}\begin{tabular}{|r|r|r|r|} \hline
-      Unique points & Count & Cumulative count & Cumulative proportion \\ \hline
+      Values & Count & Cumulative count & Cumulative proportion \\ \hline
       0.03 & 1 & 1 & $\frac{1}{113} \approx 0.009$ \\
       0.04 & 5 & 6 & $\frac{6}{113} \approx 0.053$ \\
       0.05 & 3 & 9 & $\frac{9}{113} \approx 0.080$ \\
@@ -442,17 +510,17 @@ the median among those with non-zero hospitalization days.
 \frametitle{Measures of spread}
 
 \begin{itemize}
-   \item  \textbf{Range} The difference between the maximum and the minimum value.
+   \item  (\textbf{Range} The difference between the maximum and the minimum value.)
 
    \item  \textbf{Interquartile range (IQR)}: Q3-Q1.
 
    \item \textbf{Standard deviation (sd)} is given by the formula,
    \[ s = \sqrt{\frac{1}{n-1}\sum_{i=1}^n (x_i-\bar x)^2}. \]
    %It is a measure of spread with expressed in the same unit as the data.
-   Where $x_1, x_2, \ldots, x_n$ is the sample  and
-   $ \bar x=\frac 1n\sum_{i=1}^n x_i$ is the (sample) mean.
+   Where $x_1, x_2, \ldots, x_n$ is the sample and
+   $ \bar x=\frac 1n\sum_{i=1}^n x_i$ is the mean.
 
-   It is the typical distance between a value and the mean value.
+   \rymd It is the typical distance between a value and the mean value.
 
    \rymd \textbf{Note}: the sd in the previous salary example is 3.0 and 13.5 if
    the boss is excluded or included, respectively.
@@ -577,7 +645,7 @@ occur.
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Probability models for categorical or integer-valued data}
-A yet undetermined random value is called a \emph{random variable} (RV).
+A yet undetermined random value is called a \emph{random variable}.
 
 \rymd Let $Z=$'the outcome of the throw of a die'.
 Then $\pr(Z=k)=1/6$ for all $k=1,2,\ldots,6$, or, equivalently
@@ -589,7 +657,7 @@ $\pr(Z=k)$ & 1/6 & 1/6 & 1/6 & 1/6 & 1/6 & 1/6\\ \hline
 
 \rymd Suppose that in the population there are 49 \% non-smokers, 20 \% former smokers
 and 31\% current smokers. Then the smoking status $X$ of a person selected
-at random is a RV with a probability function
+at random is a random variable with a probability function
 
 \rymd
 \begin{center}\begin{tabular}{|c|ccc|} \hline
@@ -599,7 +667,7 @@ $\pr(X=v)$ & 0.49 & 0.20   & 0.31 \\ \hline
 }
 \frame{ % -------------------------------------------------------------------->
 Five samples from three different sampling sizes from previous distribution
-<<fig.height = 7>>=
+<<fig.height = 6>>=
 set.seed(20101212)
 pf <- c(0.49,0.20,0.31)
 m <- 5
@@ -629,6 +697,8 @@ foo_bar(1000, l = TRUE)
 layout(matrix(1, nrow = 1))
 par(.par_reset)
 @
+The Law of Large Numbers tells us that the sample distribution will
+increasingly look like the population distribution.
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{FEV data set}
@@ -643,6 +713,8 @@ of tables.
 <<tab_smoker, results='asis'>>=
 load("data/F8_smoking.Rdata") # dd
 with(dd, tabsmok <<- table( age=age, smoker=smoker))
+with(dd, tabsmok2 <<- addmargins(prop.table(table( age=age, smoker=smoker), 2), 1))
+with(dd, tabsmok3 <<- 100*prop.table(table( age=age, smoker=smoker), 2))
 latex(
    object = t(tabsmok),
    file = "",
@@ -653,39 +725,16 @@ latex(
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{Visualizing 'age' versus 'smoking'}
-<<smoker>>=
-load("data/F8_smoking.Rdata")
-par(mar=c(4,4,0,0))
-barplot(tabsmok, beside=TRUE, legend=TRUE, ylab="Frequency", col=brewer.pal(9, "YlGn"))
-par(.par_reset)
-@
-}
-\frame{ % -------------------------------------------------------------------->
-%\frametitle{}
-If the groups (smokers/non-smokers) aren't balanced
-it is difficult to compare the distributions.
-
-Tabulate/plot the percentages within groups:
-<<tab_smoker2, results='asis'>>=
-load("data/F8_smoking.Rdata") # dd
-with(dd, tabsmok2 <<- addmargins(prop.table(table( age=age, smoker=smoker), 2), 1))
-latex(
-   tabsmok2,
-   digits=2,
-   file="",
-   title="Age",
-   cgroup="Smoking (proportion)"
-)
-@
-}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Percentages within smoking groups}
-The distributions are now easier to compare.
-<<plot_smoker2>>=
-load("data/F8_smoking.Rdata")
-with(dd, tabsmok3 <<- 100*prop.table(table( age=age, smoker=smoker), 2))
-par(mar=c(4,4,1,0))
-barplot(tabsmok3, beside=TRUE, legend=TRUE, ylab="Percent", col=brewer.pal(9, "YlGn"))
+Absolute frequencies can be hard to compare if groups are unbalanced - use
+subgroup percentages instead.
+<<smoker, fig.height = 6>>=
+par(mfrow = c(2,1), mar = c(2,4,1,0))
+barplot(tabsmok, beside=TRUE, legend=TRUE, ylab="Frequency",
+        col=brewer.pal(9, "YlGn"), xaxt = 'n', args.legend = list(horiz = TRUE))
+mtext("Frequency plot", side = 3, line = 0)
+barplot(tabsmok3, beside=TRUE, legend=FALSE, ylab="Percent",
+        col=brewer.pal(9, "YlGn"))
+mtext("Within subgroup percentages", side = 3, line = 0)
 par(.par_reset)
 @
 }
@@ -784,9 +833,14 @@ par(.par_reset)
 
 \frame{ % -------------------------------------------------------------------->
 \frametitle{The Normal Distribution}
-Sometimes we assume that the population follows a Normal density curve.
+Sometimes we assume that data follows a Normal density curve.
 
-<<fev6>>=
+\rymd (\textbf{Beware!} In many models/tests it is \emph{not} the data in front
+of you which is assumed normal. More on that later in the course.)
+
+\rymd
+
+<<fev6, fig.height = 4>>=
 load("data/F8_smoking.Rdata") # dd
 n <- 11
 par(mar=c(4,4,0,0))
@@ -814,15 +868,48 @@ devation of $\sigma$, according to the equation:
 The special case of $\mu=0$ and $\sigma=1$ is called a \emph{standard normal
   distribution}.
 
-\rymd
-\textbf{Digression:} Any sample can be "standardized" by
-subtracting the mean and dividing by the standard deviation.
+\rymd \textbf{Note:} Any sample can be "standardized" by subtracting the mean
+and dividing by the standard deviation.
 
+%% \rymd
+%% \textbf{Digression:} Any sample can be "standardized" by
+%% subtracting the mean and dividing by the standard deviation.
+%% If $x_1, x_2, \ldots, x_n$ is a sample (of size $n$) with mean
+%% $\bar x = \frac1n\sum_1^n x_i$ and
+%% $sd = \sqrt{\frac1{n-1}\sum_1^n(x_i-\bar x)^2}$, then the transformation
+%% \[ \frac{x_1-\bar x}{sd}, \frac{x_2-\bar x}{sd}, \ldots, \frac{x_n-\bar x}{sd}, \]
+%% is \emph{standardized} (it has mean 0 and sd 1).
+}
+\frame{ % --------------------------------------------------------------------->
+\frametitle{Digression on standardization:}
 If $x_1, x_2, \ldots, x_n$ is a sample (of size $n$) with mean
 $\bar x = \frac1n\sum_1^n x_i$ and
 $sd = \sqrt{\frac1{n-1}\sum_1^n(x_i-\bar x)^2}$, then the transformation
 \[ \frac{x_1-\bar x}{sd}, \frac{x_2-\bar x}{sd}, \ldots, \frac{x_n-\bar x}{sd}, \]
 is \emph{standardized} (it has mean 0 and sd 1).
+
+\rymd Here is the albumin measurements again; orginal and standardized:
+<<fig.height = 3>>=
+load("data/F3_albumin.Rdata")
+par(mar=c(4,1,4,1))
+plot(
+   x = alb, y = rep(1,length(alb)),
+   yaxt='n', xaxt = 'n',
+   ylab="", xlab = "",
+   ylim=c(0.8,1.2),
+   bty = 'n',
+   main=""
+)
+points(sort(alb), rep(1,length(alb)))
+xx <- seq(1.7, 2.2, by = 0.1)
+m <- mean(alb)
+s <- sd(alb)
+axis(3, at= xx, labels=TRUE)
+mtext("Measurement scale (g / dL)", side = 3, line = 2.5)
+axis(1, at= c(m-2*s,m-s, m, m+s,m+2*s), labels=c(-2,-1, 0, 1,2))
+mtext("Standardized scale", side = 1, line = 2.5)
+par(.par_reset)
+@
 }
 \frame{ % --------------------------------------------------------------------->
 \frametitle{Properties of the standard Normal distribution}
@@ -854,7 +941,10 @@ This will be useful when creating \emph{confidence intervals}.
 is determined by its mean ($\mu$) and standard deviation ($\sigma$).
 
 \rymd
-{\centering\fbox{If $X$ is N(0,1) then $\mu+\sigma X$ is N$(\mu,\sigma)$.}\par}
+{\centering\fbox{If $Y$ is N$(\mu,\sigma)$ then $(Y-\mu)/\sigma$ is N$(0, 1)$.}\par}
+
+\rymd
+{\centering\fbox{If $X$ is N(0,1) then $\mu + \sigma X$ is N$(\mu,\sigma)$.}\par}
 <<normals, fig.height = 3.5>>=
 par(mar = c(2,4,0,0))
 n <- 100
@@ -994,8 +1084,8 @@ If we also knew the distribution of the estimator, we could calculate things
 like confidence intervals.
 
 \rymd
-How does the distribution of the mean value depend on the distribution of the
-population?
+Next up: \emph{How does the distribution of the mean value depend on the
+  distribution of the population?}
 
 }
 
@@ -1005,18 +1095,19 @@ population?
 Sometimes our model assumptions gives us the answer.
 
 \rymd
-1. If the population is normally distributed $N(\mu, \sigma)$
+\textbf{1.} If the population is normally distributed $N(\mu, \sigma)$
 
-The mean value is a linear combination and so \emph{by theory} the mean value
-has a distribution (details skipped)
+The mean value is a linear combination and so \emph{by theory} (details skipped)
+the mean value has the distribution:
 
-$$N(\mu, \sigma/\sqrt n),$$
+$$N\left(\mu, \frac{\sigma}{\sqrt n}\right),$$
 
-where $n$ is the sample size. I.e. the SE for the mean is
-$\sigma/\sqrt{10}\approx\sigma^*/\sqrt{10}$.
+where $n$ is the sample size.
+
+%% I.e. the SE for the mean is $\sigma/\sqrt{10}$.
 
 \rymd
-2. If the population has a gamma-distribution (skewed).
+\textbf{2.} If the population has a gamma-distribution (skewed).
 
 Details are unimportant, the point is that the mean value distribution
 \emph{can} be calculated (look 2 slides ahead).
@@ -1062,6 +1153,7 @@ par(.par_reset)
 @
 }
 
+
 \frame{ % -------------------------------------------------------------------->
 \frametitle{The Central Limit Theorem (CLT)}
 
@@ -1078,124 +1170,58 @@ large enough.
    \item CLT applies to many 'statistics' (= functions of samples).
 \end{itemize}
 
-This is great news! This means we (often) only need to calculate the standard
+\rymd This is great news! This means we (often) only need to calculate the standard
 error.
 
 }
 
-
 \frame{ % -------------------------------------------------------------------->
-  \frametitle{Understanding sampling using the Seeing Theory website}
+\frametitle{Sample mean distribution of coin flips}
+Even non-continuous (discrete) distributions can be approximated with the normal
+distribution. (Normal density curve rescaled by $1/n$.)
+<<>>=
+par(mar=c(4,4,1,1))
 
-The Seeing Theory website
+mh <- function(n){
+    data.frame(x = 0:n,
+               m = 0:n / n,
+               p = dbinom(x = 0:n, size = n, prob = 0.5),
+               n = n)
+}
+nset <- c(1,2,5,10,20, 50)
+R <- NULL
+for(n in nset) R <- rbind(R, mh(n))
 
-{\centering \href{https://seeing-theory.brown.edu/probability-distributions}
-    {https://seeing-theory.brown.edu/probability-distributions}\par}
-
-provides a way to visualize sampling (Section 'Central Limit Theorem').
-
-\rymd
-A population distribution is given (with parameters $\alpha$ and $\beta$).
-
-\rymd
-You simulate calculating a \emph{sample mean} from a sample of size $\leq 15$
-up to 50 iterations at the time.
-
-\rymd
-\textbf{Note:} at sample size 1, this means just recording the value sampled.
-
-\begin{itemize}
-\item At sample size 1, with many iterations the sample distribution should
-  resemble the population.
-\item What happens to the distribution of the sample mean as the sample size
-  increases?
-\end{itemize}
-
-Note: in a real study we only get the one sample, so we never observe the
-sampling distribution directly.
-
+xx <- seq(0,1,len = 101)
+N <- NULL
+for(n in nset){
+    d <- dnorm(xx, mean = .5, sd = sqrt(1/(4*n)))
+    tmp <- data.frame(n = n, m = xx, N = d, N2 = d/n)
+    N <- rbind(N, tmp)
 }
 
+ggplot(R, aes(m, p)) +
+    geom_bar(width = 0.01, stat = "identity") +
+    geom_point() +
+    geom_line(data = N, aes(m, N2), color = "red", lty = 2) +
+    labs(y = "Probability", x = "Value for mean") +
+    facet_wrap(~n, scales = "free_y")
 
-\frame{ % -------------------------------------------------------------------->
-\frametitle{The $t$-distribution}
-
-Calculating standard test statistics from a normal distribution requires
-estimating the standard deviation. For \textbf{small samples} the change in
-distribution motivates making exact calculations. The $t$-distribution is
-"increasingly standard normal" as its parameter (degrees of freedom) increases.
-
-<<"t-dist", include = TRUE>>=
-par(mar = c(5.1, 4.1, 4.1, 2.1))
-x0 <- 4
-curve(dnorm(x, 0, 1), -x0, x0, col = "grey", cex = 2, ylab = "Density", xlab = "")
-## text(0, dnorm(0), expression(infinity), adj = c(0.5,-.3))
-curve(dt(x, df = 1), -x0, x0, add = T, col = "black")
-## text(0, dt(0, df=1), "1", adj = c(0.5,-.3))
-curve(dt(x, df = 3), -x0, x0, add = T, col = "red")
-## text(0, dt(0, df=3), "3", adj = c(0.5,-.3))
-curve(dt(x, df = 7), -x0, x0, add = T, col = "blue")
-## text(0, dt(0,df=7), "7", adj = c(0.5,-.3))
-legend(x = -4, y = .4, legend = c(1, 3, 7, expression(infinity == "N(0,1)")), lty = 1,
-       col = c("black", "red", "blue", "grey"), title = "Degrees of freedom")
 par(.par_reset)
 @
-
 }
-\frame{ % -------------------------------------------------------------------->
-\frametitle{The $\chi^2$-distribution}
 
-If you add $k$ standard normal random numbers, each squared, then the resulting
-distribution is $\chi^2(k)$. As we will see this is useful in the context of
-categorical variables.
 
-<<"chi2-dist", include = TRUE>>=
-x0 <- 8
-curve(dnorm(x, 0, 1), -3, x0, col = "grey", xlim = c(-2,7))
-curve(dchisq(x, df = 1), 0, x0, add = T, col = "black")
-## text(0.5, dchisq(0.5, df=1), "1", adj = c(0.5,-.3))
-curve(dchisq(x, df = 3), 0, x0, add = T, col = "red")
-## text(1.1, dchisq(1.1, df=2), "2", adj = c(0.5,-.3))
-curve(dchisq(x, df = 7), 0, x0, add = T, col = "blue")
-## text(3.5, dchisq(3.5,df=3), "3", adj = c(0.5,-.3))
-legend(x = 3, y = .4,
-       legend = c(expression("N(0,1)"),
-                  expression(chi~"(1)"),
-                  expression(chi~"(3)"),
-                  expression(chi~"(7)")),
-       lty = 1,
-       col = c("grey", "black", "red", "blue"), title = "Distribution")
-@
-}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section[Misc.]{Miscellaneous: visual tests, missing data} %%%%%%%%%%%%%%%%%%%%
+\section[Misc. Topics]{Miscellaneous: visual tests, etc} %%%%%%%%%%%%%%%%%%%%%%
 \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Visual tests of normality}
-Perhaps surprisingly, quite often we rely on \emph{visual} rather than
-\emph{formal} tests of model assumptions.
-
-\rymd
-A common formal test of normality is the Shapiro-Wilks test.
-
-\rymd Many plots can provide a visual test of normality, but a common one is the
-Q-Q plot. 'Q' is for \emph{quantile}.
-
-\rymd
-\textbf{Quantile?}
-Quantiles divides your data into (roughly) equal piles.
-\begin{itemize}
-\item the median is the 2-quantile
-\item the tertiles are the 3-quantiles (the $33\frac 13$ percentile and
-the $66\frac 23$ percentile)
-\item the quartiles (Q1, Q2 and Q3) are the 4-quantiles.
-\item \ldots and so on.
-\end{itemize}
-}
-\frame{ % -------------------------------------------------------------------->
-\frametitle{Cross-over data}
+\frametitle{Visual tests of normality: Cross-over data}
 13 patients had their peak expiratory flow (PEF, l/min) recorded
 after inhaling each of two different asthma drugs
 (the order of which were random).
@@ -1206,6 +1232,9 @@ of effect size.
 \rymda Data:
 \[ \mbox{\Sexpr{load("data/F4_crossover.Rdata"); paste(y-x, collapse=",\\,\\,")}} \]
 Is the normal distribution a good model for these 13 numbers?
+
+Perhaps surprisingly, quite often we rely on \emph{visual} rather than
+\emph{formal} tests of model assumptions.
 }
 \frame{ % -------------------------------------------------------------------->
 \frametitle{PEV}
@@ -1251,14 +1280,38 @@ qqline(y-x, col="grey70")
 par(.par_reset)
 @
 }
+
+%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{Visual tests of normality}
+%% Perhaps surprisingly, quite often we rely on \emph{visual} rather than
+%% \emph{formal} tests of model assumptions.
+
+%% \rymd
+%% A common formal test of normality is the Shapiro-Wilks test.
+
+%% \rymd Many plots can provide a visual test of normality, but a common one is the
+%% Q-Q plot. 'Q' is for \emph{quantile}.
+
+%% \rymd
+%% \textbf{Quantile?}
+%% Quantiles divides your data into (roughly) equal piles.
+%% \begin{itemize}
+%% \item the median is the 2-quantile
+%% \item the tertiles are the 3-quantiles (the $33\frac 13$ percentile and
+%% the $66\frac 23$ percentile)
+%% \item the quartiles (Q1, Q2 and Q3) are the 4-quantiles.
+%% \item \ldots and so on.
+%% \end{itemize}
+%% }
+
 \frame{ % -------------------------------------------------------------------->
 The S100B measurements is certainly not normally distributed.
 <<sub_norm>>=
 load("data/F10B_subarach.Rdata")
 t <- dd$s100b
-layout(matrix(1:2, ncol=2))
-plot(ecdf(t), do.points=FALSE, verticals=TRUE, xlab="micrgrams / litre", ylab="", main="CF")
-curve(pnorm(x, mean(t), sd(t)), from=-1, to=2, add=TRUE, lty=2, col="grey60")
+## layout(matrix(1:2, ncol=2))
+## plot(ecdf(t), do.points=FALSE, verticals=TRUE, xlab="micrgrams / litre", ylab="", main="CF")
+## curve(pnorm(x, mean(t), sd(t)), from=-1, to=2, add=TRUE, lty=2, col="grey60")
 qqnorm(t, ylim=c(-0.2, 1.2))
 qqline(t)
 par(.par_reset)
@@ -1321,67 +1374,143 @@ ggplot(df, aes(resid)) +
 @
 
 }
-\frame{ %-------------------------------------------------------------------->
-\frametitle{What about missing data?}
 
-\textbf{'Good' scenario:} Suppose in an experiment a batch of samples are
-destroyed throught some random accident. Typically this only leads to a smaller
-sample size, but there is no problem running the analysis as planned.
 
-\rymd \textbf{'Bad' scenario:} Suppose we study severity of myocardial
-infarctions with a model that includes sex, age, BMI (some missing) and
-smoking status (some missing). Worry: the reason for missing depends on the
-value.
+\frame{ % -------------------------------------------------------------------->
+\frametitle{The $t$-distribution}
 
-\rymd The statistical software default is to include only those individuals with
-complete case data on all variables in the analysis.
+Calculating standard test statistics from a normal distribution requires
+estimating the standard deviation. For \textbf{small samples} the change in
+distribution motivates making exact calculations. The $t$-distribution is
+"increasingly standard normal" as its parameter (degrees of freedom) increases.
 
-\rymd This \textbf{complete case analysis} will only give an unbiased
-result if the reason that a variable is missing has nothing to do with the
-actual value (and/or the outcome).
+<<"t-dist", include = TRUE>>=
+par(mar = c(5.1, 4.1, 4.1, 2.1))
+x0 <- 4
+curve(dnorm(x, 0, 1), -x0, x0, col = "grey", cex = 2, ylab = "Density", xlab = "")
+## text(0, dnorm(0), expression(infinity), adj = c(0.5,-.3))
+curve(dt(x, df = 1), -x0, x0, add = T, col = "black")
+## text(0, dt(0, df=1), "1", adj = c(0.5,-.3))
+curve(dt(x, df = 3), -x0, x0, add = T, col = "red")
+## text(0, dt(0, df=3), "3", adj = c(0.5,-.3))
+curve(dt(x, df = 7), -x0, x0, add = T, col = "blue")
+## text(0, dt(0,df=7), "7", adj = c(0.5,-.3))
+legend(x = -4, y = .4, legend = c(1, 3, 7, expression(infinity == "N(0,1)")), lty = 1,
+       col = c("black", "red", "blue", "grey"), title = "Degrees of freedom")
+par(.par_reset)
+@
+
 }
 \frame{ % -------------------------------------------------------------------->
-\frametitle{Solutions\ldots ish}
-There is no trick that guarantees a non-biased analysis.
+\frametitle{The $\chi^2$-distribution}
 
-\rymd \textbf{Single imputation} e.g.\ replace missing value with a "typical"
-value for that variable (e.g. mean or median). This method underestimates the
-variance in the variable and will give overly optimistic results.
+If you add $k$ standard normal random numbers, each squared, then the resulting
+distribution is $\chi^2(k)$. As we will see this is useful in the context of
+categorical variables.
 
-\rymd \textbf{Multiple imputation} create multiple imputed data sets where the
-missing values are replaced differently in each iteration (perhaps even
-"predicted" from other covariates).
-
-\rymd
-\begin{quote}
-"It is not that multiple imputation is so good; it is really that other methods
-  for addressing missing data are so bad."
-\begin{flushright}
-(Donald Rubin)
-\end{flushright}
-\end{quote}
-\textbf{N.B.} we typically do not impute our outcome data.
+<<"chi2-dist", include = TRUE>>=
+x0 <- 8
+curve(dnorm(x, 0, 1), -3, x0, col = "grey", xlim = c(-2,7))
+curve(dchisq(x, df = 1), 0, x0, add = T, col = "black")
+## text(0.5, dchisq(0.5, df=1), "1", adj = c(0.5,-.3))
+curve(dchisq(x, df = 3), 0, x0, add = T, col = "red")
+## text(1.1, dchisq(1.1, df=2), "2", adj = c(0.5,-.3))
+curve(dchisq(x, df = 7), 0, x0, add = T, col = "blue")
+## text(3.5, dchisq(3.5,df=3), "3", adj = c(0.5,-.3))
+legend(x = 3, y = .4,
+       legend = c(expression("N(0,1)"),
+                  expression(chi~"(1)"),
+                  expression(chi~"(3)"),
+                  expression(chi~"(7)")),
+       lty = 1,
+       col = c("grey", "black", "red", "blue"), title = "Distribution")
+@
 }
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section[Ref]{References} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\frame{ % -------------------------------------------------------------------->
-\frametitle{References}
-\begin{itemize}
-\item Chapters 1-8, 10: Petrie \& Sabin. \emph{Medical Statistics at a Glance}, Wiley-Blackwell (2009).
-\item Puhan et al. \emph{More medical journals should inform their contributors about three
-key principles of graph construction}, Journal of Clinical Epidemiology,
-\textbf{59} (2006) 1017-1022.
-\item Franzblau \& Chung. \emph{Graphs, Tables, and Figures in Scientific Publications: The
-Good, the Bad, and How Not to Be the Latter}, American Society for Surgery of the Hand,
-\textbf{37A} (2012) 591-596.
-\item Kelleher \& Wagener. \emph{Ten guidelines for effective data visualization in scientific
-publications}, Environmental Modelling \& Software \textbf{26} (2011) 822-827.
-\item L.\ Wilkinson, \emph{The Grammar of Graphics}, 2$^{\mbox{nd}}$ ed., Springer 2005.
-%\item H. Wickham, \emph{ggplot2}, 2$^{\mbox{nd}}$ ed. TO APPEAR
-\end{itemize}
-}
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \section[Ref]{References} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \frame{ % -------------------------------------------------------------------->
+%% \frametitle{References}
+%% \begin{itemize}
+%% \item Chapters 1-8, 10: Petrie \& Sabin. \emph{Medical Statistics at a Glance}, Wiley-Blackwell (2009).
+%% \item Puhan et al. \emph{More medical journals should inform their contributors about three
+%% key principles of graph construction}, Journal of Clinical Epidemiology,
+%% \textbf{59} (2006) 1017-1022.
+%% \item Franzblau \& Chung. \emph{Graphs, Tables, and Figures in Scientific Publications: The
+%% Good, the Bad, and How Not to Be the Latter}, American Society for Surgery of the Hand,
+%% \textbf{37A} (2012) 591-596.
+%% \item Kelleher \& Wagener. \emph{Ten guidelines for effective data visualization in scientific
+%% publications}, Environmental Modelling \& Software \textbf{26} (2011) 822-827.
+%% %% \item L.\ Wilkinson, \emph{The Grammar of Graphics}, 2$^{\mbox{nd}}$ ed., Springer 2005.
+%% %%\item H. Wickham, \emph{ggplot2}, 2$^{\mbox{nd}}$ ed. TO APPEAR
+%% \item Brown University \emph{Seeing Theory}  \href{https://seeing-theory.brown.edu/probability-distributions}
+%%     {https://seeing-theory.brown.edu/probability-distributions}
+%% \end{itemize}
+%% }
 
 \end{document} % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Polls} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\lada}{\fbox{$\phantom{x}$}}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Poll: Variables and driving}
+\textbf{Q1:} Tick the boxes you think are always true. (Multiple choice)
+\begin{itemize}
+\item[\lada] An ordinal variable with values A, B, C, (etc) is such that the "increases" (although not numerical) B-A, C-B, (etc) can be considered to be of the same magnitude.
+\item[\lada] Anything measured numerically must be analysed as such.
+\item[\lada] Anything recorded as a categorization must be analysed as such.
+\item[\lada] None of the above.
+\end{itemize}
+
+\textbf{Q2:} A poll showed that 80\% of drivers thought their driving skills
+were above average. As a group, do these drivers overestimate their driving
+skills? (Single choice)
+\begin{itemize}
+\item[\lada] No
+\item[\lada] Yes
+\item[\lada] Probably
+\item[\lada] We can't say
+\end{itemize}
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Poll: Boxplots and means}
+\textbf{Q1:} A group of 24 individuals have been randomly assigned to 6
+different exercise groups, and their blood pressure is measured after
+training. The researchers do a boxplot for the measurements for each group. Is
+this a good approach? (Single choice)
+\begin{itemize}
+\item[\lada] Yes, a good way to visualize the overall pattern.
+\item[\lada] No, the overall sample size is too small.
+\item[\lada] No, the group sizes are too small.
+\end{itemize}
+\textbf{Q1:} Suppose the mean athletic skill is somewhat better in group
+A as compared to group B (of equal size). If a sport team is fairly admitting members by
+assessing athletic skill, we should expect more people from A being admitted. (Single choice)
+\begin{itemize}
+\item[\lada] True
+\item[\lada] False
+\item[\lada] We can't say
+\end{itemize}
+}
+\frame{ % -------------------------------------------------------------------->
+\frametitle{Poll: LLN and CLT}
+\textbf{Q1:} Suppose you have flipped a (fair) coin 3 times, every time showing H
+('Heads'). The Law of Large Numbers tells us that the relative frequency of H
+will tend to 50\% in the long run. Does this imply that we now have an increased
+probability of T ('Tails')? (Single choice)
+\begin{itemize}
+\item[\lada] Yes
+\item[\lada] No
+\end{itemize}
+\textbf{Q2:} The Central Limit Theorem says that, althought the distribution of
+any numerical characteristic of individuals (income, blood pressure, etc) might
+be skewed in small populations, it will be (approx.) normally distributed in
+"large enough" populations. (Single choice)
+\begin{itemize}
+\item[\lada] True
+\item[\lada] False
+\end{itemize}
+}
